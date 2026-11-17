@@ -137,10 +137,11 @@ header{
   transition:transform .12s ease;
 }
 .qa a:active{transform:scale(.95)}
-.qa .ico{width:38px;height:38px;border-radius:12px;overflow:hidden;background:var(--cream)}
+.qa .ico{width:38px;height:38px;border-radius:12px;overflow:hidden;background:var(--cream);display:grid;place-items:center;color:var(--red)}
 .qa .ico img{width:100%;height:100%;object-fit:cover}
+.qa .ico svg{width:20px;height:20px;display:block}
 .qa a.primary{background:var(--red);color:#fff;border-color:var(--red)}
-.qa a.primary .ico{background:rgba(255,255,255,.18)}
+.qa a.primary .ico{background:rgba(255,255,255,.18);color:#fff}
 
 /* ---------- specials ---------- */
 .specials{display:grid;gap:12px}
@@ -193,10 +194,12 @@ header{
 
 /* ---------- search + chips ---------- */
 .search{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:11px 16px;box-shadow:0 2px 8px rgba(28,26,23,.05)}
+.search .search-ico{width:18px;height:18px;flex:none;color:#A9A196}
 .search input{border:none;outline:none;background:none;font-size:15px;flex:1;color:var(--ink);min-width:0}
 .search input::placeholder{color:#A9A196}
-.search .clear{font-size:18px;color:var(--ink-soft);display:none}
-.search.has .clear{display:block}
+.search .clear{width:26px;height:26px;flex:none;display:none;place-items:center;border-radius:50%;background:var(--cream);color:var(--ink-soft)}
+.search .clear svg{width:14px;height:14px}
+.search.has .clear{display:grid}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:14px 2px 4px;margin:0 -2px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);transition:.15s;white-space:nowrap}
@@ -211,8 +214,10 @@ header{
 .item .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .item h4{margin:0;font-size:15.5px;font-weight:700;line-height:1.3}
 .item .desc{margin:5px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
-.fav{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:#C3BBAD;background:var(--cream);transition:.15s}
+.fav{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#C3BBAD;background:var(--cream);transition:.15s}
+.fav svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor}
 .fav.on{color:var(--red);background:#FDECEF}
+.fav.on svg{fill:currentColor}
 .sizes{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .size{padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--cream);border:1px solid var(--line);color:var(--ink-soft);font-variant-numeric:tabular-nums}
 .size.on{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -268,7 +273,8 @@ blockquote{margin:0;padding:16px 18px;background:var(--cream);border-left:4px so
 blockquote cite{display:block;margin-top:9px;font-style:normal;font-weight:700;font-size:12px;color:var(--red)}
 .contact-row{display:flex;gap:13px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line);text-decoration:none}
 .contact-row:last-of-type{border-bottom:none}
-.contact-row .ico{width:40px;height:40px;border-radius:12px;background:var(--cream);display:grid;place-items:center;font-size:19px;flex:none}
+.contact-row .ico{width:40px;height:40px;border-radius:12px;background:var(--cream);display:grid;place-items:center;flex:none;color:var(--red)}
+.contact-row .ico svg{width:19px;height:19px;display:block}
 .contact-row .lab{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--ink-soft);text-transform:uppercase}
 .contact-row .val{font-size:14.5px;font-weight:600;margin-top:2px;display:block}
 .socials{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
@@ -288,11 +294,11 @@ nav.tabbar{
   border-top:1px solid var(--line);
   display:grid;grid-template-columns:repeat(6,1fr);
 }
-.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:#9A9184;position:relative;transition:.15s}
-.tab .ti{font-size:20px;line-height:1;filter:grayscale(1);opacity:.6;transition:.15s}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#9A9184;position:relative;transition:.15s;-webkit-tap-highlight-color:transparent}
+.tab svg{width:25px;height:25px;display:block;opacity:.55;transition:.15s}
 .tab.on{color:var(--red)}
-.tab.on .ti{filter:none;opacity:1;transform:translateY(-1px)}
-.tab .badge{position:absolute;top:7px;right:calc(50% - 20px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
+.tab.on svg{opacity:1;transform:translateY(-1px)}
+.tab .badge{position:absolute;top:2px;right:calc(50% - 18px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
 .tab .badge.show{display:flex}
 
 /* ============================================================
@@ -363,13 +369,31 @@ nav.tabbar{
 </head>
 <body>
 
+<!-- SVG icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5c0-2.5 1.8-4 4-4s4 1.5 4 4"/><path d="M3 8.5h10"/><path d="M3 12.5h18"/><path d="M3 16.5h18"/><path d="M3 20.5h18"/></g></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S3.5 15.4 3.5 9.6C3.5 6.9 5.6 5 8.2 5c1.6 0 3 .8 3.8 2.1C12.8 5.8 14.2 5 15.8 5c2.6 0 4.7 1.9 4.7 4.6 0 5.8-8.5 10.9-8.5 10.9Z"/></g></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.2 9l6 .6-4.5 4 1.3 5.9L12 16.4l-5 3.1L8.3 13.6 3.8 9.6l6-.6L12 3.5Z"/></g></symbol>
+    <symbol id="i-game" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="10" rx="5"/><path d="M7.5 10.5v3M6 12h3"/></g><g fill="currentColor" stroke="none"><circle cx="15.8" cy="11" r="1.1"/><circle cx="18.2" cy="13" r="1.1"/></g></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/></g><g fill="currentColor" stroke="none"><circle cx="12" cy="7.8" r="1.15"/></g></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9Z"/></g></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8c-1.5-4.5-6-4.5-6-1.5 0 2 2.5 2.5 6 1.5Zm0 0c1.5-4.5 6-4.5 6-1.5 0 2-2.5 2.5-6 1.5Z"/></g></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></g></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7Z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></g></symbol>
+  </defs>
+</svg>
+
 <div class="checker"></div>
 
 <header>
   <div class="brand">
     <a class="logo" href="#" onclick="go('home');return false;">
       <span class="logo-badge">
-        <span class="fb">Burger</span>
+        <span class="fb"></span>
         <img src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" alt="Big Boy" onerror="this.remove()">
       </span>
       <span class="logo-text">
@@ -402,40 +426,40 @@ nav.tabbar{
 
   <div class="qa">
     <a class="primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
-      <span class="ico"><img alt="" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_160,h_160,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.parentNode.textContent='⛽'"></span>Order Online
+      <span class="ico"><svg><use href="#i-bag"/></svg></span>Order Online
     </a>
-    <a href="tel:7012234125"><span class="ico" style="display:grid;place-items:center;font-size:19px">Call</span>Call</a>
+    <a href="tel:7012234125"><span class="ico"><svg><use href="#i-phone"/></svg></span>Call</a>
     <a href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
-       data-title="Directions"><span class="ico" style="display:grid;place-items:center;font-size:19px">Map</span>Directions</a>
-    <a href="#rewards" onclick="go('rewards');return false;"><span class="ico" style="display:grid;place-items:center;font-size:19px">Gift Cards</span></a>
+       data-title="Directions"><span class="ico"><svg><use href="#i-pin"/></svg></span>Directions</a>
+    <a href="#rewards" onclick="go('rewards');return false;"><span class="ico"><svg><use href="#i-gift"/></svg></span>Gift Cards</a>
   </div>
 
   <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
   <div class="specials">
     <div class="special">
-      <div class="pic ph"><span class="fb">Pancakes</span><img alt="Flying style burger" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Flying style burger" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
       <div>
         <h3>Flying Style</h3>
         <p>We are the only Big Boy that sells flying style. Ask for it by name.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb">Drink</span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg" onerror="this.remove()"></div>
       <div>
         <h3>Hot-N-Tot</h3>
         <p>Cinnamon syrup blended into a delicious Coke — a warm, spiced soda you won't find anywhere else.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb">Fries</span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></div>
       <div>
         <h3>Fries &amp; Gravy</h3>
         <p>There's no debate: dipping fries in gravy is the ultimate way to enjoy them.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb">Ice Cream</span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg" onerror="this.remove()"></div>
       <div>
         <h3>Big Boy Snow</h3>
         <p>Pebble ice topped with your syrup of choice. Cherry and marshmallow are customer favorites.</p>
@@ -485,9 +509,9 @@ nav.tabbar{
   <p class="screen-sub">Tap Favorite to save.</p>
 
   <div class="search" id="searchWrap">
-    <span>Search</span>
+    <svg class="search-ico"><use href="#i-search"/></svg>
     <input id="search" type="search" placeholder="Search burgers, shakes, sides…" autocomplete="off">
-    <button class="clear" id="searchClear" aria-label="Clear">Close</button>
+    <button class="clear" id="searchClear" aria-label="Clear search"><svg><use href="#i-close"/></svg></button>
   </div>
 
   <div class="chips" id="chips"></div>
@@ -507,29 +531,29 @@ nav.tabbar{
   <p class="screen-sub">Loyalty perks and gift cards for the Big Boy faithful.</p>
 
   <div class="reward-hero">
-    <div class="avatar ph"><span class="fb">Burger</span><img alt="Big Boy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+    <div class="avatar ph"><span class="fb"></span><img alt="Big Boy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
     <h2>EAT. EARN. REPEAT.</h2>
     <p>Join Big Boy Rewards and start collecting on every order — then treat somebody else to a gift card.</p>
   </div>
 
   <div class="reward-grid">
     <a class="reward-card" href="https://www.toasttab.com/loyalty/welcome/RQQO1ZM52u5HXnVX" data-title="Loyalty Sign Up">
-      <span class="ico ph"><span class="fb">Gift</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" onerror="this.remove()"></span>
       <span class="txt"><h3>Loyalty Sign Up</h3><p>Create your free rewards account in under a minute.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://www.toasttab.com/big-boy-2511-east-main-avenue/giftcards" data-title="eGift Card">
-      <span class="ico ph"><span class="fb">💳</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
       <span class="txt"><h3>Purchase eGift Card</h3><p>Send a taste of Big Boy to friends and family instantly.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://www.bismarckbigboy.com/category/all-products" data-title="Big Boy Shop">
-      <span class="ico ph"><span class="fb">Shop</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg" onerror="this.remove()"></span>
       <span class="txt"><h3>Big Boy Shop</h3><p>Merch, gear, and good stuff from the original location.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
-      <span class="ico ph"><span class="fb">Burger</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></span>
       <span class="txt"><h3>Order Online</h3><p>Skip the line with Toast pickup ordering.</p></span>
       <span class="arrow">›</span>
     </a>
@@ -596,15 +620,15 @@ nav.tabbar{
     <a class="contact-row" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
        data-title="Directions">
-      <span class="ico">Location</span>
+      <span class="ico"><svg><use href="#i-pin"/></svg></span>
       <span><span class="lab">Address</span><span class="val">2511 E Main Ave, Bismarck, ND 58501</span></span>
     </a>
     <a class="contact-row" href="tel:7012234125">
-      <span class="ico">Call</span>
+      <span class="ico"><svg><use href="#i-phone"/></svg></span>
       <span><span class="lab">Telephone</span><span class="val">701-223-4125</span></span>
     </a>
     <div class="contact-row">
-      <span class="ico">Hours</span>
+      <span class="ico"><svg><use href="#i-info"/></svg></span>
       <span><span class="lab">Hours</span><span class="val">Seven days a week · 10:30 AM – 9:00 PM</span></span>
     </div>
   </div>
@@ -676,13 +700,13 @@ nav.tabbar{
 </div>
 
 <!-- ============ TAB BAR ============ -->
-<nav class="tabbar">
-  <button class="tab on" data-tab="home"><span class="ti">Home</span>HOME</button>
-  <button class="tab" data-tab="menu"><span class="ti">Menu</span>MENU</button>
-  <button class="tab" data-tab="favs"><span class="ti">Favorites</span>SAVED<span class="badge" id="favBadge">0</span></button>
-  <button class="tab" data-tab="rewards"><span class="ti">Rewards</span>REWARDS</button>
-  <button class="tab" data-tab="game"><span class="ti">Game</span>GAME</button>
-  <button class="tab" data-tab="info"><span class="ti">Info</span>INFO</button>
+<nav class="tabbar" aria-label="Main navigation">
+  <button class="tab on" data-tab="home" aria-label="Home"><svg><use href="#i-home"/></svg></button>
+  <button class="tab" data-tab="menu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
+  <button class="tab" data-tab="favs" aria-label="Favorites"><svg><use href="#i-heart"/></svg><span class="badge" id="favBadge">0</span></button>
+  <button class="tab" data-tab="rewards" aria-label="Rewards"><svg><use href="#i-star"/></svg></button>
+  <button class="tab" data-tab="game" aria-label="Game"><svg><use href="#i-game"/></svg></button>
+  <button class="tab" data-tab="info" aria-label="Info"><svg><use href="#i-info"/></svg></button>
 </nav>
 
 <script>
@@ -842,8 +866,8 @@ function renderChips(){
     const imgId = imgMap[c.id];
     const imgSrc = imgId ? `https://static.wixstatic.com/media/${imgId}/v1/fill/w_16,h_16,al_c,q_85,enc_auto/${imgId}` : '';
     const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">` : '';
-    `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`
-  ).join('');
+    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`;
+  }).join('');
   $$('.chip').forEach(ch => ch.addEventListener('click', () => {
     state.cat = ch.dataset.cat; renderChips(); renderMenu();
   }));
@@ -851,7 +875,7 @@ function renderChips(){
 
 function picHTML(it, cls){
   const src = wix(it.img, 300, 300);
-  return `<div class="pic ph ${cls||''}"><span class="fb">🍽️</span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}" onerror="this.remove()"></div>`;
+  return `<div class="pic ph ${cls||''}"><span class="fb"></span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}" onerror="this.remove()"></div>`;
 }
 
 function itemHTML(it){
@@ -865,7 +889,7 @@ function itemHTML(it){
     <div class="body">
       <div class="top">
         <h4>${it.n}</h4>
-        <button class="fav ${fav?'on':''}" data-fav="${it.id}" aria-label="Save ${it.n}">Favorite</button>
+        <button class="fav ${fav?'on':''}" data-fav="${it.id}" aria-label="Save ${it.n}"><svg><use href="#i-heart"/></svg></button>
       </div>
       ${it.d ? `<p class="desc">${it.d}</p>` : ''}
       <div class="sizes">${sizes}</div>
@@ -921,7 +945,6 @@ document.addEventListener('click', e => {
     $$(`[data-fav="${id}"]`).forEach(b => {
       const on = state.favs.has(id);
       b.classList.toggle('on', on);
-      b.textContent = on ? 'Favorite' : 'Save Favorite';
     });
     if (state.tab==='favs') renderFavs();
   }
@@ -940,7 +963,8 @@ function updateBadge(){
 function renderFavs(){
   const ids = [...state.favs];
   const box = $('#favList');
-  <div class="empty">
+  if (!ids.length){
+    box.innerHTML = `<div class="empty">
       <div class="big">Empty</div>
       <h3>No favorites yet</h3>
       <p>Tap the heart on any menu item and it'll show up here for quick reordering.</p>
@@ -1121,9 +1145,304 @@ updateStatus();
 updateBadge();
 setInterval(updateStatus, 30000);
 
-(function(){
-  // Big Boy Catch — auto-start mini game on canvas
+/* ============================================================
+   MINI GAME — Big Boy Catch
+   Runs only while the GAME screen is active.
+   ============================================================ */
+const G = {
+  canvas: $('#gameCanvas'), ctx: null, running: false,
+  bw: 0, bh: 0, items: [], score: 0, lives: 3, speed: 3,
+  x: 0, raf: 0, last: 0, touchDir: 0, touchX: null
+};
+if (G.canvas && G.canvas.getContext) G.ctx = G.canvas.getContext('2d');
+
+G.resize = function(){
+  const w = G.canvas.clientWidth || G.canvas.parentElement.clientWidth || 340;
+  G.bw = Math.min(w, 420);
+  G.bh = Math.round(G.bw * 0.78);
+  G.canvas.width = G.bw; G.canvas.height = G.bh;
+  G.x = G.x || G.bw / 2;
+  if (!G.running) G.draw();
+};
+
+G.spawn = function(){
+  const good = Math.random() < 0.66;
+  const s = Math.max(30, Math.round(G.bw * 0.09));
+  G.items.push({
+    x: s/2 + Math.random() * (G.bw - s),
+    y: -s,
+    s: s,
+    vy: (2.4 + Math.random() * 2.2) * (G.speed / 3),
+    good: good,
+    rot: Math.random() * Math.PI,
+    vr: (Math.random() - 0.5) * 0.08
+  });
+};
+
+G.drawBoy = function(x){
+  const cx = x, ground = G.bh - 8;
+  const u = G.bw / 100;                       // scale unit
+  // legs
+  G.ctx.fillStyle = '#1C1A17';
+  G.ctx.fillRect(cx - 9*u, ground - 26*u, 7*u, 26*u);
+  G.ctx.fillRect(cx + 2*u,  ground - 26*u, 7*u, 26*u);
+  // shoes
+  G.ctx.fillStyle = '#FFFFFF';
+  G.ctx.beginPath();
+  G.ctx.ellipse(cx - 5.5*u, ground - 2*u, 6.5*u, 3.4*u, 0, 0, Math.PI*2);
+  G.ctx.ellipse(cx + 5.5*u, ground - 2*u, 6.5*u, 3.4*u, 0, 0, Math.PI*2);
+  G.ctx.fill();
+  // checkered overalls
+  G.ctx.save();
+  G.ctx.beginPath();
+  G.ctx.moveTo(cx - 13*u, ground - 62*u);
+  G.ctx.lineTo(cx + 13*u, ground - 62*u);
+  G.ctx.lineTo(cx + 15*u, ground - 22*u);
+  G.ctx.lineTo(cx - 15*u, ground - 22*u);
+  G.ctx.closePath();
+  G.ctx.clip();
+  G.ctx.fillStyle = '#C8102E'; G.ctx.fillRect(cx-16*u, ground-64*u, 32*u, 44*u);
+  G.ctx.fillStyle = '#FFFFFF';
+  for (let r = 0; r < 7; r++)
+    for (let c = 0; c < 4; c++)
+      if ((r+c) % 2 === 0) G.ctx.fillRect(cx-16*u + c*8*u, ground-64*u + r*6.3*u, 8*u, 6.3*u);
+  G.ctx.restore();
+  // shirt
+  G.ctx.fillStyle = '#FFFFFF';
+  G.ctx.beginPath();
+  G.ctx.moveTo(cx - 12*u, ground - 66*u);
+  G.ctx.quadraticCurveTo(cx, ground - 74*u, cx + 12*u, ground - 66*u);
+  G.ctx.lineTo(cx + 13*u, ground - 56*u);
+  G.ctx.lineTo(cx - 13*u, ground - 56*u);
+  G.ctx.closePath(); G.ctx.fill();
+  // arms
+  G.ctx.strokeStyle = '#F2C9A0'; G.ctx.lineWidth = 5*u; G.ctx.lineCap = 'round';
+  G.ctx.beginPath();
+  G.ctx.moveTo(cx - 11*u, ground - 62*u); G.ctx.lineTo(cx - 20*u, ground - 44*u);
+  G.ctx.moveTo(cx + 11*u, ground - 62*u); G.ctx.lineTo(cx + 20*u, ground - 44*u);
+  G.ctx.stroke();
+  // head
+  G.ctx.fillStyle = '#F2C9A0';
+  G.ctx.beginPath(); G.ctx.arc(cx, ground - 80*u, 11*u, 0, Math.PI*2); G.ctx.fill();
+  // hair swoop
+  G.ctx.fillStyle = '#1C1A17';
+  G.ctx.beginPath();
+  G.ctx.arc(cx, ground - 82*u, 11*u, Math.PI, Math.PI*2);
+  G.ctx.quadraticCurveTo(cx + 16*u, ground - 92*u, cx + 19*u, ground - 84*u);
+  G.ctx.quadraticCurveTo(cx + 12*u, ground - 88*u, cx + 6*u, ground - 84*u);
+  G.ctx.closePath(); G.ctx.fill();
+  // eyes + smile
+  G.ctx.fillStyle = '#1C1A17';
+  G.ctx.beginPath(); G.ctx.arc(cx - 4*u, ground - 80*u, 1.4*u, 0, Math.PI*2); G.ctx.fill();
+  G.ctx.beginPath(); G.ctx.arc(cx + 4*u, ground - 80*u, 1.4*u, 0, Math.PI*2); G.ctx.fill();
+  G.ctx.strokeStyle = '#1C1A17'; G.ctx.lineWidth = 1.6*u;
+  G.ctx.beginPath(); G.ctx.arc(cx, ground - 76*u, 4.5*u, 0.25, Math.PI - 0.25); G.ctx.stroke();
+};
+
+G.drawItem = function(it){
+  G.ctx.save();
+  G.ctx.translate(it.x, it.y);
+  G.ctx.rotate(it.rot);
+  const s = it.s;
+  if (it.good){
+    // pizza burger: bun top, patty, cheese, bun bottom
+    G.ctx.fillStyle = '#E8A33D';
+    G.ctx.beginPath(); G.ctx.ellipse(0, -s*0.28, s*0.5, s*0.26, 0, Math.PI, Math.PI*2); G.ctx.fill();
+    G.ctx.fillStyle = '#6B3A1F'; G.ctx.fillRect(-s*0.5, -s*0.16, s, s*0.16);
+    G.ctx.fillStyle = '#FFC72C';                        // cheese
+    G.ctx.beginPath();
+    G.ctx.moveTo(-s*0.5, 0); G.ctx.lineTo(-s*0.32, s*0.16);
+    G.ctx.lineTo(-s*0.14, 0); G.ctx.lineTo(s*0.04, s*0.18);
+    G.ctx.lineTo(s*0.22, 0); G.ctx.lineTo(s*0.5, s*0.12);
+    G.ctx.lineTo(s*0.5, 0); G.ctx.closePath(); G.ctx.fill();
+    G.ctx.fillStyle = '#E8A33D';
+    G.ctx.beginPath(); G.ctx.ellipse(0, s*0.26, s*0.5, s*0.2, 0, 0, Math.PI); G.ctx.fill();
+    G.ctx.fillStyle = '#FFF3D6';                        // sesame
+    for (const [dx,dy] of [[-0.2,-0.42],[0,-0.5],[0.2,-0.4],[0.1,-0.3]]){
+      G.ctx.beginPath(); G.ctx.ellipse(dx*s, dy*s, s*0.045, s*0.028, 0.6, 0, Math.PI*2); G.ctx.fill();
+    }
+  } else {
+    // gravy splat
+    G.ctx.fillStyle = '#6B4226';
+    G.ctx.beginPath();
+    for (let i = 0; i < 12; i++){
+      const a = (i / 12) * Math.PI * 2;
+      const rr = s * (i % 2 ? 0.3 : 0.5);
+      const px = Math.cos(a) * rr, py = Math.sin(a) * rr;
+      i ? G.ctx.lineTo(px, py) : G.ctx.moveTo(px, py);
+    }
+    G.ctx.closePath(); G.ctx.fill();
+    G.ctx.fillStyle = 'rgba(255,255,255,.28)';
+    G.ctx.beginPath(); G.ctx.ellipse(-s*0.12, -s*0.14, s*0.14, s*0.09, -0.5, 0, Math.PI*2); G.ctx.fill();
+  }
+  G.ctx.restore();
+};
+
+G.draw = function(){
+  if (!G.ctx) return;
+  const {bw:W, bh:H} = G;
+  // sky
+  const grd = G.ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, '#BEE3F8'); grd.addColorStop(1, '#FFF6E5');
+  G.ctx.fillStyle = grd; G.ctx.fillRect(0, 0, W, H);
+  // clouds
+  G.ctx.fillStyle = 'rgba(255,255,255,.75)';
+  for (const [cx, cy, r] of [[W*0.18, H*0.16, W*0.06],[W*0.62, H*0.10, W*0.05],[W*0.82, H*0.24, W*0.045]]){
+    G.ctx.beginPath();
+    G.ctx.arc(cx, cy, r, 0, Math.PI*2); G.ctx.arc(cx+r, cy+r*0.2, r*0.8, 0, Math.PI*2); G.ctx.arc(cx-r, cy+r*0.25, r*0.75, 0, Math.PI*2);
+    G.ctx.fill();
+  }
+  // floor + plate
+  G.ctx.fillStyle = '#C8102E'; G.ctx.fillRect(0, H-8, W, 8);
+  G.ctx.fillStyle = '#FFFDF7';
+  G.ctx.beginPath(); G.ctx.ellipse(G.x, H-10, W*0.16, 7, 0, 0, Math.PI*2); G.ctx.fill();
+  G.ctx.strokeStyle = '#EAE2D2'; G.ctx.lineWidth = 2; G.ctx.stroke();
+  // items
+  G.items.forEach(it => G.drawItem(it));
+  // big boy
+  G.drawBoy(G.x);
+  // HUD
+  G.ctx.fillStyle = '#1C1A17'; G.ctx.font = '700 15px Inter, sans-serif';
+  G.ctx.textAlign = 'left';  G.ctx.fillText('SCORE ' + G.score, 12, 24);
+  G.ctx.textAlign = 'right';
+  let hearts = '';
+  for (let i = 0; i < G.lives; i++) hearts += '\u2665 ';
+  G.ctx.fillStyle = '#C8102E';
+  G.ctx.fillText(hearts.trim(), W - 12, 24);
+};
+
+G.step = function(now){
+  if (!G.running) return;
+  const dt = Math.min(2.5, (now - G.last) / 16.667) || 1;
+  G.last = now;
+
+  // movement
+  const dir = G.touchDir || (keys.ArrowLeft ? -1 : keys.ArrowRight ? 1 : 0);
+  G.x += dir * 5.2 * dt;
+  const half = G.bw * 0.09;
+  G.x = Math.max(half + 4, Math.min(G.bw - half - 4, G.x));
+
+  // spawn
+  G.spawnCd -= dt;
+  if (G.spawnCd <= 0 && G.items.length < 8){
+    G.spawn();
+    G.spawnCd = Math.max(18, 46 - G.speed * 2.4);
+    if (G.speed < 9) G.speed += 0.05;
+  }
+
+  // update + collide
+  const catchY = G.bh - 12;
+  for (let i = G.items.length - 1; i >= 0; i--){
+    const it = G.items[i];
+    it.y += it.vy * dt; it.rot += it.vr * dt;
+    const dx = Math.abs(it.x - G.x), dy = it.y;
+    if (dy > catchY - it.s*0.5 && dy < catchY + 14 && dx < G.bw*0.16 + it.s*0.5){
+      if (it.good){ G.score += 100; pulse('#C8102E'); }
+      else { G.lives -= 1; pulse('#6B4226'); shake(); }
+      G.items.splice(i, 1);
+      continue;
+    }
+    if (it.y > G.bh + it.s){                              // missed
+      if (it.good){ G.lives -= 1; shake(); }
+      G.items.splice(i, 1);
+    }
+  }
+  if (G.lives <= 0){ G.over(); return; }
+  syncHud();
+  G.draw();
+  G.raf = requestAnimationFrame(G.step);
+};
+
+G.start = function(){
+  G.items = []; G.score = 0; G.lives = 3; G.speed = 3;
+  G.spawnCd = 0; G.x = G.bw / 2; G.last = performance.now();
+  syncHud();
+  $('#gameStart').classList.add('game-overlay--hidden');
+  $('#gameOver').classList.add('game-overlay--hidden');
+  G.running = true;
+  cancelAnimationFrame(G.raf);
+  G.raf = requestAnimationFrame(G.step);
+};
+
+G.pause = function(){
+  G.running = false;
+  cancelAnimationFrame(G.raf);
+};
+
+G.over = function(){
+  G.running = false;
+  cancelAnimationFrame(G.raf);
+  $('#gameFinalScore').textContent = G.score;
+  $('#gameOver').classList.remove('game-overlay--hidden');
+  G.draw();
+};
+
+G.toEnd = function(){
+  if (state.tab !== 'game'){ G.pause(); }
+};
+
+function syncHud(){
+  $('#gameScore').textContent = G.score;
+  $('#gameLives').textContent = G.lives;
+}
+function pulse(color){
+  const el = document.querySelector('.game-wrap');
+  el.style.boxShadow = 'inset 0 0 0 2px ' + color;
+  setTimeout(() => { el.style.boxShadow = ''; }, 160);
+}
+function shake(){
+  const el = document.querySelector('.game-wrap');
+  el.style.transform = 'translateX(3px)';
+  setTimeout(() => { el.style.transform = ''; }, 90);
+}
+
+/* controls */
+const keys = { ArrowLeft:false, ArrowRight:false };
+window.addEventListener('keydown', e => { if (e.key in keys) keys[e.key] = true; });
+window.addEventListener('keyup',   e => { if (e.key in keys) keys[e.key] = false; });
+
+if (G.canvas){
+  const padDir = (dir) => {
+    G.touchDir = dir;
+    const t = dir < 0 ? G.bw*0.35 : G.bw*0.65;
+    return t;
+  };
+  const hold = (el, dir) => {
+    const on  = e => { e.preventDefault(); padDir(dir); };
+    const off = e => { e.preventDefault(); G.touchDir = 0; };
+    el.addEventListener('touchstart', on,  {passive:false});
+    el.addEventListener('touchend',   off, {passive:false});
+    el.addEventListener('touchcancel',off, {passive:false});
+    el.addEventListener('mousedown',  on);
+    el.addEventListener('mouseup',    off);
+    el.addEventListener('mouseleave', off);
+  };
+  hold($('#gameLeft'), -1);
+  hold($('#gameRight'), 1);
+  G.canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const r = G.canvas.getBoundingClientRect();
+    G.touchX = e.touches[0].clientX - r.left;
+    G.x = Math.max(4, Math.min(G.bw - 4, G.touchX));
+  }, {passive:false});
+
+  $('#gameStartBtn').addEventListener('click', () => { G.resize(); G.start(); });
+  $('#gameRestartBtn').addEventListener('click', () => { G.resize(); G.start(); });
+  $('#gamePause').addEventListener('click', () => {
+    if (G.running) G.pause(); else { G.last = performance.now(); G.running = true; G.raf = requestAnimationFrame(G.step); }
+    $('#gamePause').textContent = G.running ? '\u23F8' : '\u25B6';
+  });
+  window.addEventListener('resize', () => G.resize());
+}
+
+/* ============================================================
+   PWA — installable + offline shell
+   ============================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
-</html>
 </html>
