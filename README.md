@@ -86,7 +86,7 @@ If you generate a **new** keystore, update `.well-known/assetlinks.json` with th
 ## Credits
 
 - Menu items, prices, photos, history, and awards: [bismarckbigboy.com](https://www.bismarckbigboy.com/)
-- App icon: Big Boy mascot artwork from the restaurant's site media library, composited on brand red (`#C8102E`)
+- App icon: Big Boy mascot artwork from the restaurant's site media library, on a dark charcoal background
 - Fonts: [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue) and [Inter](https://fonts.google.com/specimen/Inter)
 - Map: OpenStreetMap contributors
 - Delivery links: Uber Eats, DoorDash, Food Dudes
