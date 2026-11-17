@@ -1,0 +1,6 @@
+# Signing keystore + build artifacts — never publish these.
+# The APK/AAB live on GitHub Releases; the keystore stays private.
+release/
+*.apk
+*.aab
+*.keystore
