@@ -844,7 +844,7 @@ function go(tab){
   $('#orderbar').classList.toggle('show', tab==='menu');
   if (tab==='favs') renderFavs();
   if (tab==='menu') renderMenu();
-  if (tab==='game') gResize();
+  if (tab==='game' && typeof G !== 'undefined' && G.resize){ G.resize(); }
   window.scrollTo({top:0, behavior:'instant'});
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
