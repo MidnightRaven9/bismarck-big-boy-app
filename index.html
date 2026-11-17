@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C8102E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Big Boy">
+<meta name="description" content="Bismarck Big Boy — A Family Tradition since 1954. Menu, hours, order online, and rewards.">
+<title>Bismarck Big Boy</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-48.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://static.wixstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C8102E;
+  --red-dark:#9B0B23;
+  --cream:#FFF6E5;
+  --paper:#FFFDF7;
+  --ink:#1C1A17;
+  --ink-soft:#6B645A;
+  --yellow:#FFC72C;
+  --line:#EAE2D2;
+  --shadow:0 6px 20px rgba(28,26,23,.10);
+  --radius:18px;
+  --nav-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
+  overscroll-behavior-y:none;
+}
+body.locked{overflow:hidden}
+h1,h2,h3,.display{font-family:'Bebas Neue','Arial Narrow',Impact,sans-serif;font-weight:400;letter-spacing:.02em}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit}
+img{max-width:100%}
+
+/* ---------- checker strip ---------- */
+.checker{
+  height:12px;
+  background-color:#fff;
+  background-image:
+    linear-gradient(45deg,var(--ink) 25%,transparent 25%,transparent 75%,var(--ink) 75%),
+    linear-gradient(45deg,var(--ink) 25%,transparent 25%,transparent 75%,var(--ink) 75%);
+  background-size:12px 12px;
+  background-position:0 0,6px 6px;
+}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:40;
+  background:var(--red);
+  color:#fff;
+  padding:12px 16px 14px;
+  box-shadow:0 4px 14px rgba(200,16,46,.28);
+}
+.brand{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+.logo-badge{
+  width:42px;height:42px;border-radius:50%;
+  background:#fff;position:relative;overflow:hidden;flex:none;
+  border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2);
+  display:grid;place-items:center;font-size:20px;
+}
+.logo-badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.logo-text .t1{font-family:'Bebas Neue','Arial Narrow',Impact,sans-serif;font-size:26px;line-height:.9;letter-spacing:.06em}
+.logo-text .t2{font-size:9.5px;letter-spacing:.24em;opacity:.9;font-weight:700;margin-top:3px}
+.status{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.35);
+  padding:7px 11px;border-radius:999px;font-size:12px;font-weight:700;
+  white-space:nowrap;
+}
+.status .dot{width:8px;height:8px;border-radius:50%;background:#7CE0A8;box-shadow:0 0 0 3px rgba(124,224,168,.3);flex:none}
+.status.closed .dot{background:#FFB3B3;box-shadow:0 0 0 3px rgba(255,179,179,.3)}
+.status small{display:block;font-weight:500;opacity:.85;font-size:10.5px}
+
+/* ---------- screens ---------- */
+.screen{display:none;padding:18px 16px 8px;animation:fade .28s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.screen-title{font-size:34px;margin:4px 0 4px;line-height:1}
+.screen-sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 18px}
+.section-title{font-size:24px;margin:26px 0 12px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 16px)}
+
+/* ---------- photo helpers ---------- */
+.ph{position:relative;overflow:hidden;background:var(--cream);display:grid;place-items:center}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph .fb{position:relative;z-index:0;line-height:1}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;overflow:hidden;border-radius:var(--radius);
+  background:var(--red);color:#fff;padding:30px 20px 24px;
+  box-shadow:var(--shadow);min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;
+}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero-tint{position:absolute;inset:0;z-index:1;background:linear-gradient(155deg,rgba(200,16,46,.86) 0%,rgba(155,11,35,.93) 65%,rgba(120,8,26,.96) 100%)}
+.hero-check{
+  position:absolute;inset:0;z-index:1;opacity:.5;
+  background-image:
+    linear-gradient(45deg,rgba(255,255,255,.13) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.13) 75%),
+    linear-gradient(45deg,rgba(255,255,255,.13) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.13) 75%);
+  background-size:28px 28px;background-position:0 0,14px 14px;
+}
+.hero>*:not(.hero-bg):not(.hero-tint):not(.hero-check){position:relative;z-index:2}
+.hero .eyebrow{font-size:11px;letter-spacing:.3em;font-weight:800;color:var(--yellow);margin:0 0 8px}
+.hero h1{font-size:52px;margin:0;line-height:.92}
+.hero p{margin:12px 0 0;font-size:14.5px;line-height:1.55;opacity:.95;max-width:34ch}
+.hero .years{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  background:var(--yellow);color:var(--red-dark);
+  font-weight:800;font-size:12px;letter-spacing:.06em;
+  padding:8px 13px;border-radius:999px;align-self:flex-start;
+}
+.hero .addr{margin-top:14px;font-size:13px;opacity:.92;line-height:1.6}
+
+/* ---------- quick actions ---------- */
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:16px}
+.qa a{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:11px 4px;text-decoration:none;font-size:10.5px;font-weight:700;
+  color:var(--ink);text-align:center;box-shadow:0 2px 8px rgba(28,26,23,.05);
+  transition:transform .12s ease;
+}
+.qa a:active{transform:scale(.95)}
+.qa .ico{width:38px;height:38px;border-radius:12px;overflow:hidden;background:var(--cream)}
+.qa .ico img{width:100%;height:100%;object-fit:cover}
+.qa a.primary{background:var(--red);color:#fff;border-color:var(--red)}
+.qa a.primary .ico{background:rgba(255,255,255,.18)}
+
+/* ---------- specials ---------- */
+.specials{display:grid;gap:12px}
+.special{
+  display:flex;gap:14px;align-items:center;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;box-shadow:0 3px 12px rgba(28,26,23,.06);
+}
+.special .pic{
+  width:66px;height:66px;border-radius:14px;flex:none;
+  border:2px solid var(--red);
+}
+.special h3{margin:0;font-size:22px;line-height:1}
+.special p{margin:5px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.45}
+
+/* ---------- hours ---------- */
+.hours-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.hours-row:last-child{border-bottom:none}
+.hours-row .d{font-weight:600}
+.hours-row .h{color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.hours-row.today,.hours-row.today .h{color:var(--red);font-weight:700}
+
+/* ---------- delivery ---------- */
+.delivery{display:grid;gap:10px}
+.del{
+  display:flex;align-items:center;gap:13px;
+  background:var(--c);color:#fff;text-decoration:none;
+  padding:15px 16px;border-radius:16px;
+  box-shadow:0 6px 18px rgba(28,26,23,.16);
+  transition:transform .12s ease;position:relative;overflow:hidden;
+}
+.del::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.12),transparent 55%);pointer-events:none}
+.del:active{transform:scale(.98)}
+.del .txt{flex:1;min-width:0;position:relative;z-index:1}
+.del .n{display:block;font-size:17.5px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.del .n em{font-style:normal;color:var(--g,#fff)}
+.del .s{display:block;margin-top:3px;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.82}
+.del .go{position:relative;z-index:1;font-size:21px;opacity:.9;font-weight:700}
+.delivery-note{font-size:12px;color:var(--ink-soft);margin:11px 2px 0;line-height:1.55}
+
+/* ---------- awards ---------- */
+.awards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.award{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center}
+.award .yr{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--red);line-height:1}
+.award .nm{font-size:10.5px;font-weight:700;margin-top:4px;line-height:1.3;letter-spacing:.04em}
+
+/* ---------- cards ---------- */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 3px 12px rgba(28,26,23,.06)}
+.card+.card{margin-top:12px}
+
+/* ---------- search + chips ---------- */
+.search{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:11px 16px;box-shadow:0 2px 8px rgba(28,26,23,.05)}
+.search input{border:none;outline:none;background:none;font-size:15px;flex:1;color:var(--ink);min-width:0}
+.search input::placeholder{color:#A9A196}
+.search .clear{font-size:18px;color:var(--ink-soft);display:none}
+.search.has .clear{display:block}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 2px 4px;margin:0 -2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);transition:.15s;white-space:nowrap}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 4px 12px rgba(200,16,46,.3)}
+
+/* ---------- menu items ---------- */
+.cat-head{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.1em;color:var(--red);margin:22px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--red);display:flex;justify-content:space-between;align-items:baseline}
+.cat-head span{font-family:Inter,sans-serif;font-size:10.5px;letter-spacing:.14em;color:var(--ink-soft);font-weight:700}
+.item{display:flex;gap:13px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 3px 10px rgba(28,26,23,.05)}
+.item .pic{width:58px;height:58px;flex:none;border-radius:13px;font-size:26px}
+.item .body{flex:1;min-width:0}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.item h4{margin:0;font-size:15.5px;font-weight:700;line-height:1.3}
+.item .desc{margin:5px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.fav{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:#C3BBAD;background:var(--cream);transition:.15s}
+.fav.on{color:var(--red);background:#FDECEF}
+.sizes{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.size{padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--cream);border:1px solid var(--line);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.size.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.price{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--red);line-height:1}
+.price-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+
+/* sticky order bar */
+.orderbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:35;padding:10px 16px 12px;background:linear-gradient(to top,var(--cream) 70%,rgba(255,246,229,0));display:none}
+.orderbar.show{display:block}
+.orderbar a{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--red);color:#fff;text-decoration:none;padding:15px;border-radius:999px;font-weight:800;font-size:14.5px;letter-spacing:.06em;box-shadow:0 8px 22px rgba(200,16,46,.38)}
+.orderbar a:active{transform:scale(.98)}
+.orderbar .ico{width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none}
+.orderbar .ico img{width:100%;height:100%;object-fit:cover}
+
+/* ---------- empty / buttons ---------- */
+.empty{text-align:center;padding:50px 20px;color:var(--ink-soft)}
+.empty .big{font-size:52px;opacity:.35}
+.empty h3{font-size:26px;color:var(--ink);margin:12px 0 6px}
+.empty p{font-size:13.5px;margin:0 0 18px;line-height:1.6}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--red);color:#fff;text-decoration:none;padding:14px 24px;border-radius:999px;font-weight:800;font-size:14px;letter-spacing:.05em;box-shadow:0 6px 18px rgba(200,16,46,.3);border:2px solid var(--red)}
+.btn.ghost{background:var(--paper);color:var(--red);border:2px solid var(--red);box-shadow:none}
+.btn.dark{background:var(--ink);border-color:var(--ink);box-shadow:none}
+.btn.block{display:flex;width:100%}
+.btn:active{transform:scale(.98)}
+
+/* ---------- rewards ---------- */
+.reward-hero{border-radius:var(--radius);padding:26px 20px;text-align:center;color:#fff;background:linear-gradient(150deg,var(--red),var(--red-dark));box-shadow:var(--shadow);position:relative;overflow:hidden}
+.reward-hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(255,255,255,.14) 0 2px,transparent 2px);background-size:22px 22px}
+.reward-hero>*{position:relative;z-index:1}
+.reward-hero .avatar{width:74px;height:74px;border-radius:50%;margin:0 auto;border:4px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.reward-hero h2{font-size:36px;margin:12px 0 6px}
+.reward-hero p{font-size:13.5px;opacity:.94;margin:0 auto;max-width:32ch;line-height:1.6}
+.reward-grid{display:grid;gap:12px;margin-top:16px}
+.reward-card{display:flex;gap:14px;align-items:center;text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:0 3px 12px rgba(28,26,23,.06);transition:.15s}
+.reward-card:active{transform:scale(.98)}
+.reward-card .ico{width:48px;height:48px;border-radius:13px;flex:none;font-size:22px}
+.reward-card .txt{flex:1;min-width:0}
+.reward-card h3{margin:0;font-size:20px;line-height:1.1}
+.reward-card p{margin:3px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+.reward-card .arrow{color:var(--red);font-size:22px;font-weight:700}
+
+/* ---------- info ---------- */
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding-bottom:20px}
+.tl-item::before{content:"";position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--red);border:3px solid var(--cream);box-shadow:0 0 0 2px var(--red)}
+.tl-item .yr{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);line-height:1}
+.tl-item h3{margin:3px 0 5px;font-size:20px}
+.tl-item p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+.story-photo{width:100%;max-height:300px;object-fit:contain;object-position:top;background:var(--cream);border-radius:12px;margin-bottom:16px;display:block}
+.photo-cap{font-size:11px;color:var(--ink-soft);text-align:center;margin:-8px 0 16px;letter-spacing:.06em}
+blockquote{margin:0;padding:16px 18px;background:var(--cream);border-left:4px solid var(--red);border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.7;color:var(--ink)}
+blockquote cite{display:block;margin-top:9px;font-style:normal;font-weight:700;font-size:12px;color:var(--red)}
+.contact-row{display:flex;gap:13px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line);text-decoration:none}
+.contact-row:last-of-type{border-bottom:none}
+.contact-row .ico{width:40px;height:40px;border-radius:12px;background:var(--cream);display:grid;place-items:center;font-size:19px;flex:none}
+.contact-row .lab{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--ink-soft);text-transform:uppercase}
+.contact-row .val{font-size:14.5px;font-weight:600;margin-top:2px;display:block}
+.socials{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.socials a{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:14px;text-decoration:none;font-weight:700;font-size:13.5px;color:#fff}
+.socials a img{width:19px;height:19px;object-fit:contain}
+.socials a.ig{background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)}
+.socials a.fb{background:#1877F2}
+.note-box{background:#FFFBEF;border:1px solid #F3E3AE;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.6;color:#6B5A1E}
+
+/* ---------- bottom nav ---------- */
+nav.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(255,253,247,.94);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);
+}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:#9A9184;position:relative;transition:.15s}
+.tab .ti{font-size:20px;line-height:1;filter:grayscale(1);opacity:.6;transition:.15s}
+.tab.on{color:var(--red)}
+.tab.on .ti{filter:none;opacity:1;transform:translateY(-1px)}
+.tab .badge{position:absolute;top:7px;right:calc(50% - 20px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
+.tab .badge.show{display:flex}
+
+/* ============================================================
+   IN-APP BROWSER
+   ============================================================ */
+.iab{
+  position:fixed;inset:0;z-index:200;display:none;
+  background:var(--paper);
+  flex-direction:column;
+  padding-top:env(safe-area-inset-top);
+}
+.iab.open{display:flex;animation:iabIn .26s cubic-bezier(.2,.8,.3,1)}
+@keyframes iabIn{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.iab-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--ink);color:#fff;padding:9px 10px;flex:none;
+  box-shadow:0 4px 14px rgba(0,0,0,.25);position:relative;z-index:3;
+}
+.iab-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:9px 13px;border-radius:999px;font-size:13.5px;font-weight:700;
+  background:rgba(255,255,255,.13);color:#fff;white-space:nowrap;
+}
+.iab-btn:active{background:rgba(255,255,255,.25)}
+.iab-where{flex:1;min-width:0;display:flex;align-items:center;gap:9px;justify-content:center}
+.iab-where img{width:20px;height:20px;border-radius:5px;background:#fff;flex:none}
+.iab-where .h{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iab-where .h small{display:block;font-weight:500;font-size:10px;opacity:.6;letter-spacing:.08em}
+.iab-progress{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;background:rgba(255,255,255,.12)}
+.iab-progress i{display:block;height:100%;width:40%;background:var(--yellow);animation:slide 1.1s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+.iab.loading .iab-progress{visibility:visible}
+.iab:not(.loading) .iab-progress{visibility:hidden}
+.iab-body{flex:1;position:relative;background:#fff;min-height:0}
+.iab-frame{position:absolute;inset:0;width:100%;height:100%;border:none;display:none;background:#fff}
+.iab-body.web .iab-frame{display:block}
+.iab-handoff{position:absolute;inset:0;overflow:auto;padding:36px 24px 40px;display:none;background:var(--paper)}
+.iab-body.handoff .iab-handoff{display:block}
+.ho{max-width:400px;margin:0 auto;text-align:center}
+.ho .site-img{width:74px;height:74px;border-radius:18px;object-fit:cover;border:1px solid var(--line);box-shadow:0 6px 18px rgba(28,26,23,.12);background:#fff}
+.ho h3{font-size:30px;margin:14px 0 0;line-height:1.05}
+.ho .host{font-size:11px;letter-spacing:.16em;font-weight:800;color:var(--ink-soft);text-transform:uppercase;margin-top:6px}
+.ho p{font-size:14px;line-height:1.7;color:var(--ink-soft);margin:16px 0 24px}
+.ho .btn{margin-bottom:10px}
+.ho .why{font-size:11.5px;color:#9A9184;margin-top:6px;line-height:1.5}
+
+@media(min-width:760px){
+  body{max-width:560px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,.10)}
+  .iab{left:50%;transform:translateX(-50%);max-width:560px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .iab.open{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="checker"></div>
+
+<header>
+  <div class="brand">
+    <a class="logo" href="#" onclick="go('home');return false;">
+      <span class="logo-badge">
+        <span class="fb">🍔</span>
+        <img src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" alt="Big Boy" onerror="this.remove()">
+      </span>
+      <span class="logo-text">
+        <span class="t1">BIG BOY</span>
+        <span class="t2">BISMARCK · SINCE 1954</span>
+      </span>
+    </a>
+    <div class="status" id="status">
+      <span class="dot"></span>
+      <span><span id="statusMain">Checking…</span><small id="statusSub"></small></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<section class="screen active" id="s-home">
+  <div class="hero">
+    <img class="hero-bg" alt="" src="https://static.wixstatic.com/media/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg/v1/fill/w_1100,h_700,al_c,q_80,enc_auto/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg" onerror="this.remove()">
+    <div class="hero-tint"></div>
+    <div class="hero-check"></div>
+    <p class="eyebrow">A FAMILY TRADITION</p>
+    <h1>Stop By and<br>See Us Today</h1>
+    <p>Bismarck's first local drive-through and the city's oldest continuously operating restaurant.</p>
+    <span class="years">🎉 CELEBRATING 70 YEARS</span>
+    <div class="addr">
+      2511 E Main Ave, Bismarck, ND 58501<br>
+      Seven days a week · 10:30 AM – 9:00 PM
+    </div>
+  </div>
+
+  <div class="qa">
+    <a class="primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
+      <span class="ico"><img alt="" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_160,h_160,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.parentNode.textContent='🛍️'"></span>Order Online
+    </a>
+    <a href="tel:7012234125"><span class="ico" style="display:grid;place-items:center;font-size:19px">📞</span>Call</a>
+    <a href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
+       data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
+       data-title="Directions"><span class="ico" style="display:grid;place-items:center;font-size:19px">🧭</span>Directions</a>
+    <a href="#rewards" onclick="go('rewards');return false;"><span class="ico" style="display:grid;place-items:center;font-size:19px">🎁</span>Gift Cards</a>
+  </div>
+
+  <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
+  <div class="specials">
+    <div class="special">
+      <div class="pic ph"><span class="fb">🥞</span><img alt="Flying style burger" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+      <div>
+        <h3>Flying Style</h3>
+        <p>We are the only Big Boy that sells flying style. Ask for it by name.</p>
+      </div>
+    </div>
+    <div class="special">
+      <div class="pic ph"><span class="fb">🥤</span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg" onerror="this.remove()"></div>
+      <div>
+        <h3>Hot-N-Tot</h3>
+        <p>Cinnamon syrup blended into a delicious Coke — a warm, spiced soda you won't find anywhere else.</p>
+      </div>
+    </div>
+    <div class="special">
+      <div class="pic ph"><span class="fb">🍟</span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></div>
+      <div>
+        <h3>Fries &amp; Gravy</h3>
+        <p>There's no debate: dipping fries in gravy is the ultimate way to enjoy them.</p>
+      </div>
+    </div>
+    <div class="special">
+      <div class="pic ph"><span class="fb">🍨</span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg" onerror="this.remove()"></div>
+      <div>
+        <h3>Big Boy Snow</h3>
+        <p>Pebble ice topped with your syrup of choice. Cherry and marshmallow are customer favorites.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title" id="delivery">GET IT DELIVERED</h2>
+  <div class="delivery">
+    <a class="del" href="https://www.ubereats.com/store/big-boy-restaurant/Yaiq62AyUguFfz1C5_BRlQ" data-title="Uber Eats" style="--c:#000000;--g:#06C167">
+      <span class="txt"><span class="n">Uber <em>Eats</em></span><span class="s">Delivery</span></span>
+      <span class="go">→</span>
+    </a>
+    <a class="del" href="https://www.doordash.com/store/32380757" data-title="DoorDash" style="--c:#FF3008;--g:#FFFFFF">
+      <span class="txt"><span class="n">DoorDash</span><span class="s">Delivery</span></span>
+      <span class="go">→</span>
+    </a>
+    <a class="del" href="https://fooddudesdelivery.com/bismarck/big-boy?q=fd" data-title="Food Dudes" style="--c:#F06F00;--g:#FFFFFF">
+      <span class="txt"><span class="n">Food <em>Dudes</em></span><span class="s">Local delivery</span></span>
+      <span class="go">→</span>
+    </a>
+  </div>
+  <p class="delivery-note">Same Big Boy favorites, delivered to your door. Prices and delivery areas are set by each service.</p>
+
+  <h2 class="section-title">HOURS</h2>
+  <div class="card" id="hoursCard"></div>
+
+  <h2 class="section-title">AWARDS</h2>
+  <div class="awards">
+    <div class="award"><div class="yr">2021</div><div class="nm">GRANITE AWARD</div></div>
+    <div class="award"><div class="yr">2021</div><div class="nm">BEST OF THE FEST</div></div>
+    <div class="award"><div class="yr">2020</div><div class="nm">PEOPLE'S CHOICE</div></div>
+  </div>
+
+  <div class="note-box" style="margin-top:16px">
+    🅿️ <strong>No indoor seating.</strong> Grab food for the road, take it home for the family, enjoy it in your car, or (as weather permits) use the picnic tables right here on the property.
+  </div>
+
+  <div style="margin-top:18px">
+    <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER ONLINE →</a>
+  </div>
+</section>
+
+<!-- ============ MENU ============ -->
+<section class="screen" id="s-menu">
+  <h1 class="screen-title">MENU</h1>
+  <p class="screen-sub">Tap a size to see its price. Tap ♡ to save a favorite.</p>
+
+  <div class="search" id="searchWrap">
+    <span>🔍</span>
+    <input id="search" type="search" placeholder="Search burgers, shakes, sides…" autocomplete="off">
+    <button class="clear" id="searchClear" aria-label="Clear">✕</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+  <div id="menuList"></div>
+</section>
+
+<!-- ============ FAVORITES ============ -->
+<section class="screen" id="s-favs">
+  <h1 class="screen-title">FAVORITES</h1>
+  <p class="screen-sub">Your saved go-to orders, ready to reorder.</p>
+  <div id="favList"></div>
+</section>
+
+<!-- ============ REWARDS ============ -->
+<section class="screen" id="s-rewards">
+  <h1 class="screen-title">REWARDS</h1>
+  <p class="screen-sub">Loyalty perks and gift cards for the Big Boy faithful.</p>
+
+  <div class="reward-hero">
+    <div class="avatar ph"><span class="fb">🍔</span><img alt="Big Boy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+    <h2>EAT. EARN. REPEAT.</h2>
+    <p>Join Big Boy Rewards and start collecting on every order — then treat somebody else to a gift card.</p>
+  </div>
+
+  <div class="reward-grid">
+    <a class="reward-card" href="https://www.toasttab.com/big-boy-2511-east-main-avenue/rewardsSignup" data-title="Loyalty Sign Up">
+      <span class="ico ph"><span class="fb">⭐</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" onerror="this.remove()"></span>
+      <span class="txt"><h3>Loyalty Sign Up</h3><p>Create your free rewards account in under a minute.</p></span>
+      <span class="arrow">›</span>
+    </a>
+    <a class="reward-card" href="https://www.toasttab.com/big-boy-2511-east-main-avenue/giftcards" data-title="eGift Card">
+      <span class="ico ph"><span class="fb">💳</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
+      <span class="txt"><h3>Purchase eGift Card</h3><p>Send a taste of Big Boy to friends and family instantly.</p></span>
+      <span class="arrow">›</span>
+    </a>
+    <a class="reward-card" href="https://www.bismarckbigboy.com/category/all-products" data-title="Big Boy Shop">
+      <span class="ico ph"><span class="fb">🧢</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg" onerror="this.remove()"></span>
+      <span class="txt"><h3>Big Boy Shop</h3><p>Merch, gear, and good stuff from the original location.</p></span>
+      <span class="arrow">›</span>
+    </a>
+    <a class="reward-card" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
+      <span class="ico ph"><span class="fb">🍔</span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></span>
+      <span class="txt"><h3>Order Online</h3><p>Skip the line with Toast pickup ordering.</p></span>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============ INFO ============ -->
+<section class="screen" id="s-info">
+  <h1 class="screen-title">OUR STORY</h1>
+  <p class="screen-sub">70 years of comfort food, community, and nostalgic flavor.</p>
+
+  <div class="card">
+    <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
+         src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg"
+         onerror="this.remove()">
+    <div class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="yr">1954</div>
+        <h3>The Beginning</h3>
+        <p>Harley McDowell opened Big Boy in Bismarck after eating at one on a business trip. That same year he became the fourth KFC franchisee — and "Colonel" Harland Sanders and McDowell ultimately became close friends.</p>
+      </div>
+      <div class="tl-item">
+        <div class="yr">1978</div>
+        <h3>The Rothenberger Years</h3>
+        <p>McDowell sold the Bismarck restaurants to Stan and Bonnie Rothenberger. He wasn't the highest of five bids — McDowell chose him for "his established reputation for honest business and quality food service."</p>
+      </div>
+      <div class="tl-item">
+        <div class="yr">2017</div>
+        <h3>Where We Are Now</h3>
+        <p>Chad Wachter, a lifelong Bismarck resident and Big Boy fan, took over. He added an easier-to-read menu board, a second drive-through exit, and a park with picnic benches — while keeping every recipe exactly the same.</p>
+      </div>
+      <div class="tl-item" style="padding-bottom:0">
+        <div class="yr">TODAY</div>
+        <h3>The Sole Survivor</h3>
+        <p>Regional locations once existed in downtown Bismarck, Fargo, Minot, Dickinson, and Medora. The original Bismarck restaurant remains the sole survivor.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">MISSION</h2>
+  <div class="card">
+    <p style="margin:0;font-size:14px;line-height:1.7;color:var(--ink-soft)">
+      At Bismarck Big Boy, we serve up timeless favorites with a side of tradition, offering great food, fast service, and a place where memories are made, one order at a time.
+    </p>
+  </div>
+
+  <h2 class="section-title">VISION</h2>
+  <div class="card">
+    <p style="margin:0;font-size:14px;line-height:1.7;color:var(--ink-soft)">
+      To honor and grow our Big Boy tradition by being North Dakota's go-to destination for comfort food, community, and nostalgic flavor — where every generation feels at home.
+    </p>
+  </div>
+
+  <h2 class="section-title">FROM THE OWNER</h2>
+  <blockquote>
+    "We are proud to be part of many memories that center around family and food. Food from Big Boy brings back fond family memories for me. We made improvements to the property, but the food is the same. There was no need to mess with perfection. Our food will taste the same way it did when you ate it with your family, on that first date, or on some other special day in your life."
+    <cite>— Chad Wachter, Owner</cite>
+  </blockquote>
+
+  <h2 class="section-title">CONTACT</h2>
+  <div class="card">
+    <a class="contact-row" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
+       data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
+       data-title="Directions">
+      <span class="ico">📍</span>
+      <span><span class="lab">Address</span><span class="val">2511 E Main Ave, Bismarck, ND 58501</span></span>
+    </a>
+    <a class="contact-row" href="tel:7012234125">
+      <span class="ico">📞</span>
+      <span><span class="lab">Telephone</span><span class="val">701-223-4125</span></span>
+    </a>
+    <div class="contact-row">
+      <span class="ico">🕐</span>
+      <span><span class="lab">Hours</span><span class="val">Seven days a week · 10:30 AM – 9:00 PM</span></span>
+    </div>
+  </div>
+
+  <div class="socials">
+    <a class="ig" href="https://www.instagram.com/bismarck_big_boy/" data-title="Instagram">
+      <img alt="" src="https://static.wixstatic.com/media/81af6121f84c41a5b4391d7d37fce12a.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/81af6121f84c41a5b4391d7d37fce12a.png" onerror="this.remove()">Instagram
+    </a>
+    <a class="fb" href="https://www.facebook.com/bismarckbigboy/" data-title="Facebook">
+      <img alt="" src="https://static.wixstatic.com/media/23fd2a2be53141ed810f4d3dcdcd01fa.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/23fd2a2be53141ed810f4d3dcdcd01fa.png" onerror="this.remove()">Facebook
+    </a>
+  </div>
+
+  <div style="margin-top:18px">
+    <a class="btn block" href="https://www.bismarckbigboy.com/" data-title="bismarckbigboy.com">VISIT BISMARCKBIGBOY.COM →</a>
+  </div>
+</section>
+
+<!-- sticky order bar (menu screen) -->
+<div class="orderbar" id="orderbar">
+  <a href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
+    <span class="ico"><img alt="" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_80,h_80,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
+    ORDER ONLINE FOR PICKUP
+  </a>
+</div>
+
+<!-- ============ IN-APP BROWSER ============ -->
+<div class="iab" id="iab" role="dialog" aria-modal="true" aria-label="In-app browser">
+  <div class="iab-bar">
+    <button class="iab-btn" id="iabBack">‹ Back</button>
+    <div class="iab-where">
+      <img id="iabFav" alt="" src="" hidden>
+      <span class="h" id="iabHost"></span>
+    </div>
+    <button class="iab-btn" id="iabExt">↗</button>
+    <div class="iab-progress"><i></i></div>
+  </div>
+  <div class="iab-body" id="iabBody">
+    <iframe class="iab-frame" id="iabFrame" title="In-app browser" allow="clipboard-write; fullscreen; geolocation"></iframe>
+    <div class="iab-handoff" id="iabHandoff"><div class="ho" id="hoInner"></div></div>
+  </div>
+</div>
+
+<!-- ============ TAB BAR ============ -->
+<nav class="tabbar">
+  <button class="tab on" data-tab="home"><span class="ti">🏠</span>HOME</button>
+  <button class="tab" data-tab="menu"><span class="ti">🍔</span>MENU</button>
+  <button class="tab" data-tab="favs"><span class="ti">♡</span>SAVED<span class="badge" id="favBadge">0</span></button>
+  <button class="tab" data-tab="rewards"><span class="ti">🎁</span>REWARDS</button>
+  <button class="tab" data-tab="info"><span class="ti">ℹ️</span>INFO</button>
+</nav>
+
+<script>
+/* ============================================================
+   BISMARCK BIG BOY — menu data + photos from bismarckbigboy.com
+   ============================================================ */
+const wix = (id, w, h) =>
+  `https://static.wixstatic.com/media/${id}/v1/fill/w_${w},h_${h},al_c,q_85,enc_auto/${id}`;
+
+const MENU = [
+  { id:'burgers', name:'BURGERS', items:[
+    { id:'big-boy-original', n:'Big Boy Original', img:'063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg', d:'A double hamburger patty, topped with our special sauce, lettuce and cheese. For a lighter option try our Junior.', s:[['Double',6.49]] },
+    { id:'jr-big-boy', n:'Jr Big Boy', img:'063b6c_b5d3ae991ff048fa82f72a223eb45bce~mv2.jpg', d:'Single hamburger patty, topped with our special sauce, lettuce and cheese.', s:[['Single',3.99]] },
+    { id:'pizza-burger', n:'Big Boy Pizza Burger', img:'063b6c_20c89d5d47cf4e898627c70ffe740281~mv2.jpg', d:'Signature burger with pizza sauce and American cheese, served flying style or on a bun.', s:[['Single',3.79],['Double',6.39]] },
+    { id:'hamburger', n:'Hamburger', img:'063b6c_a91baf12ad30489d9feeb1cd3ea44b43~mv2.jpg', d:'Topped with ketchup, mustard, pickle, and onion.', s:[['Single',3.39],['Double',5.89]] },
+    { id:'cheeseburger', n:'Cheeseburger', img:'063b6c_329cdc6d6cb84fc7ba8dd21b6556241b~mv2.jpg', d:'American cheese, topped with ketchup, mustard, pickle, and onion.', s:[['Single',3.69],['Double',6.29]] },
+    { id:'alpine-burger', n:'Alpine Burger', img:'063b6c_c609940490a44ab3b857a752eb0b07f9~mv2.jpg', d:'Topped with a mayo and mustard sauce and Swiss cheese.', s:[['Single',3.99],['Double',6.49]] },
+    { id:'bacon-cheeseburger', n:'Bacon Cheeseburger', img:'063b6c_329cdc6d6cb84fc7ba8dd21b6556241b~mv2.jpg', d:'Bacon round and American cheese, topped with ketchup, mustard, pickle, and onion.', s:[['Single',4.99],['Double',7.59]] }
+  ]},
+  { id:'sandwiches', name:'SANDWICHES', items:[
+    { id:'chicken-wrap', n:'Big Boy Chicken Wrap', img:'063b6c_616ccde60f40490f8360687f3f8ea137~mv2.jpg', d:'Diced chicken, lettuce, American cheese and your choice of sauce in a flour tortilla — Honey Mustard, BBQ Ranch, Ranch, Boom Boom, or Caesar.', s:[['Wrap',5.99]] },
+    { id:'big-chicken', n:'Big Chicken', img:'063b6c_724df592c7b34899bdc6fe94152f2e40~mv2.jpg', d:'2 chicken strips, honey mustard, lettuce, and Swiss cheese on bun.', s:[['Sandwich',6.99]] },
+    { id:'big-boy-fish', n:'Big Boy Fish', img:'063b6c_13cfa18e944d48f8879049bbec783023~mv2.jpg', d:'Cod filet, breaded and deep fried, topped with our house tartar and lettuce.', s:[['Sandwich',6.99]] },
+    { id:'ham-cheese', n:'Ham & Cheese', img:'063b6c_a273ac51740b4045ab24f873a4bb544e~mv2.jpg', d:'Hot ham and Swiss cheese sandwich.', s:[['Sandwich',5.99]] },
+    { id:'bbq-beef', n:'BBQ Beef', img:'063b6c_c7fd0a3f44c643f59a2b375188707dd6~mv2.jpg', d:'Our version of a sloppy joe.', s:[['Sandwich',3.19]] },
+    { id:'hot-dog-6', n:'6 inch Hot Dog', img:'063b6c_2a3c6722badb40eaa6b5d41802de046f~mv2.jpg', d:'Choice of toppings: Ketchup, Mustard, Pickle, Onion, Lettuce, Tomato, Mayo, Bacon, Cheese.', s:[['6 inch',3.19]] },
+    { id:'coney-6', n:'6 inch Coney Dog', img:'063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg', d:'6 inch hot dog topped with our sloppy joe mix.', s:[['6 inch',5.09]] },
+    { id:'hot-dog-foot', n:'Footlong Hot Dog', img:'063b6c_2a3c6722badb40eaa6b5d41802de046f~mv2.jpg', d:'12 inch hot dog with your choice of toppings: Ketchup, Mustard, Pickle, Onion, Lettuce, Tomato, Mayo, Bacon, Cheese.', s:[['Footlong',5.99]] },
+    { id:'coney-foot', n:'Footlong Coney Dog', img:'063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg', d:'12 inch hot dog topped with our sloppy joe mix.', s:[['Footlong',7.99]] },
+    { id:'chili-cheese-dog', n:'Chili Cheese Dog', img:'063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg', d:'Chili cheese all the way.', s:[['Regular',5.99]] },
+    { id:'chili-cheese-foot', n:'Foot Long Chili Cheese Dog', img:'063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg', d:'The big one — chili and cheese on a foot long.', s:[['Footlong',8.29]] }
+  ]},
+  { id:'chicken', name:'CHICKEN', items:[
+    { id:'chicken-1-breast', n:'Chicken 1 Breast', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with fries, gravy, and salad.', s:[['Snack',7.49],['Meal',10.99]] },
+    { id:'chicken-2-piece', n:'Chicken 2 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with fries, gravy, and salad.', s:[['Snack',10.49],['Meal',12.99]] },
+    { id:'chicken-3-piece', n:'Chicken 3 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with fries, gravy, and salad.', s:[['Snack',12.99],['Meal',14.99]] },
+    { id:'chicken-4-piece', n:'Chicken 4 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with fries, gravy, and salad.', s:[['Regular',12.99],['Meal',16.99]] },
+    { id:'chicken-8-piece', n:'Chicken 8 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with medium fry, medium gravy, and pint of salad.', s:[['Regular',25.99],['Meal',34.99]] },
+    { id:'chicken-12-piece', n:'Chicken 12 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with large fry, large gravy, and 2 pints salad.', s:[['Regular',38.99],['Meal',58.99]] },
+    { id:'chicken-16-piece', n:'Chicken 16 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal comes with large fry, large gravy, and 2 pints salad.', s:[['Regular',48.99],['Meal',68.99]] },
+    { id:'chicken-20-piece', n:'Chicken 20 Piece', img:'063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg', d:'Meal includes large & medium fry, large & medium gravy, and 3 pints of salad.', s:[['Regular',59.99],['Meal',89.99]] },
+    { id:'strips-3', n:'Chicken Strips 3 Piece', img:'063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg', d:'Meal comes with fries, gravy, and salad.', s:[['Snack',11.99],['Meal',15.59]] },
+    { id:'strips-8', n:'Chicken Strips 8 Piece', img:'063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg', d:'Meal comes with medium fry, medium gravy, and pint of salad.', s:[['Regular',22.99],['Meal',37.49]] }
+  ]},
+  { id:'kids', name:'KIDS MEALS', items:[
+    { id:'kids-strip', n:'Kids Chicken Strip', img:'063b6c_c38f6fa8b504452591abd4d990fd4fd0~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['1 Piece',5.99]] },
+    { id:'kids-nugget', n:'Kids 4 Piece Nugget Meal', img:'063b6c_3553570521ab43128da2cb05a425de8f~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['Meal',5.99]] },
+    { id:'kids-cheeseburger', n:'Kids Cheeseburger', img:'063b6c_b7ebf0bf46c045b8911615147014c1fc~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['Meal',5.99]] },
+    { id:'kids-hamburger', n:'Kids Hamburger', img:'063b6c_112dfc358fe6434a88fb0c5a2f8488e4~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['Meal',5.99]] },
+    { id:'kids-toasted-cheese', n:'Kids Toasted Cheese', img:'063b6c_dc02e51837d243b9a9f074d1eb114a70~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['Meal',5.99]] },
+    { id:'kids-toasted-pizza', n:'Kids Toasted Cheese w/ Pizza Sauce', img:'063b6c_f6175cd4013e49b595e3d250e63c784a~mv2.jpg', d:'Comes with fries, chocolate chip cookie and a small beverage.', s:[['Meal',5.99]] }
+  ]},
+  { id:'sides', name:'SIDE DISHES', items:[
+    { id:'fries', n:'French Fries', img:'063b6c_87fb6e2ea07845a08107a66734db1ed2~mv2.jpg', d:'The classic — best paired with gravy.', s:[['Small',3.29],['Medium',6.29],['Large',11.69]] },
+    { id:'gravy', n:'Gravy', img:'063b6c_bd3567683a66429799a82c3780ed8851~mv2.jpg', d:'For dipping. Non-negotiable.', s:[['Small',1.79],['Medium',2.89],['Large',5.29]] },
+    { id:'strip-1', n:'Chicken Strip 1 Piece', img:'063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg', s:[['Piece',2.89]] },
+    { id:'onion-rings', n:'Onion Rings', img:'063b6c_9ef2785b1857457e9a1c97e0e72bd0dc~mv2.jpg', s:[['Small',6.59],['Medium',12.99],['Large',19.99]] },
+    { id:'cheese-stix', n:'Cheese Stix', img:'063b6c_1628e15369d9490486927b9e715cf616~mv2.jpg', s:[['Small',6.29],['Medium',9.29],['Large',13.79]] },
+    { id:'poppers', n:'Poppers', img:'063b6c_f7e53295af2247d582c54b8a44c1c996~mv2.jpg', s:[['Small',6.29],['Medium',9.89],['Large',14.69]] },
+    { id:'nuggets', n:'Chicken Nuggets', img:'063b6c_3553570521ab43128da2cb05a425de8f~mv2.jpg', s:[['Small',5.09],['Medium',9.99],['Large',12.99]] },
+    { id:'coleslaw', n:'Coleslaw', img:'063b6c_8f19006d857a4e9991d70ac70dd64c32~mv2.jpg', s:[['Small',2.19],['Large',7.29]] },
+    { id:'mac-salad', n:'Macaroni Salad', img:'063b6c_713795ad8a4e4ca38e410a91370330a9~mv2.jpg', s:[['Small',2.09],['Large',7.29]] },
+    { id:'potato-salad', n:'Potato Salad', img:'063b6c_b2b5d9bf38d5493aaf55391eac0553f9~mv2.jpg', s:[['Small',1.99],['Large',6.99]] },
+    { id:'baked-beans', n:'Baked Beans', img:'063b6c_0ee0e0c4e19e4d2e86ba36be7b5d75a4~mv2.jpg', s:[['Small',1.99],['Large',6.99]] },
+    { id:'chili', n:'Chili', img:'063b6c_116ac58d30c64925914110efd33420bd~mv2.jpg', s:[['Small',5.09],['Large',7.99]] }
+  ]},
+  { id:'drinks', name:'BEVERAGES', items:[
+    { id:'hot-n-tot', n:'Hot-N-Tot', img:'063b6c_e7045135af6547c487ec577ed9ce6078~mv2.png', d:'Handcrafted cinnamon syrup blended into Coca-Cola — a warm and spiced soda sensation.', s:[['Small',2.29],['Medium',2.79],['Large',4.59]] },
+    { id:'frozen-flavors', n:'Frozen Flavors', img:'063b6c_a2ba4d69d7b04e54babd0af9168738a0~mv2.jpg', d:'Coke, Strawberry, and Lemonade.', s:[['Small',3.09],['Medium',4.39],['Large',5.49]] },
+    { id:'coke-products', n:'Coke Products', img:'063b6c_886ea1c11ef645a581e17a3ed12fd17a~mv2.png', d:'Full fountain lineup.', s:[['Small',1.69],['Medium',2.09],['Large',3.39]] },
+    { id:'cherry-coke', n:'Cherry Coke', img:'063b6c_b2b0b60d829e4e4eb283724dda92a0ef~mv2.png', s:[['Small',2.29],['Medium',2.69],['Large',4.59]] }
+  ]},
+  { id:'shakes', name:'SHAKES & TREATS', items:[
+    { id:'big-boy-snow', n:'Big Boy Snow', img:'063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg', d:'Classic pebble ice topped with your choice of syrup. Similar to a snow cone, best with a spoon. Flavors: Cherry, Strawberry, Cinnamon, Marshmallow, Grape.', s:[['Medium',2.39],['Large',2.69]] },
+    { id:'freeze', n:'Freeze', img:'063b6c_62cf3828896d425a8aeaa6aac4fb201b~mv2.jpg', d:'Reeses, Oreo, and Snickers.', s:[['Regular',6.49]] },
+    { id:'frozen-frosty', n:'Frozen Frosty', img:'063b6c_90dc185cd6074425bf06d9ea8d7453b7~mv2.jpg', d:'Coke, Strawberry, and Lemonade.', s:[['Small',2.19],['Large',3.49]] },
+    { id:'purple-cow', n:'Purple Cow', img:'063b6c_4033048751a648c1b405e8c3113be879~mv2.png', d:'Grape milkshake — vanilla ice cream blended with vibrant grape flavoring.', s:[['Small',4.29],['Large',5.29]] },
+    { id:'brown-cow', n:'Brown Cow', img:'063b6c_96628dc943f4421eb6785b8856140583~mv2.png', d:'Root beer milkshake — classic root beer with smooth, velvety ice cream.', s:[['Small',4.29],['Large',5.29]] }
+  ]}
+];
+
+/* ============================================================
+   State
+   ============================================================ */
+const FAV_KEY = 'bb_favs_v1';
+const state = { tab:'home', cat:'all', q:'', favs:loadFavs() };
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const money = n => '$' + n.toFixed(2);
+
+function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch(e){ return new Set(); } }
+function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs])); } catch(e){} }
+
+const BY_ID = {};
+MENU.forEach(g => g.items.forEach(it => { it._cat = g.name; BY_ID[it.id] = it; }));
+
+/* ============================================================
+   Open / closed status — 10:30 AM to 9:00 PM, 7 days
+   ============================================================ */
+const OPEN_MIN = 10*60 + 30;
+const CLOSE_MIN = 21*60;
+function updateStatus(){
+  const d = new Date();
+  const mins = d.getHours()*60 + d.getMinutes();
+  const el = $('#status');
+  if (mins >= OPEN_MIN && mins < CLOSE_MIN){
+    el.classList.remove('closed');
+    $('#statusMain').textContent = 'Open now';
+    $('#statusSub').textContent = 'Closes 9:00 PM';
+  } else {
+    el.classList.add('closed');
+    $('#statusMain').textContent = 'Closed';
+    $('#statusSub').textContent = mins < OPEN_MIN ? 'Opens 10:30 AM' : 'Opens tomorrow 10:30 AM';
+  }
+}
+
+function renderHours(){
+  const today = new Date().getDay();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  $('#hoursCard').innerHTML = days.map((d,i) => `
+    <div class="hours-row ${i===today?'today':''}">
+      <span class="d">${d}${i===today?' · TODAY':''}</span>
+      <span class="h">10:30 AM – 9:00 PM</span>
+    </div>`).join('');
+}
+
+/* ============================================================
+   Navigation
+   ============================================================ */
+const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
+function go(tab){
+  state.tab = tab;
+  Object.entries(SCREENS).forEach(([k,sel]) => $(sel).classList.toggle('active', k===tab));
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab===tab));
+  $('#orderbar').classList.toggle('show', tab==='menu');
+  if (tab==='favs') renderFavs();
+  if (tab==='menu') renderMenu();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+$$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
+
+/* ============================================================
+   Menu rendering
+   ============================================================ */
+const CATS = [{id:'all',name:'ALL'}].concat(MENU.map(g => ({id:g.id, name:g.name})));
+
+function renderChips(){
+  $('#chips').innerHTML = CATS.map(c =>
+    `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${c.name}</button>`
+  ).join('');
+  $$('.chip').forEach(ch => ch.addEventListener('click', () => {
+    state.cat = ch.dataset.cat; renderChips(); renderMenu();
+  }));
+}
+
+function picHTML(it, cls){
+  const src = wix(it.img, 300, 300);
+  return `<div class="pic ph ${cls||''}"><span class="fb">🍽️</span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}" onerror="this.remove()"></div>`;
+}
+
+function itemHTML(it){
+  const sizes = it.s.map((s,i) =>
+    `<button class="size ${i===0?'on':''}" data-price="${s[1]}">${s[0]} ${money(s[1])}</button>`
+  ).join('');
+  const fav = state.favs.has(it.id);
+  return `
+  <div class="item" data-id="${it.id}">
+    ${picHTML(it)}
+    <div class="body">
+      <div class="top">
+        <h4>${it.n}</h4>
+        <button class="fav ${fav?'on':''}" data-fav="${it.id}" aria-label="Save ${it.n}">${fav?'♥':'♡'}</button>
+      </div>
+      ${it.d ? `<p class="desc">${it.d}</p>` : ''}
+      <div class="sizes">${sizes}</div>
+      <div class="price-row"><span class="price">${money(it.s[0][1])}</span></div>
+    </div>
+  </div>`;
+}
+
+function renderMenu(){
+  const q = state.q.trim().toLowerCase();
+  let html = '';
+  let shown = 0;
+  MENU.forEach(g => {
+    if (state.cat !== 'all' && state.cat !== g.id) return;
+    const items = g.items.filter(it =>
+      !q || it.n.toLowerCase().includes(q) || (it.d||'').toLowerCase().includes(q)
+    );
+    if (!items.length) return;
+    shown += items.length;
+    html += `<div class="cat-head">${g.name}<span>${items.length} ITEM${items.length>1?'S':''}</span></div>`;
+    html += items.map(itemHTML).join('');
+  });
+  if (!shown){
+    html = `<div class="empty">
+      <div class="big">🔍</div>
+      <h3>Nothing found</h3>
+      <p>We couldn't match “${state.q}”. Try “fries”, “shake”, or “dog”.</p>
+      <button class="btn ghost" onclick="clearSearch()">CLEAR SEARCH</button>
+    </div>`;
+  }
+  $('#menuList').innerHTML = html;
+}
+
+function clearSearch(){
+  state.q = ''; $('#search').value = ''; $('#searchWrap').classList.remove('has'); renderMenu();
+}
+
+/* size chips + favorites (delegated) */
+document.addEventListener('click', e => {
+  const sizeBtn = e.target.closest('.size');
+  if (sizeBtn){
+    const wrap = sizeBtn.closest('.item');
+    wrap.querySelectorAll('.size').forEach(s => s.classList.remove('on'));
+    sizeBtn.classList.add('on');
+    wrap.querySelector('.price').textContent = money(parseFloat(sizeBtn.dataset.price));
+    return;
+  }
+  const favBtn = e.target.closest('[data-fav]');
+  if (favBtn){
+    const id = favBtn.dataset.fav;
+    if (state.favs.has(id)) state.favs.delete(id); else state.favs.add(id);
+    saveFavs(); updateBadge();
+    $$(`[data-fav="${id}"]`).forEach(b => {
+      const on = state.favs.has(id);
+      b.classList.toggle('on', on);
+      b.textContent = on ? '♥' : '♡';
+    });
+    if (state.tab==='favs') renderFavs();
+  }
+});
+
+function updateBadge(){
+  const n = state.favs.size;
+  const b = $('#favBadge');
+  b.textContent = n;
+  b.classList.toggle('show', n>0);
+}
+
+/* ============================================================
+   Favorites screen
+   ============================================================ */
+function renderFavs(){
+  const ids = [...state.favs];
+  const box = $('#favList');
+  if (!ids.length){
+    box.innerHTML = `<div class="empty">
+      <div class="big">♡</div>
+      <h3>No favorites yet</h3>
+      <p>Tap the heart on any menu item and it'll show up here for quick reordering.</p>
+      <button class="btn" onclick="go('menu')">BROWSE THE MENU</button>
+    </div>`;
+    return;
+  }
+  const groups = {};
+  ids.forEach(id => {
+    const it = BY_ID[id];
+    if (!it) return;
+    (groups[it._cat] = groups[it._cat] || []).push(it);
+  });
+  box.innerHTML = Object.entries(groups).map(([cat, items]) =>
+    `<div class="cat-head">${cat}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
+  ).join('') + `<div style="margin-top:18px">
+      <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
+    </div>`;
+}
+
+/* ============================================================
+   Search
+   ============================================================ */
+$('#search').addEventListener('input', e => {
+  state.q = e.target.value;
+  $('#searchWrap').classList.toggle('has', !!state.q);
+  renderMenu();
+});
+$('#searchClear').addEventListener('click', clearSearch);
+
+/* ============================================================
+   IN-APP BROWSER
+   ------------------------------------------------------------
+   Sites that refuse to be framed (verified via X-Frame-Options /
+   CSP frame-ancestors) get a "handoff" card instead of a blank
+   iframe, so the app always explains what happened.
+   ============================================================ */
+const BLOCKED = [
+  h => h === 'order.toasttab.com',
+  h => h.endsWith('instagram.com'),
+  h => h.endsWith('facebook.com'),
+  h => h === 'www.google.com' || h === 'maps.google.com' || h === 'maps.apple.com',
+  h => h === 'ubereats.com' || h === 'www.ubereats.com',
+  h => h === 'doordash.com' || h === 'www.doordash.com',
+  (h,u) => h.endsWith('toasttab.com') && u.includes('giftcards')
+];
+function canEmbed(url){
+  let u; try { u = new URL(url); } catch(e){ return false; }
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') return false;
+  const h = u.hostname.toLowerCase();
+  return !BLOCKED.some(f => f(h, url));
+}
+
+const iab = $('#iab'), iabBody = $('#iabBody'), iabFrame = $('#iabFrame');
+let iabUrl = '', iabIsOpen = false;
+
+const NOTES = {
+  'order.toasttab.com': "Big Boy's own ordering runs on Toast, which blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
+  'www.toasttab.com':   "Toast's gift card checkout blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
+  'www.instagram.com':  "Instagram blocks being shown inside other apps. Continue to open it in Instagram or your browser.",
+  'www.facebook.com':   "Facebook blocks being shown inside other apps. Continue to open it in Facebook or your browser.",
+  'www.google.com':     "Google Maps blocks being shown inside other apps. Continue to open it for turn-by-turn directions.",
+  'www.ubereats.com':   "Uber Eats blocks being shown inside other apps. Continue to open it and place your delivery order.",
+  'www.doordash.com':   "DoorDash blocks being shown inside other apps. Continue to open it and place your delivery order."
+};
+
+function openIAB({src, url, title}){
+  iabUrl = url;
+  let host = '', hostRaw = '';
+  try {
+    const u = new URL(url);
+    hostRaw = u.hostname;
+    host = u.hostname.replace(/^www\./,'');
+  } catch(e){ host = url; }
+
+  const label = title || host;
+  $('#iabHost').innerHTML = (title && host)
+    ? `${title}<small>${host}</small>`
+    : `<span>${host}</span>`;
+  const fav = $('#iabFav');
+  fav.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=64`;
+  fav.hidden = false;
+  fav.onerror = () => { fav.hidden = true; };
+
+  if (src){
+    iabBody.className = 'iab-body web';
+    iab.classList.add('loading');
+    iabFrame.src = src;
+  } else {
+    iabFrame.src = 'about:blank';
+    iabBody.className = 'iab-body handoff';
+    const isOrdering = host === 'order.toasttab.com';
+    $('#hoInner').innerHTML = `
+      <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128" onerror="this.style.visibility='hidden'">
+      <h3>${label}</h3>
+      <div class="host">${host}</div>
+      <p>${NOTES[hostRaw] || NOTES[host] || "This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved."}</p>
+      <a class="btn block" id="hoGo" data-raw href="${url}">CONTINUE TO ${host.toUpperCase()} →</a>
+      ${isOrdering ? `<button class="btn ghost block" id="hoDelivery">🚗 GET IT DELIVERED INSTEAD</button>` : ''}
+      <button class="btn dark block" id="hoCancel">GO BACK TO THE APP</button>
+      <div class="why">Your place in the app is kept — just tap Back to return.</div>`;
+    $('#hoGo').addEventListener('click', ev => {
+      ev.preventDefault();
+      ev.stopPropagation();          // stop the global link interceptor re-opening the overlay
+      const w = window.open(url, '_blank');
+      if (!w) location.href = url;   // popup blocked → navigate
+      closeIAB();
+    });
+    if (isOrdering){
+      $('#hoDelivery').addEventListener('click', () => {
+        closeIAB();
+        go('home');
+        setTimeout(() => {
+          const el = document.getElementById('delivery');
+          if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        }, 180);
+      });
+    }
+    $('#hoCancel').addEventListener('click', closeIAB);
+  }
+
+  if (!iabIsOpen){
+    iabIsOpen = true;
+    try { history.pushState({iab:true}, ''); } catch(e){}
+  }
+  iab.classList.add('open');
+  document.body.classList.add('locked');
+}
+
+function hideIAB(){
+  iabIsOpen = false;
+  iab.classList.remove('open');
+  document.body.classList.remove('locked');
+  iab.classList.remove('loading');
+  iabFrame.src = 'about:blank';
+}
+function closeIAB(){
+  if (history.state && history.state.iab) history.back();   // triggers popstate → hideIAB
+  else hideIAB();
+}
+window.addEventListener('popstate', () => { if (iabIsOpen) hideIAB(); });
+
+$('#iabBack').addEventListener('click', closeIAB);
+$('#iabExt').addEventListener('click', () => {
+  if (!iabUrl) return;
+  const w = window.open(iabUrl, '_blank');
+  if (!w) location.href = iabUrl;
+});
+iabFrame.addEventListener('load', () => iab.classList.remove('loading'));
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && iabIsOpen) closeIAB(); });
+
+/* intercept every external link so nothing silently leaves the app */
+document.addEventListener('click', e => {
+  if (!(e.target instanceof Element)) return;
+  const a = e.target.closest('a[href]');
+  if (!a) return;
+  if (a.hasAttribute('data-raw')) return;   // handoff buttons handle themselves
+  const forced = a.getAttribute('data-iab');
+  const href = a.getAttribute('href') || '';
+  if (!forced && !/^https?:/i.test(href)) return;   // tel:, #, mailto: → native behaviour
+  e.preventDefault();
+  const url = forced || href;
+  openIAB({
+    src: canEmbed(url) ? url : null,
+    url: a.dataset.external || href,
+    title: a.dataset.title || ''
+  });
+}, false);
+
+/* ============================================================
+   Init
+   ============================================================ */
+renderChips();
+renderMenu();
+renderHours();
+updateStatus();
+updateBadge();
+setInterval(updateStatus, 30000);
+
+/* ============================================================
+   PWA — installable + offline shell
+   ============================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
