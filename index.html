@@ -831,8 +831,18 @@ $$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
 const CATS = [{id:'all',name:'ALL'}].concat(MENU.map(g => ({id:g.id, name:g.name})));
 
 function renderChips(){
-  $('#chips').innerHTML = CATS.map(c =>
-    `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${c.name}</button>`
+  // Build image map: category id -> first item image
+  const imgMap = {};
+  MENU.forEach(g => {
+    if (g.items && g.items.length) {
+      imgMap[g.id] = g.items[0].img;
+    }
+  });
+  $('#chips').innerHTML = CATS.map(c => {
+    const imgId = imgMap[c.id];
+    const imgSrc = imgId ? `https://static.wixstatic.com/media/${imgId}/v1/fill/w_16,h_16,al_c,q_85,enc_auto/${imgId}` : '';
+    const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">` : '';
+    `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`
   ).join('');
   $$('.chip').forEach(ch => ch.addEventListener('click', () => {
     state.cat = ch.dataset.cat; renderChips(); renderMenu();
