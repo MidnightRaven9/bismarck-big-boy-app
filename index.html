@@ -1110,74 +1110,9 @@ renderHours();
 updateStatus();
 updateBadge();
 setInterval(updateStatus, 30000);
-setInterval(updateStatus, 30000);
 
 (function(){
   // Big Boy Catch — auto-start mini game on canvas
-  const canvas = document.getElementById('gameCanvas');
-  if (!canvas || !canvas.getContext) return;
-  const ctx = canvas.getContext('2d');
-  const ww = window.innerWidth, wh = window.innerHeight;
-  const r = Math.min(ww, 420);
-  const bw = r, bh = r * 0.76;
-  canvas.width = bw; canvas.height = bh;
-
-  // sky
-  const grd = ctx.createLinearGradient(0,0,0,bh);
-  grd.addColorStop(0,'#87CEEB'); grd.addColorStop(1,'#E0F7FA');
-  ctx.fillStyle = grd; ctx.fillRect(0,0,bw,bh);
-  // ground + plate
-  ctx.fillStyle = '#C8102E'; ctx.fillRect(0, bh-20, bw, 20);
-  ctx.fillStyle = '#C8102E'; ctx.fillRect(20, bh-20, bw-40, 20);
-  // Big Boy silhouette
-  ctx.fillStyle = '#1C1A17';
-  ctx.beginPath(); ctx.arc(bw/2, bh-30, 24, Math.PI*0.15, Math.PI*1.35);
-  ctx.lineTo(bw/2-12, bh-60); ctx.lineTo(bw/2+12, bh-60); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#C8102E';
-  ctx.beginPath(); ctx.arc(bw/2, bh-65, 18, 0, Math.PI); ctx.lineTo(bw/2, bh-80); ctx.closePath(); ctx.fill();
-
-  // game state
-  let score = 0, lives = 3, fallSpeed = 3, gamePaused = false;
-  let items = [];
-  let keys = {ArrowLeft:false,ArrowRight:false};
-
-  // spawn falling items
-  function spawn(){
-    const type = Math.random()<.65 ? 'burger' : 'gravy';
-    const x = Math.max(10, Math.min(bw-10, Math.random()*bw));
-    items.push({x, y:0, type, speed: fallSpeed + Math.random()*2});
-  }
-
-  // draw one frame
-  function draw(){
-    if (!ctx) return;
-    ctx.clearRect(0,0,bw,bh);
-    // items
-    items.forEach(it=> {
-      it.y += it.speed;
-      if (it.type === 'burger'){
-        ctx.fillStyle = '#FF6B6B'; ctx.beginPath();
-        ctx.ellipse(it.x, it.y, 22, 30, 0, 0, Math.PI*2);
-        ctx.fill(); ctx.fillStyle='#FFF';
-        for(let j=0;j<3;j++) ctx.fillRect(it.x-6+j*12, it.y-6,3,3);
-      } else {
-        ctx.fillStyle = '#6B4200'; ctx.beginPath();
-        ctx.ellipse(it.x, it.y, 16, 22, 0, 0, Math.PI*2);
-        ctx.fill();
-      }      // catch / miss detection
-      if (it.y + 30 > bh-20 && it.y < bh-10){
-        if (Math.abs(it.x - bw/2) < bw/2 - 20){
-          if (it.type === 'burger'){ score += 100; }
-          else { lives -= 1; }
-        }
-        items.splice(items.indexOf(it),1);
-      }    });    items = items.filter(it => it.y < bh+40);    // UI    ctx.fillStyle = '#fff'; ctx.font = '20px Inter'; ctx.textAlign = 'left';    ctx.fillText('Score: ' + score, 10, 30);    ctx.fillText('Lives: ' + lives, bw-80, 30);  }
-  // main loop
-  function loop(){
-    if (gamePaused) return;
-    if (items.length < 4) spawn();    draw();    requestAnimationFrame(loop);  }
-  // start immediately  loop();
-  // pause on blur  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) loop(); });})();
 </script>
 </body>
 </html>
