@@ -1,6 +1,6 @@
 /* Bismarck Big Boy — service worker: cache the app shell so it opens instantly
    and keeps working offline. Bump CACHE when index.html changes. */
-const CACHE = 'bb-app-v6';
+const CACHE = 'bb-app-v7';
 const SHELL = [
   './',
   './index.html',
@@ -9,10 +9,7 @@ const SHELL = [
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon-180.png',
-  './icons/favicon-48.png',
-  './game/boy.png',
-  './game/burger.png',
-  './game/gravy.png'
+  './icons/favicon-48.png'
 ];
 
 self.addEventListener('install', e => {
