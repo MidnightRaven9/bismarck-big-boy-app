@@ -286,7 +286,7 @@ nav.tabbar{
   background:rgba(255,253,247,.94);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--line);
-  display:grid;grid-template-columns:repeat(5,1fr);
+  display:grid;grid-template-columns:repeat(6,1fr);
 }
 .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:#9A9184;position:relative;transition:.15s}
 .tab .ti{font-size:20px;line-height:1;filter:grayscale(1);opacity:.6;transition:.15s}
@@ -338,6 +338,21 @@ nav.tabbar{
 .ho p{font-size:14px;line-height:1.7;color:var(--ink-soft);margin:16px 0 24px}
 .ho .btn{margin-bottom:10px}
 .ho .why{font-size:11.5px;color:#9A9184;margin-top:6px;line-height:1.5}
+
+/* ---------- game ---------- */
+.game-wrap{position:relative;width:100%;aspect-ratio:1/1;background:var(--cream);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:0 6px 20px rgba(28,26,23,.08)}
+#gameCanvas{display:block;width:100%;height:100%;background:var(--cream)}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.game-score,.game-lives{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);font-weight:400}
+.game-pause{background:rgba(200,16,46,.15);color:var(--red);border:1px solid var(--red);border-radius:10px;padding:6px 12px;font-size:16px;font-weight:800}
+.game-overlay{position:absolute;inset:0;background:rgba(28,26,23,.78);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;gap:14px;padding:24px}
+.game-overlay.game-overlay--hidden{display:none}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.06em;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);margin:0 0 6px}
+.game-sub{font-size:14px;line-height:1.5;color:rgba(255,255,255,.94);text-align:center;max-width:250px;margin:0 0 10px}
+.game-instr{font-size:11.5px;color:rgba(255,255,255,.72);letter-spacing:.09em;margin:0}
+.game-controls{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:12px;z-index:4}
+.game-pad{width:54px;height:54px;border-radius:50%;background:rgba(200,16,46,.16);color:var(--red);border:2px solid var(--red);font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.game-pad:active{background:rgba(200,16,46,.34);transform:scale(.93)}
 
 @media(min-width:760px){
   body{max-width:560px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,.10)}
@@ -608,6 +623,33 @@ nav.tabbar{
   </div>
 </section>
 
+<!-- ============ MINI GAME ============ -->
+<section class="screen" id="s-game">
+  <div class="game-header">
+    <div class="game-score">Score <span id="gameScore">0</span></div>
+    <div class="game-lives">❤️ <span id="gameLives">3</span></div>
+    <button class="game-pause" id="gamePause">⏸️</button>
+  </div>
+  <div class="game-wrap">
+    <canvas id="gameCanvas"></canvas>
+    <div class="game-overlay" id="gameStart">
+      <div class="game-title">BIG BOY CATCH</div>
+      <p class="game-sub">Catch the flying pizza burgers on the plate!<br>Dodge the gravy splats.</p>
+      <p class="game-instr">Hold left/right to move Big Boy</p>
+      <button class="btn block" id="gameStartBtn">START GAME</button>
+    </div>
+    <div class="game-overlay game-overlay--hidden" id="gameOver">
+      <div class="game-title">GAME OVER</div>
+      <div class="game-sub" style="margin-top:-6px">Final Score: <span id="gameFinalScore" style="color:var(--yellow)">0</span></div>
+      <button class="btn block" id="gameRestartBtn">PLAY AGAIN</button>
+    </div>
+    <div class="game-controls">
+      <button class="game-pad" id="gameLeft">←</button>
+      <button class="game-pad" id="gameRight">→</button>
+    </div>
+  </div>
+</section>
+
 <!-- sticky order bar (menu screen) -->
 <div class="orderbar" id="orderbar">
   <a href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
@@ -639,6 +681,7 @@ nav.tabbar{
   <button class="tab" data-tab="menu"><span class="ti">🍔</span>MENU</button>
   <button class="tab" data-tab="favs"><span class="ti">♡</span>SAVED<span class="badge" id="favBadge">0</span></button>
   <button class="tab" data-tab="rewards"><span class="ti">🎁</span>REWARDS</button>
+  <button class="tab" data-tab="game"><span class="ti">🎮</span>GAME</button>
   <button class="tab" data-tab="info"><span class="ti">ℹ️</span>INFO</button>
 </nav>
 
@@ -769,7 +812,7 @@ function renderHours(){
 /* ============================================================
    Navigation
    ============================================================ */
-const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
+const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', game:'#s-game', info:'#s-info' };
 function go(tab){
   state.tab = tab;
   Object.entries(SCREENS).forEach(([k,sel]) => $(sel).classList.toggle('active', k===tab));
@@ -777,6 +820,7 @@ function go(tab){
   $('#orderbar').classList.toggle('show', tab==='menu');
   if (tab==='favs') renderFavs();
   if (tab==='menu') renderMenu();
+  if (tab==='game') gResize();
   window.scrollTo({top:0, behavior:'instant'});
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
@@ -1068,14 +1112,135 @@ updateStatus();
 updateBadge();
 setInterval(updateStatus, 30000);
 
-/* ============================================================
-   PWA — installable + offline shell
-   ============================================================ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
+(function(){
+  // Tiny safe-mini game — Big Boy catches pizza burgers, avoids gravy
+  const canvas = $('#gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const startOverlay = $('#gameStart');
+  const gameOverOverlay = $('#gameOver');
+  const startBtn = $('#gameStartBtn');
+  const restartBtn = $('#gameRestartBtn');
+  const leftBtn = $('#gameLeft');
+  const rightBtn = $('#gameRight');
+  const scoreEl = $('#gameScore');
+  const livesEl = $('#gameLives');
+  const finalScoreEl = $('#gameFinalScore');
+
+  let ww, wh, bw, bh, px, py, vx = 0, score = 0, lives = 3,
+      items = [], fallSpeed = 3, gamePaused = false,
+      keys = {ArrowLeft:false,ArrowRight:false};
+
+  // resize canvas
+  function gResize(){
+    const r = Math.min(ww, 420);
+    bw = r; bh = r * 0.76;   // plate is slightly wider than tall
+    canvas.width = bw; canvas.height = bh;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,bw,bh);
+    // plate
+    ctx.fillStyle = '#C8102E'; ctx.fillRect(20, bh-20, bw-40, 20);
+    // Big Boy outline (simplified silhouette)
+    ctx.fillStyle = '#1C1A17';
+    ctx.beginPath(); ctx.arc(bw/2, bh-30, 24, Math.PI*0.15, Math.PI*1.35); ctx.lineTo(bw/2-12, bh-60); ctx.lineTo(bw/2+12, bh-60); ctx.closePath(); ctx.fill();
+    // hat
+    ctx.fillStyle = '#C8102E'; ctx.beginPath(); ctx.arc(bw/2, bh-65, 18, 0, Math.PI); ctx.lineTo(bw/2, bh-80); ctx.closePath(); ctx.fill();
+  }
+
+  // spawn falling items
+  function spawn(){
+    const type = Math.random()<.65 ? 'burger' : 'gravy';
+    const x = Math.max(10, Math.min(ww-10, Math.random()*ww));
+    items.push({x, y:0, type, speed: fallSpeed + Math.random()*2});
+  }
+
+  // draw one frame
+  function draw(){
+    if (!ctx) return;
+    ctx.clearRect(0,0,bw,bh);
+    // sky gradient
+    grd = ctx.createLinearGradient(0,0,0,bh);
+    grd.addColorStop(0,'#87CEEB'); grd.addColorStop(1,'#E0F7FA');
+    ctx.fillStyle = grd; ctx.fillRect(0,0,bw,bh);
+    // ground line
+    ctx.fillStyle = '#C8102E'; ctx.fillRect(0, bh-20, bw, 20);
+    // falling items
+    items.forEach((it,i)=> {
+      it.y += it.speed;
+      if (it.type === 'burger'){
+        ctx.fillStyle = '#FF6B6B'; ctx.beginPath();
+        ctx.ellipse(it.x, it.y, 22, 30, 0, 0, Math.PI*2);
+        ctx.fill();
+        // maybe add sesame seeds dots
+        ctx.fillStyle = '#FFF'; for(let j=0;j<3;j++){ ctx.fillRect(it.x-6+j*12, it.y-6, 3, 3); }
+      } else {
+        ctx.fillStyle = '#6B4200'; ctx.beginPath();
+        ctx.ellipse(it.x, it.y, 16, 22, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      // catch / miss
+      if (it.y + 30 > bh-20 && it.y < bh-10){
+        if (Math.abs(it.x - px) < bw/2 - 20){
+          // caught!
+          if (it.type === 'burger'){ score += 100; } else { lives -= 1; }
+          items.splice(i,1);
+        } else {
+          // miss / hit
+          if (it.type === 'gravy'){ lives -= 1; }
+          items.splice(i,1);
+        }
+      }
+    });
+    // remove off-screen
+    items = items.filter(it => it.y < bh+40);
+
+    // draw Big Boy if we have dimensions
+    if (px !== undefined){
+      ctx.fillStyle = '#1C1A17';
+      ctx.beginPath();
+      ctx.arc(px, bh-30, 24, Math.PI*0.15, Math.PI*1.35);
+      ctx.lineTo(px-12, bh-60); ctx.lineTo(px+12, bh-60); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#C8102E';
+      ctx.beginPath(); ctx.arc(bw/2, bh-65, 18, 0, Math.PI); ctx.lineTo(bw/2, bh-80); ctx.closePath(); ctx.fill();
+    }
+
+    // UI
+    ctx.fillStyle = '#fff'; ctx.font = '20px Inter'; ctx.textAlign = 'left';
+    ctx.fillText('Score: ' + score, 10, 30);
+    ctx.fillText('Lives: ' + lives, bw-100, 30);
+  }
+
+  // main loop
+  function loop(){
+    if (!ctx || gamePaused) return;
+    if (items.length < 6) spawn();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // init once we have window size
+  function init(){
+    ww = window.innerWidth; wh = window.innerHeight;
+    gResize();
+    // controls
+    leftBtn.addEventListener('click',()=>{ keys.ArrowLeft=true; });
+    rightBtn.addEventListener('click',()=>{ keys.ArrowRight=true; });
+    document.addEventListener('keydown',e=>{ if(e.key in keys) keys[e.key]=true; });
+    document.addEventListener('keyup',e=>{ if(e.key in keys) keys[e.key]=false; });
+    startBtn.addEventListener('click',()=>{ startOverlay.classList.add('game-overlay--hidden'); gameOverOverlay.classList.add('game-overlay--hidden'); score=0; lives=3; items=[]; px=bw/2; loop(); });
+    restartBtn.addEventListener('click',()=>{ gameOverOverlay.classList.add('game-overlay--hidden'); score=0; lives=3; items=[]; px=bw/2; startOverlay.classList.remove('game-overlay--hidden'); });
+    leftBtn.addEventListener('mouseup',()=>{ keys.ArrowLeft=false; });
+    rightBtn.addEventListener('mouseup',()=>{ keys.ArrowRight=false; });
+    // pause
+    $('#gamePause').addEventListener('click',()=>{ gamePaused=!gamePaused; $('#gamePause').textContent = gamePaused?'▶':'⏸️'; });
+    // start
+    loop();
+  }
+
+  // Hook into tab switch: when leaving game, pause
+  window.addEventListener('visibilitychange',()=>{ if(!document.hidden) gResize(); });
+
+  // fire after DOM + init scripts run
+  setTimeout(init, 120);
+})();
 </script>
 </body>
 </html>
