@@ -34,6 +34,7 @@ jobs:
       - name: Repackage if the app shell changed
         if: steps.hash.outputs.hash != steps.last.outputs.last
         id: package
+        continue-on-error: true
         env:
           APP_URL: https://midnightraven9.github.io/bismarck-big-boy-app/
           PACKAGE_ID: com.bismarckbigboy.app
@@ -47,6 +48,7 @@ jobs:
 
       - name: Store new hash and commit to main
         if: steps.hash.outputs.hash != steps.last.outputs.last
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
