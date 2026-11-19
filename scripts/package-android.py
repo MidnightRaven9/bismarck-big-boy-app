@@ -52,7 +52,7 @@ def options():
         "appVersionCode": 1,  # kept constant so the signature is stable
         "backgroundColor": "#FFF6E5",
         "display": "standalone",
-        "enableNotifications": False,
+        "enableNotifications": True,
         "enableSiteSettingsShortcut": True,
         "fallbackType": "customtabs",
         "features": {

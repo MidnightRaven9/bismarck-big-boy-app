@@ -294,6 +294,28 @@ blockquote cite{display:block;margin-top:9px;font-style:normal;font-weight:700;f
 .socials a.ig{background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)}
 .socials a.fb{background:#1877F2}
 .note-box{background:#2A2A2A;border:1px solid #3A3A3A;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.6;color:#B8B8B8}
+.fb-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;box-shadow:0 3px 12px rgba(0,0,0,.6);margin-top:12px}
+.fb-card-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.fb-icon{width:36px;height:36px;border-radius:50%;background:#1877F2;color:#fff;display:grid;place-items:center;font-size:18px;font-weight:800}
+.fb-name{font-size:16px;font-weight:700}
+.fb-stats{display:grid;gap:6px;margin:8px 0 14px;font-size:13px;color:var(--ink-soft)}
+.fb-stat strong{display:block;font-size:16px;color:var(--ink)}
+.fb-follow{background:var(--red);color:#fff;padding:11px 16px;border-radius:999px;font-weight:800;font-size:14px;text-align:center;display:block;margin-bottom:12px}
+.fb-footer{display:flex;gap:8px;flex-wrap:wrap}
+.fb-link{flex:1;min-width:55px;padding:10px 8px;border-radius:12px;font-size:12px;font-weight:700;text-align:center;color:#1877F2;background:var(--cream);border:1px solid var(--line)}
+.fb-link:active{transform:scale(.96)}
+.fb-deals-list{display:grid;gap:10px;margin-top:4px}
+.fb-deals-empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:16px}
+.fb-deal-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.6);transition:transform .2s ease}
+.fb-deal-card:hover{transform:translateY(-2px)}
+.fb-deal-card strong{display:block;font-size:14px;line-height:1.3;margin-bottom:6px;color:var(--red)}
+.fb-deal-card p{margin:0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.fb-deal-card.cater{background:linear-gradient(180deg,#FFF5EC 0%,var(--paper) 100%)}
+.alert-card{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:0 3px 12px rgba(0,0,0,.6);margin-top:16px}
+.alert-info{flex:1;min-width:0;color:var(--ink-soft);font-size:13.5px;line-height:1.5;margin:0}
+.alert-toggle{flex:none;padding:10px 18px;border-radius:999px;font-weight:800;font-size:13px;color:#fff;background:var(--red);transition:.15s;cursor:pointer}
+.alert-toggle[data-state="off"]{background:#3A3A3A;color:#B8B8B8}
+.alert-toggle[data-state="off"]:hover{border:none}
 
 /* ---------- bottom nav ---------- */
 nav.tabbar{
@@ -380,6 +402,8 @@ nav.tabbar{
     <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></g></symbol>
     <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7Z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></g></symbol>
+    <symbol id="i-park" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M5 18h3.5V4H5zm4.5 0H15V8.5H9.5zm0 0h5V6h-5z"/></g></symbol>
+    <symbol id="i-park2" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7 18v-2c0-1.6 1.2-3 2.7-3.2l0 0c0.4-0.03 0.8-0.12 1.2-0.26L15 18h-2.5c0 0 0 0 0 0z"/></g></symbol>
   </defs>
 </svg>
 
@@ -491,7 +515,14 @@ nav.tabbar{
   </div>
 
   <div class="note-box" style="margin-top:16px">
-    🅿️ <strong>No indoor seating.</strong> Grab food for the road, take it home for the family, enjoy it in your car, or (as weather permits) use the picnic tables right here on the property.
+    <svg style="width:15px;height:15px;display:inline-block;vertical-align:-2px;fill:currentColor;margin-right:8px;"><use href="#i-park"/></svg> <strong>No indoor seating.</strong> Grab food for the road, take it home for the family, enjoy it in your car, or (as weather permits) use the picnic tables right here on the property.
+  </div>
+
+  <h2 class="section-title">ALERTS &amp; NOTIFICATIONS</h2>
+  <div class="alert-card">
+    <p class="alert-info">Big Boy alerts — menu updates, specials, and when the grill is open.</p>
+    <button class="alert-toggle" id="notifToggle" aria-label="Toggle alerts"></button>
+    <button class="alert-test" id="notifTest" style="display:none">Test alert</button>
   </div>
 
   <div style="margin-top:18px">
@@ -628,6 +659,30 @@ nav.tabbar{
       <span><span class="lab">Hours</span><span class="val">Seven days a week · 10:30 AM – 9:00 PM</span></span>
     </div>
   </div>
+
+  <!-- On Facebook section -->
+  <h2 class="section-title">ON FACEBOOK</h2>
+  <div class="fb-card">
+    <div class="fb-card-head">
+      <span class="fb-icon">f</span>
+      <span class="fb-name">Bismarck Big Boy</span>
+    </div>
+    <div class="fb-stats">
+      <span class="fb-stat"><strong>17,863</strong> Followers</span>
+      <span class="fb-stat"><strong>786</strong> Talking About</span>
+      <span class="fb-stat"><strong>6,629</strong> Visitors</span>
+    </div>
+    <a class="fb-follow" href="https://www.facebook.com/bismarckbigboy/" data-title="Bismarck Big Boy on Facebook">Follow on Facebook</a>
+    <div class="fb-footer">
+      <a class="fb-link" href="https://www.facebook.com/bismarckbigboy/events/" data-title="Big Boy Events">Events</a>
+      <a class="fb-link" href="https://www.facebook.com/bismarckbigboy/reviews/" data-title="Big Boy Reviews">Reviews</a>
+      <a class="fb-link" href="https://www.facebook.com/bismarckbigboy/photos/" data-title="Big Boy Photos">Photos</a>
+      <a class="fb-link" href="https://www.facebook.com/bismarckbigboy/" data-title="Bismarck Big Boy">Page</a>
+    </div>
+  </div>
+
+  <h2 class="section-title">FACEBOOK DEALS &amp; SPECIALS</h2>
+  <div class="fb-deals-list" id="fbDealsList"><span class="fb-deals-empty">Loading Facebook deals…</span></div>
 
   <div class="socials">
     <a class="ig" href="https://www.instagram.com/bismarck_big_boy/" data-title="Instagram">
@@ -803,6 +858,101 @@ function renderHours(){
 }
 
 /* ============================================================
+   Facebook deals (from the auto-packager cron's scrape)
+   ============================================================ */
+async function renderFbDeals(){
+  const el = $('#fbDealsList');
+  if (!el) return;
+  try {
+    const data = await fetch('facebook_deals.json').then(r => r.ok ? r.json() : null);
+    if (!Array.isArray(data) || !data.length){ el.innerHTML = ''; return; }
+    el.innerHTML = data.map(d => `
+      <div class="fb-deal-card">
+        <strong>${d.title}</strong>
+        <p>${d.text}</p>
+      </div>`).join('');
+  } catch(e){ el.innerHTML = ''; }
+}
+
+/* ============================================================
+   Notifications — menu updates + open status alerts
+   ============================================================ */
+const NOTIF = {
+  get on(){ return localStorage.getItem('bb_notif') === '1'; },
+  set on(v){ localStorage.setItem('bb_notif', v ? '1' : '0'); },
+  hasPermission(){
+    return typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  },
+  async ask(){
+    if (typeof Notification === 'undefined') return false;
+    if (Notification.permission === 'granted') return true;
+    const p = await Notification.requestPermission();
+    return p === 'granted';
+  },
+  show(title, body){
+    if (!this.hasPermission()) return;
+    const n = new Notification(title, { body, icon: 'icons/icon-512.png?v=2' });
+    n.onclick = () => window.focus();
+  },
+  menuHash(){
+    if (this._h) return this._h;
+    let h = 1469598103934665603;
+    const str = MENU.map(g => g.name + '|' + g.items.map(i =>
+      i.n + ';' + (i.d||'') + ';' + (i.s||[]).map(s => s[0]+'='+s[1]).join(',')
+    ).join('&')).join('~');
+    for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    this._h = h >>> 0;
+    return this._h;
+  },
+  checkMenuChanged(){
+    const h = String(this.menuHash());
+    const prev = localStorage.getItem('bb_menu_hash');
+    if (prev !== h){
+      localStorage.setItem('bb_menu_hash', h);
+      if (prev !== null && this.on && state.tab === 'home'){
+        setTimeout(() => this.show('New menu items!', 'Your menu is updated — check out the new items.'), 1200);
+      }
+    }
+  },
+  maybeAlertOpen(){
+    if (state.tab !== 'menu' || !this.on) return;
+    if (!this.isOpen()) return;
+    const today = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem('bb_open_alert_day') === today) return;
+    localStorage.setItem('bb_open_alert_day', today);
+    setTimeout(() => this.show('Big Boy is OPEN!', 'The grill is hot — hop in for a burger!'), 1200);
+  },
+  isOpen(){
+    const d = new Date();
+    const mins = d.getHours()*60 + d.getMinutes();
+    return mins >= 10*60 + 30 && mins < 21*60;
+  },
+  renderToggle(){
+    const b = $('#notifToggle');
+    if (!b) return;
+    b.classList.toggle('on', this.on);
+    b.setAttribute('data-state', this.on ? 'on' : 'off');
+    b.textContent = this.on ? 'Turn off' : 'Turn on';
+    b.title = this.on ? 'Tap to disable alerts' : 'Tap to enable alerts';
+  },
+  init(){
+    this.renderToggle();
+    this.checkMenuChanged();
+    $('#notifToggle')?.addEventListener('click', async () => {
+      const on = !this.on;
+      this.on = on;
+      this.renderToggle();
+      if (on){
+        const granted = await this.ask();
+        if (granted){
+          setTimeout(() => this.show('Big Boy alerts', 'You’ll be notified when the menu updates or the grill turns on.'), 900);
+        }
+      }
+    });
+  }
+};
+
+/* ============================================================
    Navigation
    ============================================================ */
 const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
@@ -813,6 +963,8 @@ function go(tab){
   $('#orderbar').classList.toggle('show', tab==='menu');
   if (tab==='favs') renderFavs();
   if (tab==='menu') renderMenu();
+  if (tab==='menu') NOTIF.maybeAlertOpen();
+  if (tab==='info') renderFbDeals();
   window.scrollTo({top:0, behavior:'instant'});
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
@@ -1112,6 +1264,7 @@ renderHours();
 updateStatus();
 updateBadge();
 setInterval(updateStatus, 30000);
+NOTIF.init();
 
 /* ============================================================
    PWA — installable + offline shell

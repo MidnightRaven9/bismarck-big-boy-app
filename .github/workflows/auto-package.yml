@@ -56,3 +56,22 @@ jobs:
           git add APP_SHELL_HASH.txt
           git commit -m "Auto-package: app shell hash $(cat APP_SHELL_HASH.txt)" 2>&1 || echo "no changes to commit"
           git push origin main
+
+      - name: Check Facebook for new deals/specials
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "$GITHUB_WORKSPACE/bismarck-big-boy-app"
+          # Install playwright locally for the scraper
+          npm install --no-save --prefix /tmp/pw-node playwright 2>&1 | tail -1
+          /tmp/pw-node/node_modules/.bin/playwright install chromium --with-deps 2>&1 | tail -2
+          # Run the scraper (writes facebook_deals.json)
+          NODE_PATH=/tmp/pw-node/node_modules node scripts/scrape_fb_deals.js 2>&1 | tail -2
+          # Commit + push if the deals changed
+          git pull --rebase origin main --autostash 2>&1 | tail -1 || true
+          if git diff --quiet -- facebook_deals.json; then
+            echo "Facebook deals: no change"
+          else
+            git commit -am "Update Facebook deals/specials (auto-packager cron)" 2>&1 | tail -1
+            git push origin main 2>&1 | tail -2
+          fi
