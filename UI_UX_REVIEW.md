@@ -24,6 +24,14 @@ Scope: Home, Menu, Favorites, Rewards, Info, Delivery and the external-browser o
 - The new caveat text and notice use the existing charcoal/paper colors and existing yellow accent.
 - Screenshots were not overwritten; the visual diff is limited to the status copy, tab state, safe-area spacing and the new small notice/caveat text.
 
+## Visual polish pass
+
+- Standardized the dark tokens: `#171719` background, `#29292D` elevated cards, `#222225` secondary surfaces, `#101012` bottom navigation, `#F8F7F5`/`#B9B9BE` text and `#414146` borders. Brand red remains `#C8102E`.
+- Softened heavy black shadows, standardized corner radii and added subtle borders so cards, chips, search, reward cards and archival-image containers read as distinct surfaces.
+- Tightened header spacing and status styling while keeping the open/closed pill right-aligned at 360px, 320px and 195px.
+- Replaced the bottom navigation's black active block with a restrained red tint and improved inactive icon contrast.
+- At 195 CSS px the social buttons stack, reward cards shrink and empty-state headings scale down, so every tab stays within the viewport; all five tabs now pass the reflow check.
+
 ## Limitations
 
 Screenshot binaries could not be visually inspected in this environment. A rendered before/after comparison on a real phone is still required; see `TEST_REPORT.md`.

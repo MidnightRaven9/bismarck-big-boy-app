@@ -276,16 +276,19 @@ const server = http.createServer((req, res) => {
       const m = await page.evaluate(() => {
         const status = document.querySelector('#status');
         const sub = document.querySelector('#statusSub');
+        const brand = document.querySelector('.brand');
         return {
           scroll: status.scrollWidth,
           client: status.clientWidth,
           subRight: sub.getBoundingClientRect().right,
           statusRight: status.getBoundingClientRect().right,
+          brandRight: brand.getBoundingClientRect().right,
           overflow: document.documentElement.scrollWidth - window.innerWidth
         };
       });
       ok(m.scroll <= m.client + 1, `${width}px status clips its text: ${JSON.stringify(m)}`);
       ok(m.subRight <= m.statusRight + 1, `${width}px AM text escapes the pill: ${JSON.stringify(m)}`);
+      ok(Math.abs(m.statusRight - m.brandRight) <= 1, `${width}px status is not right-aligned: ${JSON.stringify(m)}`);
       ok(m.overflow <= 1, `${width}px layout overflows horizontally`);
     }
     await page.setViewportSize({ width:390, height:844 });
@@ -293,9 +296,11 @@ const server = http.createServer((req, res) => {
 
   check('200% zoom reflow (195 CSS px) has no horizontal scroll', async () => {
     await page.setViewportSize({ width:195, height:720 });
-    await page.goto(base + '#menu', { waitUntil:'networkidle' });
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    ok(overflow <= 1, '195px layout overflows by ' + overflow + 'px');
+    for (const tab of ['home','menu','favs','rewards','info']){
+      await page.goto(base + '#' + tab, { waitUntil:'networkidle' });
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      ok(overflow <= 1, `195px ${tab} layout overflows by ${overflow}px`);
+    }
     await page.setViewportSize({ width:390, height:844 });
   });
 

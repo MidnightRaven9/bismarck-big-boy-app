@@ -83,8 +83,8 @@ The service worker and registration URL derive the release version from a SHA-25
 9. Service worker takes control, installs cleanly and serves the cached menu offline — pass.
 10. Menu search, category filters and safe empty state — pass.
 11. No horizontal overflow at 320px and 360px — pass.
-12. Closed-status text stays inside the header pill at 360px, 320px and 195px — pass.
-13. 200% zoom reflow at 195 CSS px has no horizontal scroll — pass.
+12. Closed-status text stays inside the right-aligned header pill at 360px, 320px and 195px — pass.
+13. 200% zoom reflow at 195 CSS px has no horizontal scroll on any of the five tabs — pass.
 14. Keyboard navigation reaches and activates tabs with a visible focus outline — pass.
 15. Reduced motion disables transitions and animations — pass.
 16. Key text meets 4.5:1 colour contrast — pass.
