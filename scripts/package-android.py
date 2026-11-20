@@ -14,7 +14,7 @@ Designed for the auto-updater cron workflow. Reads everything from env vars:
 Produces: release/BismarckBigBoy-<VERSION>.apk and .aab, then uploads to the
 GitHub Release, clobbering existing assets.
 """
-import json, os, sys, time, urllib.request, urllib.parse, uuid, base64, subprocess, zipfile, pathlib
+import json, os, sys, time, urllib.request, urllib.parse, uuid, subprocess, zipfile, pathlib
 
 def load_env(path=".env"):
     """Load .env file into env — values already set by the environment (like GH Actions secrets) win."""

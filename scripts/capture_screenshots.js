@@ -34,7 +34,6 @@ async function shot(page, name, actions) {
     const p2 = await ctx.newPage();
     await shot(p2, '2-menu.png', async p => {
       await p.click('.tab[data-tab="menu"]');
-      await p.waitForTimeout(700);
       await p.waitForTimeout(900);
     });
     await p2.close();

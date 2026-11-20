@@ -35,7 +35,6 @@
 html,body{margin:0;padding:0}
 button,a{cursor:pointer}
 :focus-visible{outline:2px solid var(--red);outline-offset:2px}
-a:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 body{
   font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--cream);
@@ -220,7 +219,6 @@ header{
 .reward-card:active{transform:scale(.99)}
 .qa a:hover{transform:translateY(-2px)}
 .del:hover{transform:translateX(-2px)}
-.card:hover{transform:none}
 /* --- prefers-reduced-motion support --- */
 @media (prefers-reduced-motion: reduce){
   .screen, .qa a, .item, .special, .del, .tab, .tab svg, .chip, .chip.on,
@@ -241,9 +239,9 @@ a:focus, button:focus{outline:2px solid var(--red);outline-offset:2px}
 /* --- menu loading skeleton --- */
 .hidden{display:none!important}
 .menu-skeleton{display:grid;gap:8px;margin:4px 0 20px}
-.menu-skeleton .sk-row{background:linear-gradient(90deg,var(--paper) 25%,var(--line) 50%,var(--paper) 75%);background-size:200% 100%;height:14px;border-radius:6px;margin:10px 0 0;}
-.menu-skeleton .sk-row--long{height:52px;border-radius:14px;}
-.menu-skeleton .sk-row--short{height:10px;border-radius:999px;}
+.menu-skeleton .sk-row{background:linear-gradient(90deg,var(--paper) 25%,var(--line) 50%,var(--paper) 75%);background-size:200% 100%;height:14px;border-radius:6px;margin:10px 0 0}
+.menu-skeleton .sk-row--long{height:52px;border-radius:14px}
+.menu-skeleton .sk-row--short{height:10px;border-radius:999px}
 .item .pic{width:58px;height:58px;flex:none;border-radius:13px;font-size:26px}
 .item .body{flex:1;min-width:0}
 .item .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
@@ -290,7 +288,7 @@ a:focus, button:focus{outline:2px solid var(--red);outline-offset:2px}
 .reward-grid{display:grid;gap:12px;margin-top:16px}
 .reward-card{display:flex;gap:14px;align-items:center;text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:0 3px 12px rgba(28,26,23,.06);transition:.15s}
 .reward-card:active{transform:scale(.98)}
-.reward-card .ico{width:48px;height:48px;border-radius:13px;flex:none;font-size:22px}
+.reward-card .ico{width:48px;height:48px;border-radius:13px;flex:none}
 .reward-card .txt{flex:1;min-width:0}
 .reward-card h3{margin:0;font-size:20px;line-height:1.1}
 .reward-card p{margin:3px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
@@ -343,7 +341,6 @@ blockquote cite{display:block;margin-top:9px;font-style:normal;font-weight:700;f
 .fb-deal-more{display:inline-block;margin-top:8px;padding:0;border:0;background:none;color:var(--red);font-size:12px;font-weight:800;letter-spacing:.02em;cursor:pointer}
 .fb-deal-open{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:7px 11px;border-radius:999px;background:var(--cream);border:1px solid var(--line);color:var(--ink);font-size:11.5px;font-weight:800;text-decoration:none}
 .fb-deal-open svg{width:13px;height:13px;fill:none;stroke:currentColor}
-.fb-deal-card.cater{background:linear-gradient(180deg,#FFF5EC 0%,var(--paper) 100%)}
 .alert-card{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:0 3px 12px rgba(0,0,0,.6);margin-top:16px}
 .alert-info{flex:1;min-width:0;color:var(--ink-soft);font-size:13.5px;line-height:1.5;margin:0}
 .alert-toggle{flex:none;padding:10px 18px;border-radius:999px;font-weight:800;font-size:13px;color:#fff;background:var(--red);transition:.15s;cursor:pointer}
@@ -864,12 +861,17 @@ const state = { tab:'home', cat:'all', q:'', favs:loadFavs() };
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const money = n => '$' + n.toFixed(2);
+// HTML-escape helper for inserting dynamic strings into innerHTML safely.
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
 
 function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch(e){ return new Set(); } }
 function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs])); } catch(e){} }
 
 const BY_ID = {};
 MENU.forEach(g => g.items.forEach(it => { it._cat = g.name; BY_ID[it.id] = it; }));
+// A menu update can remove an item that was saved earlier — drop those stale ids.
+const stale = [...state.favs].filter(id => !BY_ID[id]);
+if (stale.length){ stale.forEach(id => state.favs.delete(id)); saveFavs(); }
 
 /* ============================================================
    Open / closed status — 10:30 AM to 9:00 PM, 7 days
@@ -946,22 +948,30 @@ document.addEventListener('click', e => {
 /* ============================================================
    Notifications — menu updates + open status alerts
    ============================================================ */
+/* Storage can be blocked (private mode, strict settings). Never let an alert
+   preference stop the rest of the app from initialising. */
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
 const NOTIF = {
-  get on(){ return localStorage.getItem('bb_notif') === '1'; },
-  set on(v){ localStorage.setItem('bb_notif', v ? '1' : '0'); },
+  get on(){ return store.get('bb_notif') === '1'; },
+  set on(v){ store.set('bb_notif', v ? '1' : '0'); },
   hasPermission(){
     return typeof Notification !== 'undefined' && Notification.permission === 'granted';
   },
   async ask(){
     if (typeof Notification === 'undefined') return false;
     if (Notification.permission === 'granted') return true;
-    const p = await Notification.requestPermission();
-    return p === 'granted';
+    try { return await Notification.requestPermission() === 'granted'; }
+    catch(e){ return false; }
   },
   show(title, body){
     if (!this.hasPermission()) return;
-    const n = new Notification(title, { body, icon: 'icons/icon-512.png?v=2' });
-    n.onclick = () => window.focus();
+    try {
+      const n = new Notification(title, { body, icon: 'icons/icon-512.png?v=2' });
+      n.onclick = () => window.focus();
+    } catch(e){}
   },
   menuHash(){
     if (this._h) return this._h;
@@ -975,9 +985,9 @@ const NOTIF = {
   },
   checkMenuChanged(){
     const h = String(this.menuHash());
-    const prev = localStorage.getItem('bb_menu_hash');
+    const prev = store.get('bb_menu_hash');
     if (prev !== h){
-      localStorage.setItem('bb_menu_hash', h);
+      store.set('bb_menu_hash', h);
       if (prev !== null && this.on && state.tab === 'home'){
         setTimeout(() => this.show('New menu items!', 'Your menu is updated — check out the new items.'), 1200);
       }
@@ -986,9 +996,10 @@ const NOTIF = {
   maybeAlertOpen(){
     if (state.tab !== 'menu' || !this.on) return;
     if (!this.isOpen()) return;
-    const today = new Date().toISOString().slice(0, 10);
-    if (localStorage.getItem('bb_open_alert_day') === today) return;
-    localStorage.setItem('bb_open_alert_day', today);
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (store.get('bb_open_alert_day') === today) return;
+    store.set('bb_open_alert_day', today);
     setTimeout(() => this.show('Big Boy is OPEN!', 'The grill is hot — hop in for a burger!'), 1200);
   },
   isOpen(){
@@ -1015,6 +1026,9 @@ const NOTIF = {
         const granted = await this.ask();
         if (granted){
           setTimeout(() => this.show('Big Boy alerts', 'You’ll be notified when the menu updates or the grill turns on.'), 900);
+        } else {
+          this.on = false;   // don't leave the toggle implying alerts are enabled
+          this.renderToggle();
         }
       }
     });
@@ -1053,7 +1067,7 @@ function renderChips(){
   });
   $('#chips').innerHTML = CATS.map(c => {
     const imgId = imgMap[c.id];
-    const imgSrc = imgId ? `https://static.wixstatic.com/media/${imgId}/v1/fill/w_16,h_16,al_c,q_85,enc_auto/${imgId}` : '';
+    const imgSrc = imgId ? wix(imgId, 16, 16) : '';
     const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">` : '';
     return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`;
   }).join('');
@@ -1103,20 +1117,16 @@ function renderMenu(){
     html += items.map(itemHTML).join('');
   });
   if (!shown){
-    const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
     html = `<div class="empty">
       <div class="big">Search</div>
       <h3>Nothing found</h3>
-      <p>We couldn't match “${esc(state.q)}”. Try “fries”, “shake”, or “dog”.</p>
+      <p>We couldn't match “${escapeHtml(state.q)}”. Try “fries”, “shake”, or “dog”.</p>
       <button class="btn ghost" id="clearSearchEmpty" data-action="clearSearch">CLEAR SEARCH</button>
     </div>`;
   }
   $('#menuSkeleton')?.classList.add('hidden');
   $('#menuList').innerHTML = html;
 }
-
-// HTML-escape helper for inserting dynamic strings into innerHTML safely.
-const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
 
 function clearSearch(){
   state.q = ''; $('#search').value = ''; $('#searchWrap').classList.remove('has'); renderMenu();
@@ -1235,15 +1245,15 @@ function openIAB({src, url, title}){
     host = u.hostname.replace(/^www\./,'');
   } catch(e){ host = url; }
 
-  const label = title || host;
-  // Escape for display — hostnames could theoretically contain special chars from URLs
+  // Escape every dynamic value before it reaches innerHTML. Deal titles come
+  // from the scraped Facebook JSON, so they must not be treated as markup.
   const escTitle = escapeHtml(title || ''), escHost = escapeHtml(host);
   $('#iabHost').innerHTML = escTitle
     ? `${escTitle}<small>${escHost}</small>`
     : `<span>${escHost}</span>`;
   const fav = $('#iabFav');
   fav.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=64`;
-  fav.alt = escTitle + ' website favicon';
+  fav.alt = (title || host) + ' website favicon';
   fav.hidden = false;
   fav.onerror = () => { fav.hidden = true; };
 
@@ -1257,10 +1267,10 @@ function openIAB({src, url, title}){
     const isOrdering = host === 'order.toasttab.com';
     $('#hoInner').innerHTML = `
       <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128">
-      <h3>${label}</h3>
-      <div class="host">${host}</div>
+      <h3>${escTitle || escHost}</h3>
+      <div class="host">${escHost}</div>
       <p>${NOTES[hostRaw] || NOTES[host] || "This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved."}</p>
-      <a class="btn block" id="hoGo" data-raw href="${url}">CONTINUE TO ${host.toUpperCase()} →</a>
+      <a class="btn block" id="hoGo" data-raw href="${escapeHtml(url)}">CONTINUE TO ${escapeHtml(host.toUpperCase())} →</a>
       ${isOrdering ? `<button class="btn ghost block" id="hoDelivery">Delivery INSTEAD</button>` : ''}
       <button class="btn dark block" id="hoCancel">GO BACK TO THE APP</button>
       <div class="why">Your place in the app is kept — just tap Back to return.</div>`;
@@ -1328,7 +1338,7 @@ document.addEventListener('click', e => {
   const url = forced || href;
   openIAB({
     src: canEmbed(url) ? url : null,
-    url: a.dataset.external || href,
+    url: href,
     title: a.dataset.title || ''
   });
 }, false);

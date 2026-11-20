@@ -1,6 +1,6 @@
 /* Bismarck Big Boy — service worker: cache the app shell so it opens instantly
    and keeps working offline. Bump CACHE when the app shell changes. */
-const CACHE = 'bb-app-v13';
+const CACHE = 'bb-app-v14';
 const SHELL = [
   './',
   './index.html',

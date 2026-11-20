@@ -290,11 +290,11 @@ function extractText(html) {
     // Drop anything that has expired since it was last scraped.
     const live = structured.filter(d => !d.expires || new Date(d.expires) > new Date());
     fs.writeFileSync(OUT, JSON.stringify(live, null, 2));
-    console.log('Wrote', structured.length, 'deals to', OUT);
+    console.log('Wrote', live.length, 'deals to', OUT);
   } catch (e) {
     console.log('ERROR', e.message);
-    // Always write a file so the app doesn't show stale data silently
-    fs.writeFileSync(OUT, JSON.stringify([], null, 2));
+    // Keep the last known-good file: a transient Facebook failure must not wipe
+    // every deal. The app already hides expired ones on render.
   } finally {
     await browser.close();
   }
