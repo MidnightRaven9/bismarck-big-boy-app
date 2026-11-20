@@ -4,3 +4,23 @@ release/
 *.apk
 *.aab
 *.keystore
+
+# Local environment for manual packaging runs (unused in GitHub Actions).
+# The cron passes the keystore as GitHub Actions secrets; .env is for local use.
+.env
+
+# Compiled python
+__pycache__/
+*.pyc
+
+# Testing
+dist/
+build/
+node_modules/
+coverage/
+
+# Misc
+Thumbs.db
+.DS_Store
+.idx/
+*.log

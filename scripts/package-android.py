@@ -14,7 +14,20 @@ Designed for the auto-updater cron workflow. Reads everything from env vars:
 Produces: release/BismarckBigBoy-<VERSION>.apk and .aab, then uploads to the
 GitHub Release, clobbering existing assets.
 """
-import json, os, sys, time, urllib.request, urllib.parse, uuid, base64, subprocess, zipfile
+import json, os, sys, time, urllib.request, urllib.parse, uuid, base64, subprocess, zipfile, pathlib
+
+def load_env(path=".env"):
+    """Load .env file into env — values already set by the environment (like GH Actions secrets) win."""
+    p = pathlib.Path(path)
+    if not p.exists(): return
+    for line in p.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line: continue
+        k, v = line.split('=', 1)
+        v = v.strip().strip('"').strip("'")
+        if v: os.environ.setdefault(k.strip(), v)
+
+load_env()
 
 SERVICE = "https://pwabuilder-cloudapk.azurewebsites.net"
 
