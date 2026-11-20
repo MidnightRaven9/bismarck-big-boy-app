@@ -83,8 +83,8 @@ img{max-width:100%}
 .retro-icon-button:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .retro-icon-button .icon{
   display:grid;place-items:center;flex:none;
-  color:var(--red);
-  filter:drop-shadow(0 0 4px rgba(255,23,52,.5));
+  color:#FFFFFF;
+  filter:drop-shadow(0 0 1px rgba(255,255,255,.45));
 }
 .retro-icon-button .icon svg{
   width:100%;height:100%;display:block;
@@ -102,7 +102,7 @@ img{max-width:100%}
     0 12px 22px rgba(0,0,0,.45),
     0 4px 16px rgba(255,0,40,.18);
 }
-.retro-icon-button.primary .icon{color:#fff;filter:none}
+.retro-icon-button.primary .icon{color:#FFFFFF}
 
 /* ---------- checker strip ---------- */
 .checker{
@@ -192,7 +192,7 @@ header{
 /* ---------- quick actions ---------- */
 .qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
 .qa a{aspect-ratio:1/1;padding:14px 8px}
-.qa .icon{width:42px;height:42px}
+.qa .icon{width:46px;height:46px}
 .qa .label{font-size:12.5px}
 .qa a[data-title="Call"] .icon svg{transform:rotate(-18deg)}
 .qa a.primary .label{color:#fff}
@@ -414,14 +414,9 @@ nav.tabbar{
 }
 .tab{padding:7px 2px;gap:4px;color:#F8F8F8;position:relative;-webkit-tap-highlight-color:transparent}
 .tab::before{left:14%;right:14%}
-.tab .icon{width:26px;height:26px}
+.tab .icon{width:28px;height:28px;color:#FFFFFF;filter:drop-shadow(0 0 1px rgba(255,255,255,.45))}
 .tab .icon svg{fill:none}
 .tab .label{font-size:10px}
-.tab[data-tab="home"] .icon,
-.tab[data-tab="menu"] .icon{color:var(--red);filter:drop-shadow(0 0 5px rgba(255,23,52,.55))}
-.tab[data-tab="favs"] .icon,
-.tab[data-tab="rewards"] .icon,
-.tab[data-tab="info"] .icon{color:#D7D7DA;filter:drop-shadow(0 0 3px rgba(255,255,255,.14))}
 .tab.on{
   background:linear-gradient(145deg,#3A2026 0%,#24161A 100%);
   border-color:rgba(255,23,52,.35);
@@ -431,7 +426,6 @@ nav.tabbar{
     0 4px 10px rgba(0,0,0,.4),
     0 0 0 1px rgba(255,23,52,.18);
 }
-.tab.on .icon{filter:drop-shadow(0 0 6px rgba(255,23,52,.62))}
 .tab .badge{position:absolute;top:3px;right:calc(50% - 19px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
 .tab .badge.show{display:flex}
 
