@@ -332,9 +332,9 @@ function renderChips(){
     }
   });
   $('#chips').innerHTML = CATS.map(c => {
-    const imgSrc = wix(imgMap[c.id], 16, 16);
+    const imgSrc = wix(imgMap[c.id], 40, 40);
     const imgHtml = imgSrc
-      ? `<img class="chip-thumb" src="${escapeHtml(imgSrc)}" alt="" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">`
+      ? `<img class="chip-thumb" src="${escapeHtml(imgSrc)}" alt="">`
       : '';
     return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${escapeHtml(c.id)}">${imgHtml}${escapeHtml(c.name)}</button>`;
   }).join('');

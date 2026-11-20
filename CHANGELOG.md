@@ -3,6 +3,21 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
+## 2026-11-20 — Brand-aligned red, white, and blue refresh
+
+### Changed
+- Rebalanced the palette to match the restaurant’s classic identity: warm cream
+  `#FFF8F2` and pure white `#FFFFFF` as dominant backgrounds, Big Boy red
+  `#C8102E` for primary actions and selected states, heritage navy `#203D60`
+  for navigation and secondary accents.
+- Converted menu, rewards, delivery, info, awards, specials, and alert cards
+  from dark charcoal to light cards with subtle warm borders.
+- Made menu category filter thumbnails perfectly circular (`40px × 40px`,
+  `border-radius:50%`, `object-fit:cover`) while keeping the same image files,
+  names, order, and selection behavior.
+- Updated the active bottom-nav tab, order bar, primary buttons, and selected
+  category chip to red; size chips and section accents remain navy.
+
 ## 2026-11-20 — Classic Diner redesign and splash update
 
 ### Changed
