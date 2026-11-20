@@ -343,13 +343,18 @@ const server = http.createServer((req, res) => {
         return 0.2126*r + 0.7152*g + 0.0722*b;
       };
       const ratio = (a,b) => { const x=lum(a), y=lum(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); };
+      const bodyBg = getComputedStyle(document.body).backgroundColor;
       const checks = [
-        ['body', document.body, getComputedStyle(document.body).backgroundColor],
-        ['.chip', document.querySelector('.chip'), getComputedStyle(document.querySelector('.card') || document.body).backgroundColor],
-        ['.btn', document.querySelector('.btn'), getComputedStyle(document.body).backgroundColor]
+        ['body', document.body],
+        ['.chip', document.querySelector('.chip')],
+        ['.btn', document.querySelector('.btn')]
       ];
-      return checks.filter(([,el,bg]) => el).map(([name,el,bg]) => [name, ratio(getComputedStyle(el).color, bg)])
-        .filter(([,r]) => r < 4.5);
+      return checks.filter(([,el]) => el).map(([name,el]) => {
+        const s = getComputedStyle(el);
+        const own = s.backgroundColor;
+        const bg = own === 'rgba(0, 0, 0, 0)' || own === 'transparent' ? bodyBg : own;
+        return [name, ratio(s.color, bg)];
+      }).filter(([,r]) => r < 4.5);
     });
     ok(bad.length === 0, 'low contrast: ' + JSON.stringify(bad));
   });
