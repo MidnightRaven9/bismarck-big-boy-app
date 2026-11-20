@@ -18,7 +18,6 @@ A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigb
 - **In-app browser** — external links open inside the app instead of bouncing out to another browser.
 - **Offline** — the service worker caches the app shell, so the menu and hours work without a signal.
 - **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
-- **Pull-to-refresh** — content reloads on pull to capture the latest specials and status.
 
 ## Screenshots
 
