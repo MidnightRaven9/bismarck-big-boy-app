@@ -3,14 +3,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](https://github.com/MidnightRaven9/bismarck-big-boy-app/blob/main/LICENSE)
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
 [![Built with: OpenCode](https://img.shields.io/badge/Built%20with-OpenCode-4da167)](https://opencode.ai)
-[![Live app](https://img.shields.io/badge/Live%20app-bismarckbigboy.app-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
+[![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
 A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built as a single self-contained HTML file with an installable Progressive Web App manifest, so customers can add it to their home screen on Android and iPhone and it opens like a native app.
 
 ## Features
 
 - **Home** — live open/closed status (10:30 AM–9:00 PM, 7 days), today's hours, specials, awards, and directions with an embedded OpenStreetMap.
-- **Menu** — all 58 items with real photos from bismarckbigboy.com, searchable, with category filters and per-size pricing.
+- **Info** — Facebook page, photos, reviews, and deals/specials. Tap a deal to expand its full text or open the original post.
+- **Menu** — all 56 items with real photos from bismarckbigboy.com, searchable, with category filters and per-size pricing.
 - **Favorites** — save items locally on the device; no account or tracking required.
 - **Rewards** — Toast loyalty sign-up, eGift cards, and the Big Boy shop.
 - **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
@@ -77,7 +78,7 @@ Then open http://localhost:8000/ in Chrome.
 | `sw.js` | Service worker — offline app-shell cache |
 | `icons/` | App icon in 5 sizes (192, 512, maskable, apple-touch, favicon) |
 | `scripts/package-android.py` | Packages the PWA into an Android APK via PWABuilder CloudAPK |
-| `scripts/scrape_fb_deals.py` | Cron scraper for Facebook deals (writes `facebook_deals.json`) |
+| `scripts/scrape_fb_deals.js` | Cron scraper for Facebook deals (writes `facebook_deals.json`) |
 | `scripts/capture_screenshots.js` | Headless-Chrome screenshot capture |
 
 ## Android Packaging & Releasing
@@ -85,7 +86,7 @@ Then open http://localhost:8000/ in Chrome.
 Re-run the packager when the site changes:
 
 ```bash
-# Enqueue via CloudAPIPackaging (RELEASE_TAG, versions, secrets come from GH Actions)
+# Enqueue via PWABuilder CloudAPK (versions and secrets come from GH Actions)
 python3 scripts/package-android.py
 ```
 
@@ -105,7 +106,7 @@ We welcome community contributions. To get started:
 3. Push your changes.
 4. Open a pull request and describe your change.
 
-Be sure to follow the existing code style, and run `node --check index.html` before submitting.
+Follow the existing code style and check the JS files with `node --check scripts/*.js` before submitting. Also load the app in a browser at `http://localhost:8000/` and confirm the tabs still work.
 
 If you're interested in becoming a maintainer of the app, please open a PR and note your interest.
 
@@ -113,7 +114,7 @@ If you're interested in becoming a maintainer of the app, please open a PR and n
 
 - Restaurant info, prices, and photo art: [bismarckbigboy.com](https://www.bismarckbigboy.com/)
 - App icon: a custom Big Boy mask on a dark charcoal background
-- Demo / author info: powered by the [Owner Mode](https://github.com/midnightraven9) team at Bismarck Big Boy
+- Maintained by [MidnightRaven9](https://github.com/MidnightRaven9) for Bismarck Big Boy
 
 ## License
 

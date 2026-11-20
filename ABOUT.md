@@ -14,32 +14,35 @@ Order, earn rewards, and browse the menu — the Bismarck Big Boy app.
 Bismarck Big Boy — the original 1954 drive-in, now in your pocket.
 
 Whether you're craving a classic Big Boy double-decker, a basket of crispy
-fries, or a hand-dipped shake, everything you need is one tap away:
+fries, or a thick shake, everything you need is one tap away:
 
-🍔 FULL MENU WITH PHOTOS — All 58 items with real photos, prices, and
+FULL MENU WITH PHOTOS — All 56 items with real photos, prices, and
    per-size options. Search it, filter it, and check what's available
    before you order.
 
-⭐ REWARDS — Sign up for Big Boy Rewards in under a minute and start
+REWARDS — Sign up for Big Boy Rewards in under a minute and start
    collecting on every order. Buy eGift cards for friends and family
    instantly.
 
-🚗 DELIVERY — One-tap ordering through Uber Eats, DoorDash, and Food
+DELIVERY — One-tap ordering through Uber Eats, DoorDash, and Food
    Dudes, plus direct pickup ordering through Toast.
 
-🕐 LIVE OPEN/CLOSED STATUS — See right away if the grill is on, today's
+LIVE OPEN/CLOSED STATUS — See right away if the grill is on, today's
    hours, and this week's specials.
 
-⭐ FAVORITES — Tap the heart on anything you love; your list is saved
+FACEBOOK DEALS — Browse current deals and specials, expand a post to
+   read the full text, and open the original post on Facebook.
+
+FAVORITES — Tap the heart on anything you love; your list is saved
    on your phone. No account, no tracking.
 
-📍 DIRECTIONS & INFO — Embedded map, address, phone, and the story of
+DIRECTIONS & INFO — Embedded map, address, phone, and the story of
    a Bismarck landmark that's been serving the community since 1954.
 
-📴 WORKS OFFLINE — The menu and hours are cached, so you can browse
+WORKS OFFLINE — The menu and hours are cached, so you can browse
    even without a signal.
 
-📲 INSTALLABLE — Add it to your home screen on Android or iPhone and
+INSTALLABLE — Add it to your home screen on Android or iPhone and
    it opens like a native app: full screen, its own icon, no browser
    chrome.
 
@@ -59,7 +62,7 @@ Main Ave, Bismarck, ND.
 
 ## Screenshot caption ideas
 
-- "The full menu, with photos — 58 items, searchable."
+- "The full menu, with photos — 56 items, searchable."
 - "Live open/closed status and today's hours, updated in real time."
 - "Big Boy Rewards — join in under a minute."
 - "Delivery in one tap: Uber Eats, DoorDash, Food Dudes."

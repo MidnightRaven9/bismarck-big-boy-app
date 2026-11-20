@@ -1,7 +1,7 @@
 {
   "name": "Bismarck Big Boy",
   "short_name": "Big Boy",
-  "description": "Bismarck Big Boy — the original 1954 drive-in: full menu with photos, live hours, delivery via Uber Eats / DoorDash / Food Dudes, Big Boy Rewards, and our app-exclusive mini game. Bismarck, ND.",
+  "description": "Bismarck Big Boy — the original 1954 drive-in: full menu with photos, live hours, delivery via Uber Eats / DoorDash / Food Dudes, Big Boy Rewards, and Facebook deals. Bismarck, ND.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -18,7 +18,7 @@
     {
       "name": "Menu",
       "short_name": "Menu",
-      "description": "Browse all 58 menu items with photos",
+      "description": "Browse all 56 menu items with photos",
       "url": "./#menu",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },

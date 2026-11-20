@@ -51,15 +51,17 @@ Then open http://localhost:8000/
 
 1. Push your branch to your fork.
 2. Open a PR against `main` on the original repo.
-3. Use the PR template (title, problem, solution, how-verified).
+3. Use the PR template (problem, solution, how-verified).
 4. Before submitting, run:
    ```bash
-   node --check index.html && node --check scripts/*.js && python3 -m py_compile scripts/*.py
+   node --check scripts/scrape_fb_deals.js && node --check scripts/capture_screenshots.js
+   python3 -m py_compile scripts/package-android.py
    ```
+   Then load `index.html` through a local server and confirm every tab still works.
 
 ## Community guidelines
 
-- **Be respectful.** Be kind to contributors and users; follow our [conduct guide](CODE_OF_CONDUCT.md).
+- **Be respectful.** Be kind to contributors and users.
 - **No harassment.** Targeted harassment of any contributor will result in mute/block.
 - **Safe spaces.** Report issues at any time; we take feedback seriously.
 

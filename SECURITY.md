@@ -9,7 +9,7 @@ Thank you for helping us keep this project secure!
 
 ## Reporting a vulnerability
 
-If you believe you have found a security vulnerability, **please do not open a public issue.** Send an email to [`bot@bismarckbigboy.app`](mailto:bot@bismarckbigboy.app) with:
+If you believe you have found a security vulnerability, **please do not open a public issue.** Report it privately through the repository's **Security → Report a vulnerability** tab on GitHub, including:
 
 - A short description of the issue
 - How to reproduce it
@@ -46,6 +46,6 @@ Never check these files in. If you have concerns about key security, rotate them
 
 ## Policies
 
-- **DoS/Abuse**: don't hammer the CloudAPIPackaging API or Pages; if you need to run our full pipeline, do it sparingly.
+- **DoS/Abuse**: don't hammer the PWABuilder CloudAPK API or Pages; if you need to run our full pipeline, do it sparingly.
 - **Service worker abuse**: don't commit unauthorized cache-busting or exfiltrating code into `sw.js`/`index.html`.
 - **Transparency**: we value security researchers who operate responsibly and disclose through the channel above.
