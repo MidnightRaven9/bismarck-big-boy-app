@@ -14,7 +14,6 @@ A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigb
 - **Favorites** — save items locally on the device; no account or tracking required.
 - **Rewards** — Toast loyalty sign-up, eGift cards, and the Big Boy shop.
 - **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
-- **Mini Game** — Big Boy Catch: a quick casual game where Big Boy catches falling pizza burgers.
 - **In-app browser** — external links open inside the app instead of bouncing out to another browser.
 - **Offline** — the service worker caches the app shell, so the menu and hours work without a signal.
 - **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
