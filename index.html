@@ -35,10 +35,28 @@
   --charcoal:#252525;
   --shadow:0 4px 12px rgba(0,0,0,.08);
   --shadow-soft:0 1px 4px rgba(0,0,0,.06);
+  --block:#252525;
+  --block-inset:#303030;
+  --block-line:#3A3A3A;
+  --block-accent:#4A4A4A;
+  --block-ink:#F5F5F5;
+  --block-ink-soft:#BFBFBF;
   --radius:18px;
   --radius-md:14px;
   --radius-sm:12px;
   --nav-h:64px;
+}
+/* ---------- dark charcoal content blocks on every tab (red areas untouched) ---------- */
+.special,.award,.card,.search,.chip,.cat-head,.item,.fav,.size,.price,
+.reward-card,.note-box,.fb-card,.fb-link,.fb-deal-card,.fb-deal-more,
+.fb-deal-open,.alert-card,.alert-toggle[data-state="off"],.ph,.story-photo,
+blockquote,.contact-row .ico,.menu-skeleton .sk-row,.btn.ghost{
+  --paper:var(--block);
+  --cream:var(--block-inset);
+  --line:var(--block-line);
+  --ink:var(--block-ink);
+  --ink-soft:var(--block-ink-soft);
+  color:var(--block-ink);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -541,6 +559,14 @@ nav.tabbar{padding:0 8px env(safe-area-inset-bottom)}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+/* ---- dark block accents: kept last so they win over base rules ---- */
+.chip.on,.size.on{background:var(--block-accent);border-color:var(--block-accent);color:var(--block-ink)}
+.cat-head{border-bottom-color:var(--block-accent)}
+blockquote{border-left-color:var(--block-accent)}
+blockquote cite,.award .yr,.tl-item .yr{color:var(--block-ink-soft)}
+.tl-item::before{background:var(--block-accent)}
+.fav.on,.contact-row .ico,.fb-deal-more,.fb-deal-more .icon{color:var(--block-ink)}
+.fb-link{color:#8AB4FF}
 </style>
 </head>
 <body>
