@@ -30,10 +30,13 @@ Please open an issue on GitHub with:
 Briefly:
 
 - **The app is static**: no server logic, no personal data collection beyond local favorites.
-- **XSS hardening**: user-controlled strings (search queries, FB deal titles) are HTML-escaped on insert.
-- **CSP**: a content-security-policy meta tag limits script/style/connect/image/frame sources.
-- **Secrets**: Android signing key is stored only in GitHub Actions secrets and in gitignored local `release/`.
-- **Closed assets**: menu data mirrors bismarckbigboy.com but is updated manually by maintainers.
+- **XSS hardening**: dynamic strings are HTML-escaped; Facebook deals are additionally schema-validated, length-capped and restricted to official Facebook URLs.
+- **CSP**: `script-src 'self'` (no inline JS); images, frames, fonts and connections are restricted to the specific origins the app needs. A `strict-origin-when-cross-origin` referrer policy is set.
+- **External links**: only the map and Food Dudes may be framed. Payments, ordering, accounts and social links hand off with `noopener noreferrer`; unsafe protocols are rejected.
+- **Service worker**: only successful same-origin responses are cached; errors and malformed JSON never replace good cached data.
+- **Secrets**: Android signing key is stored only in GitHub Actions secrets and in gitignored local `release/`. Packaging logs redact signing values.
+- **Local data**: favorites and alert preferences stay in the device's `localStorage`; there is no account, analytics or server-side collection.
+- **Menu data**: `menu.json` is local and validated; it mirrors bismarckbigboy.com and is updated manually by maintainers.
 
 ## Keystore handling (v1+)
 
@@ -44,8 +47,10 @@ The Android signing key is intentionally **not committed** to the public repo. I
 
 Never check these files in. If you have concerns about key security, rotate them via a fresh key and a new Play Store upload cert — contact us for help.
 
+See `SECURITY_REVIEW.md` for the full control and residual-risk review.
+
 ## Policies
 
 - **DoS/Abuse**: don't hammer the PWABuilder CloudAPK API or Pages; if you need to run our full pipeline, do it sparingly.
-- **Service worker abuse**: don't commit unauthorized cache-busting or exfiltrating code into `sw.js`/`index.html`.
+- **Service worker abuse**: don't commit unauthorized cache-busting or exfiltrating code into `sw.js`, `core.js` or `app.js`.
 - **Transparency**: we value security researchers who operate responsibly and disclose through the channel above.

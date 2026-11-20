@@ -1,0 +1,4 @@
+{
+  "_readme": "Optional exceptions supplied by the restaurant. Leave 'overrides' empty unless an exact date and hours are confirmed. Each entry needs a YYYY-MM-DD date and either closed:true or 24-hour HH:MM open/close values. Nothing is invented here.",
+  "overrides": []
+}

@@ -14,7 +14,7 @@ Designed for the auto-updater cron workflow. Reads everything from env vars:
 Produces: release/BismarckBigBoy-<VERSION>.apk and .aab, then uploads to the
 GitHub Release, clobbering existing assets.
 """
-import json, os, sys, time, urllib.request, urllib.parse, uuid, subprocess, zipfile, pathlib
+import hashlib, json, os, shutil, sys, time, urllib.request, urllib.parse, uuid, subprocess, zipfile, pathlib
 
 def load_env(path=".env"):
     """Load .env file into env — values already set by the environment (like GH Actions secrets) win."""
@@ -49,14 +49,30 @@ HEADERS = {
     "user-agent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36",
 }
 
-def call(path, method="GET", body=None, token=None, raw=False):
+def redact(text):
+    """Never let signing material or tokens reach logs."""
+    text = str(text)
+    for secret in (KEYSTORE_B64, KEYSTORE_PW, GITHUB_TOKEN):
+        if secret and len(secret) > 3:
+            text = text.replace(secret, "***REDACTED***")
+    return text
+
+def call(path, method="GET", body=None, token=None, raw=False, attempts=3):
     h = dict(HEADERS)
     if token:
-        h["Authorization"] = f"Bearer {token}"
+        h["Authorization"] = "Bearer " + token
     data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(SERVICE + path, data=data, headers=h, method=method)
-    with urllib.request.urlopen(req, timeout=90) as r:
-        return r.read() if raw else json.loads(r.read())
+    last = None
+    for attempt in range(attempts):
+        try:
+            req = urllib.request.Request(SERVICE + path, data=data, headers=h, method=method)
+            with urllib.request.urlopen(req, timeout=90) as r:
+                return r.read() if raw else json.loads(r.read())
+        except Exception as exc:
+            last = exc
+            if attempt < attempts - 1:
+                time.sleep(2 ** attempt)
+    raise RuntimeError(redact(f"CloudAPK request failed: {path}: {last}"))
 
 def options():
     return {
@@ -122,8 +138,8 @@ def package():
         if status == "Completed":
             break
         if status == "Failed":
-            print("FAILED:", json.dumps(job.get("errors"), indent=2))
-            print("logs:", "\n".join(job.get("logs") or [])[:2000])
+            print("FAILED:", redact(json.dumps(job.get("errors"), indent=2)))
+            print("logs:", redact("\n".join(job.get("logs") or [])[:2000]))
             sys.exit(1)
         time.sleep(3)
     else:
@@ -132,18 +148,42 @@ def package():
 
     zip_path = "/tmp/bigboy-android.zip"
     data = call(f"/downloadPackageZip?id={urllib.parse.quote(job_id)}", token=token, raw=True)
-    open(zip_path, "wb").write(data)
+    if len(data) > 200 * 1024 * 1024:
+        print("Downloaded package exceeds 200 MB — refusing to extract", flush=True)
+        sys.exit(1)
+    with open(zip_path, "wb") as f:
+        f.write(data)
     print(f"  downloaded {len(data)} bytes -> {zip_path}", flush=True)
+    print(f"  sha256: {hashlib.sha256(data).hexdigest()}", flush=True)
     return zip_path
 
 def extract(zip_path):
-    os.makedirs("/tmp/bbpkg-auto", exist_ok=True)
-    for f in os.listdir("/tmp/bbpkg-auto"):
-        os.remove(os.path.join("/tmp/bbpkg-auto", f))
-    z = zipfile.ZipFile(zip_path)
-    z.extractall("/tmp/bbpkg-auto")
-    apk = [n for n in z.namelist() if n.endswith(".apk")]
-    aab = [n for n in z.namelist() if n.endswith(".aab")]
+    """Extract only safe, regular files inside a dedicated directory."""
+    out = "/tmp/bbpkg-auto"
+    if os.path.isdir(out):
+        shutil.rmtree(out)
+    os.makedirs(out, exist_ok=True)
+    with zipfile.ZipFile(zip_path) as z:
+        bad = z.testzip()
+        if bad:
+            print(f"Corrupt archive member: {bad}", flush=True)
+            sys.exit(1)
+        total = 0
+        for info in z.infolist():
+            name = info.filename.replace("\\", "/")
+            if name.startswith("/") or ".." in name.split("/") or ":" in name:
+                print(f"Unsafe archive path rejected: {name}", flush=True)
+                sys.exit(1)
+            if info.is_dir():
+                continue
+            total += info.file_size
+            if total > 500 * 1024 * 1024:
+                print("Archive expands beyond 500 MB — refusing to extract", flush=True)
+                sys.exit(1)
+            with z.open(info) as src, open(os.path.join(out, os.path.basename(name)), "wb") as dst:
+                shutil.copyfileobj(src, dst)
+    apk = [n for n in os.listdir(out) if n.endswith(".apk")]
+    aab = [n for n in os.listdir(out) if n.endswith(".aab")]
     return apk, aab
 
 def upload(apk_src, aab_src):
@@ -168,14 +208,20 @@ def upload(apk_src, aab_src):
     for local, asset in files:
         args.append(f"{local}#{asset}")
     print(f"  uploading to {RELEASE_TAG} ...", flush=True)
-    subprocess.run(args, check=True, capture_output=True, text=True)
+    result = subprocess.run(args, capture_output=True, text=True)
+    if result.returncode != 0:
+        print("Release upload failed:", redact(result.stderr or result.stdout)[:2000], flush=True)
+        sys.exit(1)
     print(f"  uploaded {len(files)} assets to {RELEASE_TAG}")
 
 def main():
     zip_path = package()
     apk, aab = extract(zip_path)
-    apk_path = "/tmp/bbpkg-auto/" + apk[0] if apk else None
-    aab_path = "/tmp/bbpkg-auto/" + aab[0] if aab else None
+    if not apk or not aab:
+        print(f"Package incomplete — apk={apk}, aab={aab}", flush=True)
+        sys.exit(1)
+    apk_path = "/tmp/bbpkg-auto/" + apk[0]
+    aab_path = "/tmp/bbpkg-auto/" + aab[0]
     upload(apk_path, aab_path)
     print("DONE")
 

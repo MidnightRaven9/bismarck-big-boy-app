@@ -9,7 +9,12 @@ const fs = require('fs');
 const path = require('path');
 
 const TARGET = 'https://www.facebook.com/bismarckbigboy/';
-const OUT = path.join(__dirname, '..', 'facebook_deals.json');
+/* DEALS_OUTPUT/DEALS_PREVIOUS let the release workflow write to a temporary
+   file and only replace the committed data after output validation succeeds. */
+const OUT = process.env.DEALS_OUTPUT ? path.resolve(process.env.DEALS_OUTPUT)
+                                     : path.join(__dirname, '..', 'facebook_deals.json');
+const PREVIOUS = process.env.DEALS_PREVIOUS ? path.resolve(process.env.DEALS_PREVIOUS) : OUT;
+const STALE_AFTER_DAYS = 14; // retire posts Facebook has stopped showing
 
 // Deal-keyword filter (case-insensitive)
 const DEAL_WORDS = /deal|specials?|cater|gift card|gift cards|bonus|limited time|happy hour|voucher|coupon|discount|% off|hot n tot|spice|easter|thanksgiv|veterans|honoring|honor|anniversary|freebies|new item|today only|giveaway|tickets|prize|promo|offer|value meal/i;
@@ -262,15 +267,20 @@ function extractText(html) {
         text: t.trim(),
         expires: expires ? expires.toISOString() : null,
         url: id ? `https://www.facebook.com/bismarckbigboy/posts/${id}/` : null,
+        lastSeen: new Date().toISOString(),
       });
     }
+
+    // An empty candidate set means Facebook's DOM changed or blocked us. Fail
+    // loudly so automation never commits an empty or junk file over good data.
+    if (deals.length === 0) throw new Error('Scraper found no deal candidates');
 
     // Facebook's anonymous DOM is flaky: a scrape may expose only some posts,
     // or a shorter preview than a previous run. Merge with the last good output
     // so a partial scrape never drops deals or truncates text.
-    if (fs.existsSync(OUT)) {
+    if (fs.existsSync(PREVIOUS)) {
       try {
-        const previous = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+        const previous = JSON.parse(fs.readFileSync(PREVIOUS, 'utf8'));
         if (Array.isArray(previous)) {
           for (const d of structured) {
             const old = previous.find(p => (p.url && p.url === d.url) || p.title === d.title);
@@ -278,22 +288,43 @@ function extractText(html) {
             if (typeof old.text === 'string' && old.text.length > d.text.length) d.text = old.text;
             if (!d.url && old.url) d.url = old.url;
             if (!d.expires && old.expires) d.expires = old.expires;
+            d.lastSeen = old.lastSeen || scrapeTime;
           }
           const known = new Set(structured.map(d => (d.url || d.title).toLowerCase()));
           for (const old of previous) {
-            if (!known.has((old.url || old.title).toLowerCase())) structured.push(old);
+            if (known.has((old.url || old.title).toLowerCase())) continue;
+            structured.push({ ...old, lastSeen: old.lastSeen || scrapeTime });
           }
         }
       } catch (_) {}
     }
 
-    // Drop anything that has expired since it was last scraped.
-    const live = structured.filter(d => !d.expires || new Date(d.expires) > new Date());
+    // Drop expired posts and posts Facebook has not surfaced for two weeks.
+    const now = Date.now();
+    const live = structured.filter(d => {
+      if (d.expires && new Date(d.expires).getTime() <= now) return false;
+      const seen = Date.parse(d.lastSeen);
+      if (Number.isFinite(seen) && now - seen > STALE_AFTER_DAYS * 86400000) return false;
+      return true;
+    });
+    // Validate our own output before it can be published. An empty result is
+    // allowed only when real deals were found and then expired/aged out.
+    if (!Array.isArray(live)) throw new Error('Scraper output is not an array');
+    for (const d of live){
+      if (!d || typeof d !== 'object' || typeof d.title !== 'string' || typeof d.text !== 'string'){
+        throw new Error('Scraper produced a malformed deal');
+      }
+      if (d.url && !/^https:\/\/(www\.)?facebook\.com\//.test(d.url)){
+        throw new Error('Scraper produced an unsafe deal URL');
+      }
+    }
+    fs.mkdirSync(path.dirname(OUT), { recursive: true });
     fs.writeFileSync(OUT, JSON.stringify(live, null, 2));
     console.log('Wrote', live.length, 'deals to', OUT);
   } catch (e) {
-    console.log('ERROR', e.message);
-    // Keep the last known-good file: a transient Facebook failure must not wipe
+    process.exitCode = 1;
+    console.error('ERROR', e.message);
+    // Never write a partial file: a transient Facebook failure must not wipe
     // every deal. The app already hides expired ones on render.
   } finally {
     await browser.close();

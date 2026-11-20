@@ -1,0 +1,885 @@
+[
+  {
+    "id": "burgers",
+    "name": "BURGERS",
+    "items": [
+      {
+        "id": "big-boy-original",
+        "n": "Big Boy Original",
+        "img": "063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg",
+        "d": "A double hamburger patty, topped with our special sauce, lettuce and cheese. For a lighter option try our Junior.",
+        "s": [
+          [
+            "Double",
+            6.49
+          ]
+        ]
+      },
+      {
+        "id": "jr-big-boy",
+        "n": "Jr Big Boy",
+        "img": "063b6c_b5d3ae991ff048fa82f72a223eb45bce~mv2.jpg",
+        "d": "Single hamburger patty, topped with our special sauce, lettuce and cheese.",
+        "s": [
+          [
+            "Single",
+            3.99
+          ]
+        ]
+      },
+      {
+        "id": "pizza-burger",
+        "n": "Big Boy Pizza Burger",
+        "img": "063b6c_20c89d5d47cf4e898627c70ffe740281~mv2.jpg",
+        "d": "Signature burger with pizza sauce and American cheese, served flying style or on a bun.",
+        "s": [
+          [
+            "Single",
+            3.79
+          ],
+          [
+            "Double",
+            6.39
+          ]
+        ]
+      },
+      {
+        "id": "hamburger",
+        "n": "Hamburger",
+        "img": "063b6c_a91baf12ad30489d9feeb1cd3ea44b43~mv2.jpg",
+        "d": "Topped with ketchup, mustard, pickle, and onion.",
+        "s": [
+          [
+            "Single",
+            3.39
+          ],
+          [
+            "Double",
+            5.89
+          ]
+        ]
+      },
+      {
+        "id": "cheeseburger",
+        "n": "Cheeseburger",
+        "img": "063b6c_329cdc6d6cb84fc7ba8dd21b6556241b~mv2.jpg",
+        "d": "American cheese, topped with ketchup, mustard, pickle, and onion.",
+        "s": [
+          [
+            "Single",
+            3.69
+          ],
+          [
+            "Double",
+            6.29
+          ]
+        ]
+      },
+      {
+        "id": "alpine-burger",
+        "n": "Alpine Burger",
+        "img": "063b6c_c609940490a44ab3b857a752eb0b07f9~mv2.jpg",
+        "d": "Topped with a mayo and mustard sauce and Swiss cheese.",
+        "s": [
+          [
+            "Single",
+            3.99
+          ],
+          [
+            "Double",
+            6.49
+          ]
+        ]
+      },
+      {
+        "id": "bacon-cheeseburger",
+        "n": "Bacon Cheeseburger",
+        "img": "063b6c_329cdc6d6cb84fc7ba8dd21b6556241b~mv2.jpg",
+        "d": "Bacon round and American cheese, topped with ketchup, mustard, pickle, and onion.",
+        "s": [
+          [
+            "Single",
+            4.99
+          ],
+          [
+            "Double",
+            7.59
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandwiches",
+    "name": "SANDWICHES",
+    "items": [
+      {
+        "id": "chicken-wrap",
+        "n": "Big Boy Chicken Wrap",
+        "img": "063b6c_616ccde60f40490f8360687f3f8ea137~mv2.jpg",
+        "d": "Diced chicken, lettuce, American cheese and your choice of sauce in a flour tortilla — Honey Mustard, BBQ Ranch, Ranch, Boom Boom, or Caesar.",
+        "s": [
+          [
+            "Wrap",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "big-chicken",
+        "n": "Big Chicken",
+        "img": "063b6c_724df592c7b34899bdc6fe94152f2e40~mv2.jpg",
+        "d": "2 chicken strips, honey mustard, lettuce, and Swiss cheese on bun.",
+        "s": [
+          [
+            "Sandwich",
+            6.99
+          ]
+        ]
+      },
+      {
+        "id": "big-boy-fish",
+        "n": "Big Boy Fish",
+        "img": "063b6c_13cfa18e944d48f8879049bbec783023~mv2.jpg",
+        "d": "Cod filet, breaded and deep fried, topped with our house tartar and lettuce.",
+        "s": [
+          [
+            "Sandwich",
+            6.99
+          ]
+        ]
+      },
+      {
+        "id": "ham-cheese",
+        "n": "Ham & Cheese",
+        "img": "063b6c_a273ac51740b4045ab24f873a4bb544e~mv2.jpg",
+        "d": "Hot ham and Swiss cheese sandwich.",
+        "s": [
+          [
+            "Sandwich",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "bbq-beef",
+        "n": "BBQ Beef",
+        "img": "063b6c_c7fd0a3f44c643f59a2b375188707dd6~mv2.jpg",
+        "d": "Our version of a sloppy joe.",
+        "s": [
+          [
+            "Sandwich",
+            3.19
+          ]
+        ]
+      },
+      {
+        "id": "hot-dog-6",
+        "n": "6 inch Hot Dog",
+        "img": "063b6c_2a3c6722badb40eaa6b5d41802de046f~mv2.jpg",
+        "d": "Choice of toppings: Ketchup, Mustard, Pickle, Onion, Lettuce, Tomato, Mayo, Bacon, Cheese.",
+        "s": [
+          [
+            "6 inch",
+            3.19
+          ]
+        ]
+      },
+      {
+        "id": "coney-6",
+        "n": "6 inch Coney Dog",
+        "img": "063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg",
+        "d": "6 inch hot dog topped with our sloppy joe mix.",
+        "s": [
+          [
+            "6 inch",
+            5.09
+          ]
+        ]
+      },
+      {
+        "id": "hot-dog-foot",
+        "n": "Footlong Hot Dog",
+        "img": "063b6c_2a3c6722badb40eaa6b5d41802de046f~mv2.jpg",
+        "d": "12 inch hot dog with your choice of toppings: Ketchup, Mustard, Pickle, Onion, Lettuce, Tomato, Mayo, Bacon, Cheese.",
+        "s": [
+          [
+            "Footlong",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "coney-foot",
+        "n": "Footlong Coney Dog",
+        "img": "063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg",
+        "d": "12 inch hot dog topped with our sloppy joe mix.",
+        "s": [
+          [
+            "Footlong",
+            7.99
+          ]
+        ]
+      },
+      {
+        "id": "chili-cheese-dog",
+        "n": "Chili Cheese Dog",
+        "img": "063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg",
+        "d": "Chili cheese all the way.",
+        "s": [
+          [
+            "Regular",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "chili-cheese-foot",
+        "n": "Foot Long Chili Cheese Dog",
+        "img": "063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg",
+        "d": "The big one — chili and cheese on a foot long.",
+        "s": [
+          [
+            "Footlong",
+            8.29
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "chicken",
+    "name": "CHICKEN",
+    "items": [
+      {
+        "id": "chicken-1-breast",
+        "n": "Chicken 1 Breast",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with fries, gravy, and salad.",
+        "s": [
+          [
+            "Snack",
+            7.49
+          ],
+          [
+            "Meal",
+            10.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-2-piece",
+        "n": "Chicken 2 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with fries, gravy, and salad.",
+        "s": [
+          [
+            "Snack",
+            10.49
+          ],
+          [
+            "Meal",
+            12.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-3-piece",
+        "n": "Chicken 3 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with fries, gravy, and salad.",
+        "s": [
+          [
+            "Snack",
+            12.99
+          ],
+          [
+            "Meal",
+            14.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-4-piece",
+        "n": "Chicken 4 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with fries, gravy, and salad.",
+        "s": [
+          [
+            "Regular",
+            12.99
+          ],
+          [
+            "Meal",
+            16.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-8-piece",
+        "n": "Chicken 8 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with medium fry, medium gravy, and pint of salad.",
+        "s": [
+          [
+            "Regular",
+            25.99
+          ],
+          [
+            "Meal",
+            34.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-12-piece",
+        "n": "Chicken 12 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with large fry, large gravy, and 2 pints salad.",
+        "s": [
+          [
+            "Regular",
+            38.99
+          ],
+          [
+            "Meal",
+            58.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-16-piece",
+        "n": "Chicken 16 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal comes with large fry, large gravy, and 2 pints salad.",
+        "s": [
+          [
+            "Regular",
+            48.99
+          ],
+          [
+            "Meal",
+            68.99
+          ]
+        ]
+      },
+      {
+        "id": "chicken-20-piece",
+        "n": "Chicken 20 Piece",
+        "img": "063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg",
+        "d": "Meal includes large & medium fry, large & medium gravy, and 3 pints of salad.",
+        "s": [
+          [
+            "Regular",
+            59.99
+          ],
+          [
+            "Meal",
+            89.99
+          ]
+        ]
+      },
+      {
+        "id": "strips-3",
+        "n": "Chicken Strips 3 Piece",
+        "img": "063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg",
+        "d": "Meal comes with fries, gravy, and salad.",
+        "s": [
+          [
+            "Snack",
+            11.99
+          ],
+          [
+            "Meal",
+            15.59
+          ]
+        ]
+      },
+      {
+        "id": "strips-8",
+        "n": "Chicken Strips 8 Piece",
+        "img": "063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg",
+        "d": "Meal comes with medium fry, medium gravy, and pint of salad.",
+        "s": [
+          [
+            "Regular",
+            22.99
+          ],
+          [
+            "Meal",
+            37.49
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kids",
+    "name": "KIDS MEALS",
+    "items": [
+      {
+        "id": "kids-strip",
+        "n": "Kids Chicken Strip",
+        "img": "063b6c_c38f6fa8b504452591abd4d990fd4fd0~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "1 Piece",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "kids-nugget",
+        "n": "Kids 4 Piece Nugget Meal",
+        "img": "063b6c_3553570521ab43128da2cb05a425de8f~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "Meal",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "kids-cheeseburger",
+        "n": "Kids Cheeseburger",
+        "img": "063b6c_b7ebf0bf46c045b8911615147014c1fc~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "Meal",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "kids-hamburger",
+        "n": "Kids Hamburger",
+        "img": "063b6c_112dfc358fe6434a88fb0c5a2f8488e4~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "Meal",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "kids-toasted-cheese",
+        "n": "Kids Toasted Cheese",
+        "img": "063b6c_dc02e51837d243b9a9f074d1eb114a70~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "Meal",
+            5.99
+          ]
+        ]
+      },
+      {
+        "id": "kids-toasted-pizza",
+        "n": "Kids Toasted Cheese w/ Pizza Sauce",
+        "img": "063b6c_f6175cd4013e49b595e3d250e63c784a~mv2.jpg",
+        "d": "Comes with fries, chocolate chip cookie and a small beverage.",
+        "s": [
+          [
+            "Meal",
+            5.99
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sides",
+    "name": "SIDE DISHES",
+    "items": [
+      {
+        "id": "fries",
+        "n": "French Fries",
+        "img": "063b6c_87fb6e2ea07845a08107a66734db1ed2~mv2.jpg",
+        "d": "The classic — best paired with gravy.",
+        "s": [
+          [
+            "Small",
+            3.29
+          ],
+          [
+            "Medium",
+            6.29
+          ],
+          [
+            "Large",
+            11.69
+          ]
+        ]
+      },
+      {
+        "id": "gravy",
+        "n": "Gravy",
+        "img": "063b6c_bd3567683a66429799a82c3780ed8851~mv2.jpg",
+        "d": "For dipping. Non-negotiable.",
+        "s": [
+          [
+            "Small",
+            1.79
+          ],
+          [
+            "Medium",
+            2.89
+          ],
+          [
+            "Large",
+            5.29
+          ]
+        ]
+      },
+      {
+        "id": "strip-1",
+        "n": "Chicken Strip 1 Piece",
+        "img": "063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg",
+        "s": [
+          [
+            "Piece",
+            2.89
+          ]
+        ]
+      },
+      {
+        "id": "onion-rings",
+        "n": "Onion Rings",
+        "img": "063b6c_9ef2785b1857457e9a1c97e0e72bd0dc~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            6.59
+          ],
+          [
+            "Medium",
+            12.99
+          ],
+          [
+            "Large",
+            19.99
+          ]
+        ]
+      },
+      {
+        "id": "cheese-stix",
+        "n": "Cheese Stix",
+        "img": "063b6c_1628e15369d9490486927b9e715cf616~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            6.29
+          ],
+          [
+            "Medium",
+            9.29
+          ],
+          [
+            "Large",
+            13.79
+          ]
+        ]
+      },
+      {
+        "id": "poppers",
+        "n": "Poppers",
+        "img": "063b6c_f7e53295af2247d582c54b8a44c1c996~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            6.29
+          ],
+          [
+            "Medium",
+            9.89
+          ],
+          [
+            "Large",
+            14.69
+          ]
+        ]
+      },
+      {
+        "id": "nuggets",
+        "n": "Chicken Nuggets",
+        "img": "063b6c_3553570521ab43128da2cb05a425de8f~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            5.09
+          ],
+          [
+            "Medium",
+            9.99
+          ],
+          [
+            "Large",
+            12.99
+          ]
+        ]
+      },
+      {
+        "id": "coleslaw",
+        "n": "Coleslaw",
+        "img": "063b6c_8f19006d857a4e9991d70ac70dd64c32~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            2.19
+          ],
+          [
+            "Large",
+            7.29
+          ]
+        ]
+      },
+      {
+        "id": "mac-salad",
+        "n": "Macaroni Salad",
+        "img": "063b6c_713795ad8a4e4ca38e410a91370330a9~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            2.09
+          ],
+          [
+            "Large",
+            7.29
+          ]
+        ]
+      },
+      {
+        "id": "potato-salad",
+        "n": "Potato Salad",
+        "img": "063b6c_b2b5d9bf38d5493aaf55391eac0553f9~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            1.99
+          ],
+          [
+            "Large",
+            6.99
+          ]
+        ]
+      },
+      {
+        "id": "baked-beans",
+        "n": "Baked Beans",
+        "img": "063b6c_0ee0e0c4e19e4d2e86ba36be7b5d75a4~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            1.99
+          ],
+          [
+            "Large",
+            6.99
+          ]
+        ]
+      },
+      {
+        "id": "chili",
+        "n": "Chili",
+        "img": "063b6c_116ac58d30c64925914110efd33420bd~mv2.jpg",
+        "s": [
+          [
+            "Small",
+            5.09
+          ],
+          [
+            "Large",
+            7.99
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "drinks",
+    "name": "BEVERAGES",
+    "items": [
+      {
+        "id": "hot-n-tot",
+        "n": "Hot-N-Tot",
+        "img": "063b6c_e7045135af6547c487ec577ed9ce6078~mv2.png",
+        "d": "Handcrafted cinnamon syrup blended into Coca-Cola — a warm and spiced soda sensation.",
+        "s": [
+          [
+            "Small",
+            2.29
+          ],
+          [
+            "Medium",
+            2.79
+          ],
+          [
+            "Large",
+            4.59
+          ]
+        ]
+      },
+      {
+        "id": "frozen-flavors",
+        "n": "Frozen Flavors",
+        "img": "063b6c_a2ba4d69d7b04e54babd0af9168738a0~mv2.jpg",
+        "d": "Coke, Strawberry, and Lemonade.",
+        "s": [
+          [
+            "Small",
+            3.09
+          ],
+          [
+            "Medium",
+            4.39
+          ],
+          [
+            "Large",
+            5.49
+          ]
+        ]
+      },
+      {
+        "id": "coke-products",
+        "n": "Coke Products",
+        "img": "063b6c_886ea1c11ef645a581e17a3ed12fd17a~mv2.png",
+        "d": "Full fountain lineup.",
+        "s": [
+          [
+            "Small",
+            1.69
+          ],
+          [
+            "Medium",
+            2.09
+          ],
+          [
+            "Large",
+            3.39
+          ]
+        ]
+      },
+      {
+        "id": "cherry-coke",
+        "n": "Cherry Coke",
+        "img": "063b6c_b2b0b60d829e4e4eb283724dda92a0ef~mv2.png",
+        "s": [
+          [
+            "Small",
+            2.29
+          ],
+          [
+            "Medium",
+            2.69
+          ],
+          [
+            "Large",
+            4.59
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shakes",
+    "name": "SHAKES & TREATS",
+    "items": [
+      {
+        "id": "big-boy-snow",
+        "n": "Big Boy Snow",
+        "img": "063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg",
+        "d": "Classic pebble ice topped with your choice of syrup. Similar to a snow cone, best with a spoon. Flavors: Cherry, Strawberry, Cinnamon, Marshmallow, Grape.",
+        "s": [
+          [
+            "Medium",
+            2.39
+          ],
+          [
+            "Large",
+            2.69
+          ]
+        ]
+      },
+      {
+        "id": "freeze",
+        "n": "Freeze",
+        "img": "063b6c_62cf3828896d425a8aeaa6aac4fb201b~mv2.jpg",
+        "d": "Reeses, Oreo, and Snickers.",
+        "s": [
+          [
+            "Regular",
+            6.49
+          ]
+        ]
+      },
+      {
+        "id": "frozen-frosty",
+        "n": "Frozen Frosty",
+        "img": "063b6c_90dc185cd6074425bf06d9ea8d7453b7~mv2.jpg",
+        "d": "Coke, Strawberry, and Lemonade.",
+        "s": [
+          [
+            "Small",
+            2.19
+          ],
+          [
+            "Large",
+            3.49
+          ]
+        ]
+      },
+      {
+        "id": "purple-cow",
+        "n": "Purple Cow",
+        "img": "063b6c_4033048751a648c1b405e8c3113be879~mv2.png",
+        "d": "Grape milkshake — vanilla ice cream blended with vibrant grape flavoring.",
+        "s": [
+          [
+            "Small",
+            4.29
+          ],
+          [
+            "Large",
+            5.29
+          ]
+        ]
+      },
+      {
+        "id": "brown-cow",
+        "n": "Brown Cow",
+        "img": "063b6c_96628dc943f4421eb6785b8856140583~mv2.png",
+        "d": "Root beer milkshake — classic root beer with smooth, velvety ice cream.",
+        "s": [
+          [
+            "Small",
+            4.29
+          ],
+          [
+            "Large",
+            5.29
+          ]
+        ]
+      },
+      {
+        "id": "shake-flavors",
+        "n": "Shake Flavors",
+        "img": "063b6c_4033048751a648c1b405e8c3113be879~mv2.png",
+        "d": "Choose your flavor: Cherry, Strawberry, Cinnamon, Chocolate, Vanilla, Butterscotch, Hot-N-Tot Jammer (cinnamon & chocolate), Espresso Jammer (coffee & chocolate), Marshmallow, Marshmallow & Chocolate, or Orange.",
+        "s": [
+          [
+            "Small",
+            4.29
+          ],
+          [
+            "Large",
+            5.29
+          ]
+        ]
+      }
+    ]
+  }
+]

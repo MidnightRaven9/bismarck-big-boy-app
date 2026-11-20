@@ -1,0 +1,674 @@
+/* ============================================================
+   BISMARCK BIG BOY — menu data + photos from bismarckbigboy.com
+   ============================================================ */
+const wix = (id, w, h) =>
+  `https://static.wixstatic.com/media/${id}/v1/fill/w_${w},h_${h},al_c,q_85,enc_auto/${id}`;
+
+/* Pure helpers live in core.js so they can be unit-tested without a DOM. */
+const { RESTAURANT, WEEKDAYS, parseHHMM, formatTime, businessNow, addDaysUTC,
+        normalizeOverrides, effectiveHours, nextOpening, validateMenu,
+        normalizeDeals, hostnameOf, canEmbed, shouldHandoff } = globalThis.BigBoyCore;
+let HOUR_OVERRIDES = new Map();
+let MENU = [];
+
+async function loadMenu(){
+  const res = await fetch('menu.json', { cache:'no-cache' });
+  if (!res.ok) throw new Error('Menu request failed: ' + res.status);
+  MENU = validateMenu(await res.json());
+}
+
+
+/* ============================================================
+   State
+   ============================================================ */
+const FAV_KEY = 'bb_favs_v1';
+const state = { tab:'home', cat:'all', q:'', favs:loadFavs() };
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const money = n => '$' + n.toFixed(2);
+// HTML-escape helper for inserting dynamic strings into innerHTML safely.
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
+
+function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch(e){ return new Set(); } }
+function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs])); } catch(e){} }
+
+let BY_ID = {};
+function buildMenuIndex(){
+  BY_ID = {};
+  MENU.forEach(g => g.items.forEach(it => { it._cat = g.name; BY_ID[it.id] = it; }));
+  // A menu update can remove an item saved earlier — drop those stale ids.
+  const stale = [...state.favs].filter(id => !BY_ID[id]);
+  if (stale.length){ stale.forEach(id => state.favs.delete(id)); saveFavs(); }
+  CATS = [{id:'all',name:'ALL'}].concat(MENU.map(g => ({id:g.id, name:g.name})));
+}
+
+/* ============================================================
+   Open / closed status — 10:30 AM to 9:00 PM, 7 days
+   ============================================================ */
+const OPEN_MIN = 10*60 + 30;
+const CLOSE_MIN = 21*60;
+function updateStatus(){
+  const now = businessNow();
+  const h = effectiveHours(now, HOUR_OVERRIDES);
+  const el = $('#status'), main = $('#statusMain'), sub = $('#statusSub');
+  if (!el || !main || !sub) return;
+  if (h.closed){
+    el.classList.add('closed');
+    main.textContent = 'Closed today';
+    sub.textContent = h.note || 'Check our Facebook for updates.';
+    return;
+  }
+  if (now.minutes >= h.open && now.minutes < h.close){
+    el.classList.remove('closed');
+    main.textContent = 'Open now';
+    sub.textContent = 'Closes ' + formatTime(h.close);
+    return;
+  }
+  el.classList.add('closed');
+  main.textContent = 'Closed';
+  if (now.minutes < h.open){
+    sub.textContent = 'Opens ' + formatTime(h.open);
+  } else {
+    const nxt = nextOpening(now, HOUR_OVERRIDES);
+    sub.textContent = nxt
+      ? (nxt.date === addDaysUTC(now.date,1) ? 'Opens ' + formatTime(nxt.open) + ' tomorrow' : 'See Hours for next opening')
+      : 'See Hours for details';
+  }
+}
+
+function renderHours(){
+  const today = businessNow();
+  const rows = [];
+  for (let i=0; i<7; i++){
+    const date = addDaysUTC(today.date, i);
+    const wd = new Date(date + 'T00:00:00Z').getUTCDay();
+    const h = HOUR_OVERRIDES.get(date) || RESTAURANT.hours[wd];
+    rows.push({ name:WEEKDAYS[wd], date, h, isToday:i===0 });
+  }
+  const card = $('#hoursCard');
+  if (card){
+    card.innerHTML = rows.map(r => {
+      const hours = r.h && !r.h.closed
+        ? formatTime(r.h.open) + ' – ' + formatTime(r.h.close)
+        : 'Closed';
+      return '<div class="hours-row ' + (r.isToday?'today':'') + '">' +
+        '<span class="d">' + r.name + (r.isToday?' · TODAY':'') + '</span>' +
+        '<span class="h">' + hours + '</span></div>';
+    }).join('');
+  }
+  const d = RESTAURANT.hours[0];
+  const uniform = RESTAURANT.hours.every(x => x.open===d.open && x.close===d.close && !x.closed) && HOUR_OVERRIDES.size === 0;
+  const summary = uniform
+    ? 'Seven days a week · ' + formatTime(d.open) + ' – ' + formatTime(d.close) + ' (CT)'
+    : 'Hours vary — see the list below';
+  $$('[data-hours-summary]').forEach(el => { el.textContent = summary; });
+}
+
+/* ============================================================
+   Facebook deals (from the auto-packager cron's scrape)
+   ============================================================ */
+async function renderFbDeals(){
+  const el = $('#fbDealsList');
+  if (!el) return;
+  const empty = '<span class="fb-deals-empty">No current deals — check back soon.</span>';
+  try {
+    const res = await fetch('facebook_deals.json', { cache:'no-cache' });
+    if (!res.ok) throw new Error('Deals request failed: ' + res.status);
+    const live = normalizeDeals(await res.json());
+    if (!live.length){ el.innerHTML = empty; return; }
+    el.innerHTML = live.map(d => `
+      <div class="fb-deal-card">
+        <div class="fb-deal-head">
+          <strong>${escapeHtml(d.title)}</strong>
+          <svg class="fb-deal-chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+        </div>
+        <p>${escapeHtml(d.text)}</p>
+        <button class="fb-deal-more" type="button">READ MORE</button>
+        <a class="fb-deal-open" href="${escapeHtml(d.url)}" data-title="${escapeHtml(d.title)}">
+          <svg aria-hidden="true"><use href="#i-external"/></svg> OPEN ON FACEBOOK
+        </a>
+        <span class="fb-deal-caveat">Details may change — confirm on the original post.</span>
+      </div>`).join('');
+  } catch(e){
+    el.innerHTML = '<span class="fb-deals-empty">Deals are unavailable right now. Check back soon.</span>';
+  }
+}
+
+/* Expand/collapse Facebook deal cards. The "Open on Facebook" link is left to
+   the global external-link handler; it never toggles the card. */
+document.addEventListener('click', e => {
+  if (!(e.target instanceof Element)) return;
+  const card = e.target.closest('.fb-deal-card');
+  if (!card) return;
+  if (e.target.closest('a')) return;
+  card.classList.toggle('open');
+  const more = card.querySelector('.fb-deal-more');
+  if (more) more.textContent = card.classList.contains('open') ? 'SHOW LESS' : 'READ MORE';
+});
+
+/* ============================================================
+   Notifications — menu updates + open status alerts
+   ============================================================ */
+/* Storage can be blocked (private mode, strict settings). Never let an alert
+   preference stop the rest of the app from initialising. */
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+const NOTIF = {
+  get on(){ return store.get('bb_notif') === '1'; },
+  set on(v){ store.set('bb_notif', v ? '1' : '0'); },
+  hasPermission(){
+    return typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  },
+  async ask(){
+    if (typeof Notification === 'undefined') return false;
+    if (Notification.permission === 'granted') return true;
+    try { return await Notification.requestPermission() === 'granted'; }
+    catch(e){ return false; }
+  },
+  show(title, body){
+    if (!this.hasPermission()) return;
+    try {
+      const n = new Notification(title, { body, icon: 'icons/icon-512.png?v=2' });
+      n.onclick = () => window.focus();
+    } catch(e){}
+  },
+  menuHash(){
+    if (this._h) return this._h;
+    let h = 1469598103934665603;
+    const str = MENU.map(g => g.name + '|' + g.items.map(i =>
+      i.n + ';' + (i.d||'') + ';' + (i.s||[]).map(s => s[0]+'='+s[1]).join(',')
+    ).join('&')).join('~');
+    for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    this._h = h >>> 0;
+    return this._h;
+  },
+  checkMenuChanged(){
+    const h = String(this.menuHash());
+    const prev = store.get('bb_menu_hash');
+    if (prev !== h){
+      store.set('bb_menu_hash', h);
+      if (prev !== null && this.on && state.tab === 'home'){
+        setTimeout(() => this.show('New menu items!', 'Your menu is updated — check out the new items.'), 1200);
+      }
+    }
+  },
+  maybeAlertOpen(){
+    if (state.tab !== 'menu' || !this.on) return;
+    if (!this.isOpen()) return;
+    const today = businessNow().date;
+    if (store.get('bb_open_alert_day') === today) return;
+    store.set('bb_open_alert_day', today);
+    setTimeout(() => this.show('Big Boy is OPEN!', 'The grill is hot — hop in for a burger!'), 1200);
+  },
+  isOpen(){
+    const now = businessNow();
+    const h = effectiveHours(now, HOUR_OVERRIDES);
+    return !h.closed && now.minutes >= h.open && now.minutes < h.close;
+  },
+  renderToggle(){
+    const b = $('#notifToggle');
+    if (!b) return;
+    b.classList.toggle('on', this.on);
+    b.setAttribute('data-state', this.on ? 'on' : 'off');
+    b.textContent = this.on ? 'Turn off' : 'Turn on';
+    b.title = this.on ? 'Tap to disable alerts' : 'Tap to enable alerts';
+  },
+  init(){
+    this.renderToggle();
+    this.checkMenuChanged();
+    $('#notifToggle')?.addEventListener('click', async () => {
+      const on = !this.on;
+      this.on = on;
+      this.renderToggle();
+      if (on){
+        const granted = await this.ask();
+        if (granted){
+          setTimeout(() => this.show('Big Boy alerts', 'You’ll be notified when the menu updates or the grill turns on.'), 900);
+        } else {
+          this.on = false;   // don't leave the toggle implying alerts are enabled
+          this.renderToggle();
+        }
+      }
+    });
+  }
+};
+
+/* ============================================================
+   Navigation
+   ============================================================ */
+const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
+function go(tab){
+  state.tab = tab;
+  Object.entries(SCREENS).forEach(([k,sel]) => $(sel).classList.toggle('active', k===tab));
+  $$('.tab').forEach(t => {
+    const on = t.dataset.tab === tab;
+    t.classList.toggle('on', on);
+    if (on) t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current');
+  });
+  $('#orderbar').classList.toggle('show', tab==='menu');
+  if (tab==='favs') renderFavs();
+  if (tab==='menu') renderMenu();
+  if (tab==='menu') NOTIF.maybeAlertOpen();
+  if (tab==='info') renderFbDeals();
+  window.scrollTo({top:0, behavior:'instant'});
+  // Keep the URL in sync for PWA shortcuts. replaceState adds no history entry,
+  // so the in-app browser's pushState/back flow stays intact.
+  if (location.hash !== '#' + tab){
+    try { history.replaceState(history.state, '', '#' + tab); } catch(e){}
+  }
+}
+$$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
+
+/* ============================================================
+   Menu rendering
+   ============================================================ */
+let CATS = [{id:'all',name:'ALL'}];
+
+function renderChips(){
+  // Build image map: category id -> first item image
+  const imgMap = {};
+  MENU.forEach(g => {
+    if (g.items && g.items.length) {
+      imgMap[g.id] = g.items[0].img;
+    }
+  });
+  $('#chips').innerHTML = CATS.map(c => {
+    const imgId = imgMap[c.id];
+    const imgSrc = imgId ? wix(imgId, 16, 16) : '';
+    const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">` : '';
+    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`;
+  }).join('');
+  $$('.chip').forEach(ch => ch.addEventListener('click', () => {
+    state.cat = ch.dataset.cat; renderChips(); renderMenu();
+  }));
+}
+
+function picHTML(it, cls){
+  const src = wix(it.img, 300, 300);
+  return `<div class="pic ph ${cls||''}"><span class="fb"></span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}"></div>`;
+}
+
+function itemHTML(it){
+  const sizes = it.s.map((s,i) =>
+    `<button class="size ${i===0?'on':''}" data-price="${s[1]}">${s[0]} ${money(s[1])}</button>`
+  ).join('');
+  const fav = state.favs.has(it.id);
+  return `
+  <div class="item" data-id="${it.id}">
+    ${picHTML(it)}
+    <div class="body">
+      <div class="top">
+        <h4>${it.n}</h4>
+        <button class="fav ${fav?'on':''}" data-fav="${it.id}" aria-label="Save ${it.n}"><svg><use href="#i-heart"/></svg></button>
+      </div>
+      ${it.d ? `<p class="desc">${it.d}</p>` : ''}
+      <div class="sizes">${sizes}</div>
+      <div class="price-row"><span class="price">${money(it.s[0][1])}</span></div>
+    </div>
+  </div>`;
+}
+
+function renderMenu(){
+  $('#menuSkeleton')?.classList.remove('hidden');
+  const q = state.q.trim().toLowerCase();
+  let html = '';
+  let shown = 0;
+  MENU.forEach(g => {
+    if (state.cat !== 'all' && state.cat !== g.id) return;
+    const items = g.items.filter(it =>
+      !q || it.n.toLowerCase().includes(q) || (it.d||'').toLowerCase().includes(q)
+    );
+    if (!items.length) return;
+    shown += items.length;
+    html += `<div class="cat-head">${g.name}<span>${items.length} ITEM${items.length>1?'S':''}</span></div>`;
+    html += items.map(itemHTML).join('');
+  });
+  if (!shown){
+    html = `<div class="empty">
+      <div class="big">Search</div>
+      <h3>Nothing found</h3>
+      <p>We couldn't match “${escapeHtml(state.q)}”. Try “fries”, “shake”, or “dog”.</p>
+      <button class="btn ghost" id="clearSearchEmpty" data-action="clearSearch">CLEAR SEARCH</button>
+    </div>`;
+  }
+  $('#menuSkeleton')?.classList.add('hidden');
+  $('#menuList').innerHTML = html;
+}
+
+function clearSearch(){
+  state.q = ''; $('#search').value = ''; $('#searchWrap').classList.remove('has'); renderMenu();
+}
+
+/* size chips + favorites (delegated) */
+document.addEventListener('click', e => {
+  const sizeBtn = e.target.closest('.size');
+  if (sizeBtn){
+    const wrap = sizeBtn.closest('.item');
+    wrap.querySelectorAll('.size').forEach(s => s.classList.remove('on'));
+    sizeBtn.classList.add('on');
+    wrap.querySelector('.price').textContent = money(parseFloat(sizeBtn.dataset.price));
+    return;
+  }
+  const favBtn = e.target.closest('[data-fav]');
+  if (favBtn){
+    const id = favBtn.dataset.fav;
+    if (state.favs.has(id)) state.favs.delete(id); else state.favs.add(id);
+    saveFavs(); updateBadge();
+    $$(`[data-fav="${id}"]`).forEach(b => {
+      const on = state.favs.has(id);
+      b.classList.toggle('on', on);
+    });
+    if (state.tab==='favs') renderFavs();
+  }
+});
+
+function updateBadge(){
+  const n = state.favs.size;
+  const b = $('#favBadge');
+  b.textContent = n;
+  b.classList.toggle('show', n>0);
+}
+
+/* ============================================================
+   Favorites screen
+   ============================================================ */
+function renderFavs(){
+  const ids = [...state.favs];
+  const box = $('#favList');
+  if (!ids.length){
+    box.innerHTML = `<div class="empty">
+      <div class="big">Empty</div>
+      <h3>No favorites yet</h3>
+      <p>Tap the heart on any menu item and it'll show up here for quick reordering.</p>
+      <button class="btn" data-goto="menu">BROWSE THE MENU</button>
+    </div>`;
+    return;
+  }
+  const groups = {};
+  ids.forEach(id => {
+    const it = BY_ID[id];
+    if (!it) return;
+    (groups[it._cat] = groups[it._cat] || []).push(it);
+  });
+  box.innerHTML = Object.entries(groups).map(([cat, items]) =>
+    `<div class="cat-head">${cat}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
+  ).join('') + `<div style="margin-top:18px">
+      <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
+    </div>`;
+}
+
+/* ============================================================
+   Search
+   ============================================================ */
+$('#search').addEventListener('input', e => {
+  state.q = e.target.value;
+  $('#searchWrap').classList.toggle('has', !!state.q);
+  renderMenu();
+});
+$('#searchClear').addEventListener('click', clearSearch);
+
+/* ============================================================
+   IN-APP BROWSER
+   ------------------------------------------------------------
+   Sites that refuse to be framed (verified via X-Frame-Options /
+   CSP frame-ancestors) get a "handoff" card instead of a blank
+   iframe, so the app always explains what happened.
+   ============================================================ */
+/* Anchor-based open keeps the click user-initiated and strips opener/referrer. */
+function openExternal(url){
+  const { protocol } = hostnameOf(url);
+  if (protocol !== 'http:' && protocol !== 'https:') return;
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  a.setAttribute('data-raw', ''); // do not let the global interceptor re-open this link
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  try { a.click(); } finally { a.remove(); }
+}
+
+const iab = $('#iab'), iabBody = $('#iabBody'), iabFrame = $('#iabFrame');
+let iabUrl = '', iabIsOpen = false, iabReturnFocus = null;
+
+const NOTES = {
+  'order.toasttab.com': "Big Boy's own ordering runs on Toast, which blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
+  'www.toasttab.com':   "Toast's gift card checkout blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
+  'www.instagram.com':  "Instagram blocks being shown inside other apps. Continue to open it in Instagram or your browser.",
+  'www.facebook.com':   "Facebook blocks being shown inside other apps. Continue to open it in Facebook or your browser.",
+  'www.google.com':     "Google Maps blocks being shown inside other apps. Continue to open it for turn-by-turn directions.",
+  'www.ubereats.com':   "Uber Eats blocks being shown inside other apps. Continue to open it and place your delivery order.",
+  'www.doordash.com':   "DoorDash blocks being shown inside other apps. Continue to open it and place your delivery order."
+};
+
+function openIAB({src, url, title}){
+  iabUrl = url;
+  let host = '', hostRaw = '';
+  try {
+    const u = new URL(url);
+    hostRaw = u.hostname;
+    host = u.hostname.replace(/^www\./,'');
+  } catch(e){ host = url; }
+
+  // Escape every dynamic value before it reaches innerHTML. Deal titles come
+  // from the scraped Facebook JSON, so they must not be treated as markup.
+  const escTitle = escapeHtml(title || ''), escHost = escapeHtml(host);
+  $('#iabHost').innerHTML = escTitle
+    ? `${escTitle}<small>${escHost}</small>`
+    : `<span>${escHost}</span>`;
+  const fav = $('#iabFav');
+  fav.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=64`;
+  fav.alt = (title || host) + ' website favicon';
+  fav.hidden = false;
+  fav.onerror = () => { fav.hidden = true; };
+
+  if (src){
+    iabBody.className = 'iab-body web';
+    iab.classList.add('loading');
+    iabFrame.src = src;
+  } else {
+    iabFrame.src = 'about:blank';
+    iabBody.className = 'iab-body handoff';
+    const isOrdering = host === 'order.toasttab.com';
+    $('#hoInner').innerHTML = `
+      <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128">
+      <h3>${escTitle || escHost}</h3>
+      <div class="host">${escHost}</div>
+      <p>${NOTES[hostRaw] || NOTES[host] || "This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved."}</p>
+      <a class="btn block" id="hoGo" data-raw target="_blank" rel="noopener noreferrer" href="${escapeHtml(url)}">CONTINUE TO ${escapeHtml(host.toUpperCase())} →</a>
+      ${isOrdering ? `<button class="btn ghost block" id="hoDelivery">Delivery INSTEAD</button>` : ''}
+      <button class="btn dark block" id="hoCancel">GO BACK TO THE APP</button>
+      <div class="why">Your place in the app is kept — just tap Back to return.</div>`;
+    $('#hoGo').addEventListener('click', ev => {
+      ev.preventDefault();
+      ev.stopPropagation();          // stop the global link interceptor re-opening the overlay
+      openExternal(url);
+      closeIAB();
+    });
+    if (isOrdering){
+      $('#hoDelivery').addEventListener('click', () => {
+        closeIAB();
+        go('home');
+        setTimeout(() => {
+          const el = document.getElementById('delivery');
+          if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        }, 180);
+      });
+    }
+    $('#hoCancel').addEventListener('click', closeIAB);
+  }
+
+  if (!iabIsOpen){
+    iabIsOpen = true;
+    iabReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    try { history.pushState({iab:true}, ''); } catch(e){}
+  }
+  iab.classList.add('open');
+  document.body.classList.add('locked');
+  iab.focus();
+}
+
+function hideIAB(){
+  iabIsOpen = false;
+  iab.classList.remove('open');
+  document.body.classList.remove('locked');
+  iab.classList.remove('loading');
+  iabFrame.src = 'about:blank';
+  if (iabReturnFocus && document.contains(iabReturnFocus)) iabReturnFocus.focus();
+  iabReturnFocus = null;
+}
+function closeIAB(){
+  if (history.state && history.state.iab) history.back();   // triggers popstate → hideIAB
+  else hideIAB();
+}
+window.addEventListener('popstate', () => { if (iabIsOpen) hideIAB(); });
+
+$('#iabBack').addEventListener('click', closeIAB);
+$('#iabExt').addEventListener('click', () => {
+  if (!iabUrl) return;
+  openExternal(iabUrl);
+});
+iabFrame.addEventListener('load', () => iab.classList.remove('loading'));
+
+/* Keep keyboard focus inside the modal while it is open. */
+function trapIabFocus(e){
+  if (e.key !== 'Tab' || !iabIsOpen) return;
+  const list = [...iab.querySelectorAll('button:not([disabled]), a[href], iframe, [tabindex]:not([tabindex="-1"])')]
+    .filter(n => n.getClientRects().length);
+  if (!list.length) return;
+  const first = list[0], last = list[list.length-1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+}
+document.addEventListener('keydown', e => {
+  if (!iabIsOpen) return;
+  if (e.key === 'Escape') closeIAB();
+  else trapIabFocus(e);
+});
+
+/* intercept every external link so nothing silently leaves the app */
+document.addEventListener('click', e => {
+  if (!(e.target instanceof Element)) return;
+  const a = e.target.closest('a[href]');
+  if (!a) return;
+  if (a.hasAttribute('data-raw')) return;   // handoff buttons handle themselves
+  const forced = a.getAttribute('data-iab');
+  const href = a.getAttribute('href') || '';
+  if (!forced && !/^https?:/i.test(href)) return;   // tel:, #, mailto: → native behaviour
+  e.preventDefault();
+  const url = forced || href;
+  if (shouldHandoff(url)){ openExternal(href); return; }
+  openIAB({
+    src: canEmbed(url) ? url : null,
+    url: href,
+    title: a.dataset.title || ''
+  });
+}, false);
+
+/* internal navigation via data-goto + data-action (replaces inline onclick handlers) */
+document.addEventListener('click', e => {
+  if (!(e.target instanceof Element)) return;
+  const nav = e.target.closest('[data-goto]');
+  if (nav){ e.preventDefault(); go(nav.dataset.goto); return; }
+  const act = e.target.closest('[data-action]');
+  if (act){
+    e.preventDefault();
+    if (act.dataset.action === 'clearSearch') clearSearch();
+  }
+});
+
+/* image-load failure handling (was: inline) */
+document.addEventListener('error', e => {
+  const t = e.target;
+  if (t && t.tagName === 'IMG') t.style.display = 'none';
+}, true);
+
+/* ============================================================
+   Init
+   ============================================================ */
+async function initApp(){
+  let menuOk = true;
+  try { await loadMenu(); }
+  catch(e){ menuOk = false; console.warn('Menu unavailable:', e.message); }
+  try {
+    const r = await fetch('hours_overrides.json', { cache:'no-cache' });
+    HOUR_OVERRIDES = normalizeOverrides(r.ok ? await r.json() : null);
+  } catch(e){ HOUR_OVERRIDES = new Map(); }
+  if (menuOk) buildMenuIndex();
+  renderChips();
+  renderMenu();
+  if (!menuOk){
+    const list = $('#menuList');
+    if (list) list.innerHTML = '<div class="empty"><h3>Menu unavailable</h3><p>The menu could not be loaded. Check your connection and try again.</p></div>';
+  }
+  renderHours();
+  updateStatus();
+  updateBadge();
+  setInterval(updateStatus, 30000);
+  NOTIF.init();
+  renderFbDeals();
+  window.addEventListener('hashchange', applyHash);
+  applyHash();
+}
+initApp();
+
+/* PWA shortcuts deep-link into a screen or action. */
+function applyHash(){
+  const h = location.hash.slice(1);
+  if (SCREENS[h]){ go(h); return; }
+  if (h === 'order' || h === 'directions'){
+    go('home');
+    const sel = h === 'order' ? '.qa a.primary' : '.qa a[data-title="Directions"]';
+    const link = document.querySelector(sel);
+    if (link) setTimeout(() => link.click(), 120);
+  }
+}
+
+/* ============================================================
+   PWA — installable + offline shell
+   ============================================================ */
+if ('serviceWorker' in navigator) {
+  /* Activation takes control and the app reloads once, so a failure message
+     received just before that reload would otherwise disappear. Remember it
+     for this tab and redraw the notice on the replacement page. */
+  const SHELL_NOTICE_KEY = 'bb_shell_notice_v1';
+  const shellNoticePending = () => {
+    try { return sessionStorage.getItem(SHELL_NOTICE_KEY) === '1'; } catch (e) { return false; }
+  };
+  const showShellInstallNotice = () => {
+    try { sessionStorage.setItem(SHELL_NOTICE_KEY, '1'); } catch (e) {}
+    const el = $('#appNotice');
+    if (!el || !el.hidden) return;
+    el.hidden = false;
+    el.textContent = 'Offline setup did not finish. Some pages may not load without a connection. ';
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.textContent = 'RETRY';
+    btn.addEventListener('click', () => {
+      try { sessionStorage.removeItem(SHELL_NOTICE_KEY); } catch (e) {}
+      location.reload();
+    });
+    el.appendChild(btn);
+  };
+  if (shellNoticePending()) showShellInstallNotice();
+
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (!e.data || e.data.type !== 'SHELL_INSTALL_FAILED') return;
+    showShellInstallNotice();
+  });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+      reg.update().catch(() => {});
+      // Reload once when a new worker takes over so fresh content shows immediately.
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloaded) return;
+        reloaded = true;
+        location.reload();
+      });
+    }).catch(() => {});
+  });
+  // Ask the active worker for any persisted install failure from this session.
+  navigator.serviceWorker.ready
+    .then(reg => reg.active && reg.active.postMessage({ type:'CHECK_SHELL' }))
+    .catch(() => {});
+}

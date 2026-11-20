@@ -1,0 +1,48 @@
+name: Validate (no secrets, no publishing)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install pinned test dependencies
+        run: npm ci
+
+      - name: Install pinned browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Syntax checks
+        run: |
+          node --check core.js
+          node --check app.js
+          node --check sw.js
+          node --check scripts/scrape_fb_deals.js
+          node --check scripts/capture_screenshots.js
+          python3 -m py_compile scripts/package-android.py
+
+      - name: Data integrity
+        run: |
+          node -e "const fs=require('fs');['manifest.webmanifest','menu.json','facebook_deals.json','hours_overrides.json','package.json','package-lock.json'].forEach(f=>JSON.parse(fs.readFileSync(f,'utf8')));console.log('JSON OK')"
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Browser integration tests
+        run: npm run test:browser

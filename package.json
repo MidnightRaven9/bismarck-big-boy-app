@@ -1,0 +1,17 @@
+{
+  "name": "bismarck-big-boy-app-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Test-only tooling for the Bismarck Big Boy static PWA. The app itself has no runtime dependencies or build step.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/unit.test.js",
+    "test:browser": "node tests/browser.test.js",
+    "test:all": "npm test && npm run test:browser"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
+}
