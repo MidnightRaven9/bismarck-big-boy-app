@@ -53,6 +53,57 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 a{color:inherit}
 img{max-width:100%}
 
+/* ---------- raised 3D icon buttons ---------- */
+.retro-icon-button{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;min-width:0;
+  border:2px solid rgba(255,255,255,.09);
+  border-radius:25%;
+  background:linear-gradient(145deg,#252525 0%,#1B1B1B 55%,#151515 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.06),
+    inset 0 -3px 6px rgba(0,0,0,.25),
+    0 12px 20px rgba(0,0,0,.55);
+  color:#F8F8F8;
+  text-decoration:none;
+  transition:transform 180ms ease,box-shadow 180ms ease,border-color 180ms ease;
+}
+.retro-icon-button::before{
+  content:"";position:absolute;left:10%;right:10%;top:1px;height:1px;
+  background:rgba(255,255,255,.14);border-radius:999px;pointer-events:none;
+}
+.retro-icon-button:active{
+  transform:translateY(2px) scale(.98);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.04),
+    inset 0 2px 5px rgba(0,0,0,.35),
+    0 5px 10px rgba(0,0,0,.5);
+}
+.retro-icon-button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.retro-icon-button .icon{
+  display:grid;place-items:center;flex:none;
+  color:var(--red);
+  filter:drop-shadow(0 0 4px rgba(255,23,52,.5));
+}
+.retro-icon-button .icon svg{
+  width:100%;height:100%;display:block;
+  stroke-width:2.5;
+}
+.retro-icon-button .label{
+  color:#F8F8F8;font-weight:700;text-align:center;
+  letter-spacing:-.02em;line-height:1.15;
+}
+.retro-icon-button.primary{
+  background:linear-gradient(160deg,#FF263F 0%,#E00028 55%,#B80020 100%);
+  border-color:rgba(255,255,255,.22);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.15),
+    0 12px 22px rgba(0,0,0,.45),
+    0 4px 16px rgba(255,0,40,.18);
+}
+.retro-icon-button.primary .icon{color:#fff;filter:none}
+
 /* ---------- checker strip ---------- */
 .checker{
   height:12px;
@@ -139,20 +190,15 @@ header{
 .hero .addr{margin-top:14px;font-size:13px;opacity:.92;line-height:1.6}
 
 /* ---------- quick actions ---------- */
-.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:16px}
-.qa a{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
-  padding:11px 4px;text-decoration:none;font-size:10.5px;font-weight:700;
-  color:var(--ink);text-align:center;box-shadow:var(--shadow-soft);
-  transition:transform .15s ease,border-color .15s ease;
+.qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.qa a{aspect-ratio:1/1;padding:14px 8px}
+.qa .icon{width:42px;height:42px}
+.qa .label{font-size:12.5px}
+.qa a[data-title="Call"] .icon svg{transform:rotate(-18deg)}
+.qa a.primary .label{color:#fff}
+@media(min-width:520px){
+  .qa{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-.qa a:active{transform:scale(.95)}
-.qa .ico{width:38px;height:38px;border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);display:grid;place-items:center;color:var(--red)}
-.qa .ico img{width:100%;height:100%;object-fit:cover}
-.qa .ico svg{width:20px;height:20px;display:block}
-.qa a.primary{background:var(--red);color:#fff;border-color:var(--red)}
-.qa a.primary .ico{background:rgba(255,255,255,.18);color:#fff}
 
 /* ---------- specials ---------- */
 .specials{display:grid;gap:12px}
@@ -226,7 +272,8 @@ header{
 .item:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
 .reward-card:hover{transform:translateY(-1px)}
 .reward-card:active{transform:scale(.99)}
-.qa a:hover{transform:translateY(-2px)}
+.qa a:hover:not(:active){transform:translateY(-2px)}
+.qa a:active,.tab:active{transform:translateY(2px) scale(.98)}
 .del:hover{transform:translateX(-2px)}
 /* --- prefers-reduced-motion support --- */
 @media (prefers-reduced-motion: reduce){
@@ -365,11 +412,27 @@ nav.tabbar{
   box-shadow:0 -2px 12px rgba(0,0,0,.28);
   display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:0 8px;
 }
-.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-soft);position:relative;transition:.15s;-webkit-tap-highlight-color:transparent}
-.tab svg{width:28px;height:28px;display:block;opacity:.72;transition:.15s}
-.tab.on{color:var(--red);background:rgba(200,16,46,.12);border-radius:var(--radius-sm);box-shadow:inset 0 0 0 1px rgba(200,16,46,.22)}
-.tab.on svg{opacity:1;transform:translateY(-1px)}
-.tab .badge{position:absolute;top:2px;right:calc(50% - 18px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
+.tab{padding:7px 2px;gap:4px;color:#F8F8F8;position:relative;-webkit-tap-highlight-color:transparent}
+.tab::before{left:14%;right:14%}
+.tab .icon{width:26px;height:26px}
+.tab .icon svg{fill:none}
+.tab .label{font-size:10px}
+.tab[data-tab="home"] .icon,
+.tab[data-tab="menu"] .icon{color:var(--red);filter:drop-shadow(0 0 5px rgba(255,23,52,.55))}
+.tab[data-tab="favs"] .icon,
+.tab[data-tab="rewards"] .icon,
+.tab[data-tab="info"] .icon{color:#D7D7DA;filter:drop-shadow(0 0 3px rgba(255,255,255,.14))}
+.tab.on{
+  background:linear-gradient(145deg,#3A2026 0%,#24161A 100%);
+  border-color:rgba(255,23,52,.35);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.08),
+    inset 0 -2px 5px rgba(0,0,0,.3),
+    0 4px 10px rgba(0,0,0,.4),
+    0 0 0 1px rgba(255,23,52,.18);
+}
+.tab.on .icon{filter:drop-shadow(0 0 6px rgba(255,23,52,.62))}
+.tab .badge{position:absolute;top:3px;right:calc(50% - 19px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center}
 .tab .badge.show{display:flex}
 
 /* ============================================================
@@ -441,14 +504,19 @@ nav.tabbar{
 @media (max-width:300px){
   .screen{padding:14px 12px 8px}
   header{padding:8px 12px 10px}
-  .qa{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .qa{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .qa a{padding:10px 4px;gap:5px}
+  .qa .icon{width:30px;height:30px}
+  .qa .label{font-size:10px}
   .awards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .socials{grid-template-columns:1fr}
   .special{padding:10px;gap:10px}
   .special .pic{width:48px;height:48px}
   .special>div:not(.pic){min-width:0}
-  .tab svg{width:22px;height:22px}
-  .tab{font-size:9px;min-width:0}
+  .tab{padding:5px 0;gap:2px}
+  .tab .icon{width:20px;height:20px}
+  .tab .label{font-size:7.5px;letter-spacing:-.03em}
+  .tab .badge{top:1px;right:calc(50% - 16px);min-width:14px;height:14px;font-size:8px}
   .screen-title{font-size:28px}
   .section-title{font-size:22px}
   .reward-hero h2{font-size:28px}
@@ -484,19 +552,20 @@ nav.tabbar{padding:0 8px env(safe-area-inset-bottom)}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></g></symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5c0-2.8 3.6-5 8-5s8 2.2 8 5"/><path d="M3 12.5h18"/><path d="M4 16h16"/><path d="M5 19.5h14"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5a8 4.2 0 0 1 16 0"/><path d="M3.5 13c1.8 1.7 3.7-1.3 5.5 0s3.7-1.3 5.5 0 3.7-1.3 5.5 0"/><path d="M4.5 15.5h15v1.1a3 2.4 0 0 1-3 2.4h-9a3 2.4 0 0 1-3-2.4Z"/></g><g fill="currentColor" stroke="none"><circle cx="9" cy="8.3" r=".7"/><circle cx="13" cy="7.4" r=".7"/><circle cx="16.5" cy="8.6" r=".7"/></g></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S3.5 15.4 3.5 9.6C3.5 6.9 5.6 5 8.2 5c1.6 0 3 .8 3.8 2.1C12.8 5.8 14.2 5 15.8 5c2.6 0 4.7 1.9 4.7 4.6 0 5.8-8.5 10.9-8.5 10.9Z"/></g></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.2 9l6 .6-4.5 4 1.3 5.9L12 16.4l-5 3.1L8.3 13.6 3.8 9.6l6-.6L12 3.5Z"/></g></symbol>
 
     <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/></g><g fill="currentColor" stroke="none"><circle cx="12" cy="7.8" r="1.15"/></g></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9Z"/></g></symbol>
+    <symbol id="i-call" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.5v2.3a1.7 1.7 0 0 1-1.9 1.7 17 17 0 0 1-7.4-2.7 16.8 16.8 0 0 1-5.1-5.1 17 17 0 0 1-2.7-7.4 1.7 1.7 0 0 1 1.7-1.9h2.3a1.7 1.7 0 0 1 1.7 1.5c.1.8.3 1.6.6 2.4a1.7 1.7 0 0 1-.4 1.8L5.2 13a13.7 13.7 0 0 0 5.1 5.1l1.1-1.1a1.7 1.7 0 0 1 1.8-.4c.8.3 1.6.5 2.4.6a1.7 1.7 0 0 1 1.5 1.7Z"/><path d="M18.4 6.2a4.3 4.3 0 0 1 2.1 3.6"/><path d="M20.7 3.3a8 8 0 0 1 2 6.5"/></g></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
     <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8c-1.5-4.5-6-4.5-6-1.5 0 2 2.5 2.5 6 1.5Zm0 0c1.5-4.5 6-4.5 6-1.5 0 2-2.5 2.5-6 1.5Z"/></g></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></g></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></g></symbol>
     <symbol id="i-external" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h6v6"/><path d="M19 5 11 13"/><path d="M19 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4"/></g></symbol>
-    <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7Z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></g></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l1 12.5h-15L5.5 8Z"/><path d="M8.5 10V7a2.2 2.2 0 0 1 4.4 0"/><path d="M11.1 7a2.2 2.2 0 0 1 4.4 0v3"/></g></symbol>
     <symbol id="i-park" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M5 18h3.5V4H5zm4.5 0H15V8.5H9.5zm0 0h5V6h-5z"/></g></symbol>
   </defs>
 </svg>
@@ -539,14 +608,24 @@ nav.tabbar{padding:0 8px env(safe-area-inset-bottom)}
   </div>
 
   <div class="qa">
-    <a class="primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
-      <span class="ico"><svg><use href="#i-bag"/></svg></span>Order Online
+    <a class="retro-icon-button primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-bag"/></svg></span>
+      <span class="label">Order<br>Online</span>
     </a>
-    <a href="tel:7012234125"><span class="ico"><svg><use href="#i-phone"/></svg></span>Call</a>
-    <a href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
+    <a class="retro-icon-button" href="tel:7012234125">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-call"/></svg></span>
+      <span class="label">Call</span>
+    </a>
+    <a class="retro-icon-button" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
-       data-title="Directions"><span class="ico"><svg><use href="#i-pin"/></svg></span>Directions</a>
-    <a href="#rewards" data-goto="rewards"><span class="ico"><svg><use href="#i-gift"/></svg></span>Gift Cards</a>
+       data-title="Directions">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></span>
+      <span class="label">Directions</span>
+    </a>
+    <a class="retro-icon-button" href="#rewards" data-goto="rewards">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-gift"/></svg></span>
+      <span class="label">Gift Cards</span>
+    </a>
   </div>
 
   <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
@@ -825,12 +904,21 @@ nav.tabbar{padding:0 8px env(safe-area-inset-bottom)}
 
 <!-- ============ TAB BAR ============ -->
 <nav class="tabbar" aria-label="Main navigation">
-  <button class="tab on" data-tab="home" aria-label="Home" aria-current="page"><svg><use href="#i-home"/></svg></button>
-  <button class="tab" data-tab="menu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
-  <button class="tab" data-tab="favs" aria-label="Favorites"><svg><use href="#i-heart"/></svg><span class="badge" id="favBadge">0</span></button>
-  <button class="tab" data-tab="rewards" aria-label="Rewards"><svg><use href="#i-star"/></svg></button>
-
-  <button class="tab" data-tab="info" aria-label="Info"><svg><use href="#i-info"/></svg></button>
+  <button class="retro-icon-button tab on" data-tab="home" aria-label="Home" aria-current="page">
+    <span class="icon"><svg aria-hidden="true"><use href="#i-home"/></svg></span><span class="label">Home</span>
+  </button>
+  <button class="retro-icon-button tab" data-tab="menu" aria-label="Menu">
+    <span class="icon"><svg aria-hidden="true"><use href="#i-menu"/></svg></span><span class="label">Menu</span>
+  </button>
+  <button class="retro-icon-button tab" data-tab="favs" aria-label="Favorites">
+    <span class="icon"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="label">Favorites</span><span class="badge" id="favBadge">0</span>
+  </button>
+  <button class="retro-icon-button tab" data-tab="rewards" aria-label="Rewards">
+    <span class="icon"><svg aria-hidden="true"><use href="#i-star"/></svg></span><span class="label">Rewards</span>
+  </button>
+  <button class="retro-icon-button tab" data-tab="info" aria-label="Info">
+    <span class="icon"><svg aria-hidden="true"><use href="#i-info"/></svg></span><span class="label">Info</span>
+  </button>
 </nav>
 
 <script src="core.js" defer></script>
