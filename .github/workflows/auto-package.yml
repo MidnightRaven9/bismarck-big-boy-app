@@ -47,7 +47,7 @@ jobs:
         run: python3 scripts/package-android.py
 
       - name: Store new hash and commit to main
-        if: steps.hash.outputs.hash != steps.last.outputs.last
+        if: steps.hash.outputs.hash != steps.last.outputs.last && steps.package.outcome == 'success'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd "$GITHUB_WORKSPACE/bismarck-big-boy-app"
+          cd "$GITHUB_WORKSPACE"
           # Install playwright locally for the scraper
           npm install --no-save --prefix /tmp/pw-node playwright 2>&1 | tail -1
           /tmp/pw-node/node_modules/.bin/playwright install chromium --with-deps 2>&1 | tail -2
