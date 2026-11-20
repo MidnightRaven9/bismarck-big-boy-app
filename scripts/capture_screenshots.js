@@ -21,7 +21,7 @@ async function shot(page, name, actions) {
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ args: ['--no-sandbox'] });
   try {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
 
@@ -66,12 +66,11 @@ async function shot(page, name, actions) {
     });
     await p5.close();
 
-    // 6 — Delivery (from Home scroll)
+    // 6 — Delivery (dedicated tab)
     const p6 = await ctx.newPage();
     await shot(p6, '6-delivery.png', async p => {
+      await p.click('.tab[data-tab="delivery"]');
       await p.waitForTimeout(800);
-      await p.evaluate(() => document.getElementById('delivery') &&
-        document.getElementById('delivery').scrollIntoView({ behavior: 'instant', block: 'center' }));
     });
     await p6.close();
 

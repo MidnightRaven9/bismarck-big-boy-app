@@ -28,7 +28,7 @@ There are no accounts, no backend, no analytics and no personal data leaving the
 - Facebook's anonymous DOM is unreliable; deal text may remain truncated. The UI tells customers to confirm details on the original post.
 - Third-party pages can still change framing behaviour; verify embedded map and delivery pages periodically.
 - The legacy "Shake Flavors" menu entry is not on the current official menu page. The owner confirmed it should be kept, so it remains unchanged in `menu.json`.
-- All current code and workflow changes are local and uncommitted: no commit, push, workflow run, release publication or deployment has been performed.
+- All final code, workflow, documentation and screenshot changes were committed and pushed to `origin/main`; no manual workflow run, release publication or deployment was performed.
 - Manual device verification is still required for TWA fullscreen/return-to-app, digital asset links, popup behavior, iOS Safari offline behavior, real screen readers and OS-level large text.
 
 ## Not claimed

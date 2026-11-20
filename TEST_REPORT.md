@@ -1,6 +1,6 @@
 # Test Report
 
-Date: 2026-11-20. All commands were run locally in `/root/projects/bismarck-big-boy-app`. No deployment, push, release, workflow run or signing-material access was performed.
+Date: 2026-11-20. All validation commands were run locally in `/root/projects/bismarck-big-boy-app`. The final commit was pushed to `origin/main`; no release, deployment, manual workflow dispatch or signing-material access was performed.
 
 ## Baseline before remediation
 
@@ -19,7 +19,7 @@ Repository was clean at `8a2092f` before any edit. `package.json` exposes only `
 | `npm ci` | pass — 2 packages, 0 vulnerabilities |
 | `npm audit` | pass — **0 vulnerabilities** |
 | `npm test` | **17/17 pass** |
-| `npm run test:browser` | **24/24 pass** |
+| `npm run test:browser` | **26/26 pass** |
 | `npm run test:all` | pass — both suites above, sequential |
 | `node --check core.js` | pass |
 | `node --check app.js` | pass |
@@ -38,7 +38,7 @@ YAML was parsed with a temporary PyYAML install in `/tmp/opencode/yaml-venv`; no
 Final shell hash (768 hex characters, no trailing newline):
 
 ```
-bffa98ba570f36bee14ba8794dee05b21102204c8ea98da67390c45181d1323e7c3404640c6c70179be48169673734a19420678cd2ebf32fedddcfbc45b479a1c46844a6690e4e50f2d56dab588d0b7fd18837dc27bacdc48268df35ab143ac7896953e960b304678e29b4eb620729ed9916df27d93100148c447e713d1834513f137e9222699c3641ddf2af7f6c90ab6ba9dbf756ca2fbd289cdab429f426159f6a70efb80055385f497fc0806fd78a1cf5b3f9dc6a28c496ceb77931c0e41825f912a5dd594e4a46d43ce338b33c1722d27c1466fa1bf4fb0eaf8be246f822305c19c20ccd562dffb054a2748bb89d8cd38a72e4f568550aa390a422f260fcfb6a7dda6fb28bc68d00e4163237567736595db03296597da7d9a096b0e14f0b7a99e38e5eacf48b1e46511b0ff16d3623d2b2f89b6a008c87ab7ddd3914d4ff98b16aa1dd6628590e678d61fbed875ca1f52675802a20c1ebb5a5b10dda6f33655be39fb9c71fa69abd42d362a7ffca9f7ec06dbfc28f58e0febec41fc401b7
+a8cd04ab9819b7d6a62ecc55f6f516dfc9e5583a2cbef859e31cb0775ee34bfd7c3404640c6c70179be48169673734a19420678cd2ebf32fedddcfbc45b479a11c59b09d21dcc53c5f06c39314e28abc79093b3f69bdc38606929d8a35b68877896953e960b304678e29b4eb620729ed9916df27d93100148c447e713d1834513f137e9222699c3641ddf2af7f6c90ab6ba9dbf756ca2fbd289cdab429f426159f6a70efb80055385f497fc0806fd78a1cf5b3f9dc6a28c496ceb77931c0e41825f912a5dd594e4a46d43ce338b33c1722d27c1466fa1bf4fb0eaf8be246f822305c19c20ccd562dffb054a2748bb89d8cd38a72e4f568550aa390a422f260fcfb6a7dda6fb28bc68d00e4163237567736595db03296597da7d9a096b0e14f0b7a99e38e5eacf48b1e46511b0ff16d3623d2b2f89b6a008c87ab7ddd3914d4ff98b16aa1dd6628590e678d61fbed875ca1f52675802a20c1ebb5a5b10dda6f33655be39fb9c71fa69abd42d362a7ffca9f7ec06dbfc28f58e0febec41fc401b7
 ```
 
 Regenerated with:
@@ -70,34 +70,43 @@ The service worker and registration URL derive the release version from a SHA-25
 16. Service worker versions atomically from the full hash, validates JSON schema, scopes cleanup — pass.
 17. App rendering escapes menu data, uses a local image placeholder and reports storage failures — pass.
 
-## Browser integration tests (24/24, headless Chromium, 390×844 unless noted)
+## Browser integration tests (26/26, headless Chromium, 390×844 unless noted)
 
 1. Shell, 56 menu items, 8 chips and resolved status — pass.
 2. Malicious menu values render as text; no injected scripts/handlers/URLs execute — pass.
 3. Tab navigation, `aria-current`, `#directions` deep link — pass.
-4. OpenStreetMap framing, Tab focus trap, Escape and focus restoration — pass.
-5. Toast ordering hands off via popup instead of being framed — pass.
-6. Favorites persist across reload; corrupted `localStorage` does not break the menu — pass.
-7. Malformed deals JSON with no cached copy shows a safe empty state — pass.
-8. Schema-invalid menu JSON falls back to last known good data and reports `CONTENT_FALLBACK` — pass.
-9. Service worker takes control, installs cleanly and serves the cached menu offline — pass.
-10. Menu search, category filters and safe empty state — pass.
-11. No horizontal overflow at 320px and 360px — pass.
-12. 200% zoom reflow at 195 CSS px has no horizontal scroll — pass.
-13. Keyboard navigation reaches and activates tabs with a visible focus outline — pass.
-14. Reduced motion disables transitions and animations — pass.
-15. Key text meets 4.5:1 colour contrast — pass.
-16. Basic accessibility semantics: unique IDs, named buttons, image alt text, iframe title, dialog role, live status region — pass.
-17. Offline startup with caches deleted returns the 503 fallback with no inline handler, a working retry link and a strict CSP header — pass.
-18. Failed shell installation is reported, never activates an incomplete worker, and shows a retry — pass.
-19. Failed install recovers after reconnection; marker and notice are cleared — pass.
-20. Broken external images use a local `data:image/svg+xml` placeholder with stable layout and preserved alt text — pass.
-21. Favorites storage failure is reported once and favorites remain usable in memory — pass.
-22. Content-addressed updates replace old caches, keep both tabs in control and preserve unrelated caches — pass.
-23. External actions (ordering, rewards, gift cards, delivery, directions) use the expected URLs and safe handoffs; Food Dudes remains framed — pass.
-24. No page errors or CSP violations — pass.
+4. Six labeled tabs route to the dedicated Delivery screen and `#delivery` deep link — pass.
+5. OpenStreetMap framing, Tab focus trap, Escape and focus restoration — pass.
+6. Toast ordering hands off via popup instead of being framed — pass.
+7. Favorites persist across reload; corrupted `localStorage` does not break the menu — pass.
+8. Malformed deals JSON with no cached copy shows a safe empty state — pass.
+9. Schema-invalid menu JSON falls back to last known good data and reports `CONTENT_FALLBACK` — pass.
+10. Service worker takes control, installs cleanly and serves the cached menu offline — pass.
+11. Menu search, category filters and safe empty state — pass.
+12. No horizontal overflow at 320px and 360px — pass.
+13. Closed-status text stays inside the header pill at 360px, 320px and 195px — pass.
+14. 200% zoom reflow at 195 CSS px has no horizontal scroll — pass.
+15. Keyboard navigation reaches and activates tabs with a visible focus outline — pass.
+16. Reduced motion disables transitions and animations — pass.
+17. Key text meets 4.5:1 colour contrast — pass.
+18. Basic accessibility semantics: unique IDs, named buttons, image alt text, iframe title, dialog role, live status region — pass.
+19. Offline startup with caches deleted returns the 503 fallback with no inline handler, a working retry link and a strict CSP header — pass.
+20. Failed shell installation is reported, never activates an incomplete worker, and shows a retry — pass.
+21. Failed install recovers after reconnection; marker and notice are cleared — pass.
+22. Broken external images use a local `data:image/svg+xml` placeholder with stable layout and preserved alt text — pass.
+23. Favorites storage failure is reported once and favorites remain usable in memory — pass.
+24. Content-addressed updates replace old caches, keep both tabs in control and preserve unrelated caches — pass.
+25. External actions (ordering, rewards, gift cards, delivery, directions) use the expected URLs and safe handoffs; Food Dudes remains framed — pass.
+26. No page errors or CSP violations — pass.
 
-Defects found and fixed by the regression work: manual cache versioning that ignored later shell inputs; a failed install being activated with an empty cache; a failure notice that could not clear after recovery; malformed JSON reaching the page; and unescaped menu values at several HTML sinks.
+## Modern-retro redesign verification
+
+- All six redesigned screens render from the same data and links; no menu item, category, price, favorite key, hours rule, deep link or external integration was removed or renamed.
+- A new Delivery tab and screen were added; Toast ordering still hands off, Food Dudes remains framed, and the in-app "Delivery INSTEAD" button now opens the Delivery tab.
+- Programmatic checks confirmed labeled tabs, no horizontal overflow at 195/320/360px, 44px minimum touch targets across all six screens, reduced-motion `0s` overrides and key-text contrast.
+- Tracked screenshot binaries were regenerated from the redesigned local build at 390×844, including the dedicated Delivery tab.
+
+Defects found and fixed by the regression work: manual cache versioning that ignored later shell inputs; a failed install being activated with an empty cache; a failure notice that could not clear after recovery; malformed JSON reaching the page; unescaped menu values at several HTML sinks; and the closed-status “Opens 10:30 AM” pill clipping on narrow headers.
 
 ## Data and source verification (read-only)
 

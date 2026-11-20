@@ -7,14 +7,16 @@
 
 A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS and JavaScript — no build step, framework, analytics or backend. The installable Progressive Web App opens like a native app on Android and iPhone.
 
+The interface uses a modern-retro diner style: warm cream, Big Boy red, charcoal type and yellow accents, checkerboard details, rounded cards, original photography and a labeled six-tab bottom navigation.
+
 ## Features
 
-- **Home** — open/closed status calculated in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap. Exceptional hours can be supplied through `hours_overrides.json`.
-- **Info** — Facebook page, photos, reviews, and deals/specials. Tap a deal to expand its full text or open the original post.
-- **Menu** — all 56 items with real photos from bismarckbigboy.com, searchable, with category filters and per-size pricing.
+- **Home** — branded welcome hero with the original mascot, large menu and delivery actions, open/closed status calculated in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap. Exceptional hours can be supplied through `hours_overrides.json`.
+- **Menu** — all 56 items with real photos from bismarckbigboy.com, searchable, with image-enhanced category filters and clearer per-size pricing.
 - **Favorites** — save items locally on the device; no account or tracking required.
+- **Delivery** — a dedicated tab with branded Uber Eats, DoorDash and Food Dudes cards, plus clear messaging that checkout happens with the chosen provider.
 - **Rewards** — Toast loyalty sign-up, eGift cards, and the Big Boy shop.
-- **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
+- **Info** — local history timeline, Facebook page, photos, reviews, and deals/specials. Tap a deal to expand its full text or open the original post.
 - **External links** — the map and Food Dudes open inside the app; ordering, rewards, gift cards, social pages and other third-party sites hand off safely to the browser or their own app.
 - **Offline** — the service worker caches the app shell, menu and hours for use without a signal. Remote photos, maps, deals and ordering need a connection.
 - **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
@@ -31,7 +33,7 @@ The app on a phone.
 | :---: | :---: | :---: |
 | ![Delivery](assets/screenshots/6-delivery.png) | ![Rewards screen](assets/screenshots/4-rewards.png) | ![Info screen](assets/screenshots/5-info.png) |
 
-*(To add your own screenshots, run `node scripts/capture_screenshots.js` — see [Developer Setup](#developer-setup).)*
+*(Screenshots show the redesigned UI. To refresh them, run `APP_URL=http://127.0.0.1:8000/ node scripts/capture_screenshots.js` against a local server — see [Developer Setup](#developer-setup).)*
 
 ## Install
 

@@ -142,6 +142,19 @@ const server = http.createServer((req, res) => {
     ok(await page.locator('#iab.open').count() === 0, 'Escape did not close dialog');
   });
 
+  check('six labeled tabs route to the dedicated delivery screen', async () => {
+    await page.goto(base, { waitUntil:'networkidle' });
+    ok(await page.locator('.tab[data-tab]').count() === 6, 'expected six main tabs');
+    const labels = await page.locator('.tab .tab-label').allTextContents();
+    ok(labels.length === 6 && labels.every(l => l.trim().length > 0), 'tabs need visible labels');
+    await page.locator('.tab[data-tab="delivery"]').click();
+    ok(await page.locator('#s-delivery.active').count() === 1, 'delivery screen was not activated');
+    ok(await page.evaluate(() => location.hash) === '#delivery', 'delivery tab did not update the hash');
+    ok(await page.locator('#s-delivery a[href*="ubereats.com"]').count() === 1, 'delivery partner links missing');
+    await page.goto(base + '#delivery', { waitUntil:'networkidle' });
+    ok(await page.locator('#s-delivery.active').count() === 1, 'delivery deep link did not route');
+  });
+
   check('iframe framing and focus restoration', async () => {
     await page.goto(base, { waitUntil:'networkidle' });
     const link = page.locator('.qa a[data-title="Directions"]');
@@ -258,6 +271,36 @@ const server = http.createServer((req, res) => {
     await page.setViewportSize({ width:360, height:720 });
     const medium = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     ok(medium <= 1, '360px layout overflows by ' + medium + 'px');
+    await page.setViewportSize({ width:390, height:844 });
+  });
+
+  check('closed status text stays inside the header pill on narrow screens', async () => {
+    for (const width of [360, 320, 195]){
+      await page.setViewportSize({ width, height:720 });
+      await page.goto(base, { waitUntil:'networkidle' });
+      await page.waitForFunction(() => {
+        const t = document.querySelector('#statusMain')?.textContent || '';
+        return t !== 'Checking…';
+      });
+      await page.evaluate(() => {
+        document.querySelector('#statusMain').textContent = 'Closed';
+        document.querySelector('#statusSub').textContent = 'Opens 10:30 AM';
+      });
+      const m = await page.evaluate(() => {
+        const status = document.querySelector('#status');
+        const sub = document.querySelector('#statusSub');
+        return {
+          scroll: status.scrollWidth,
+          client: status.clientWidth,
+          subRight: sub.getBoundingClientRect().right,
+          statusRight: status.getBoundingClientRect().right,
+          overflow: document.documentElement.scrollWidth - window.innerWidth
+        };
+      });
+      ok(m.scroll <= m.client + 1, `${width}px status clips its text: ${JSON.stringify(m)}`);
+      ok(m.subRight <= m.statusRight + 1, `${width}px AM text escapes the pill: ${JSON.stringify(m)}`);
+      ok(m.overflow <= 1, `${width}px layout overflows horizontally`);
+    }
     await page.setViewportSize({ width:390, height:844 });
   });
 
