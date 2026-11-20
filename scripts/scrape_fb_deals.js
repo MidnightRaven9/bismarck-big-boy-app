@@ -17,6 +17,22 @@ const DEAL_WORDS = /deal|specials?|cater|gift card|gift cards|bonus|limited time
 // Facebook chrome we don't want to treat as deals
 const CHROME = /^(profile for|home|posts|notifications?|about|photos|videos|mentions|write a post|write a comment|like .+ and|see all|login|more|\d+ (.+ )?likes?|comments?|posted via|rebounduri|mv2|facebook)/i;
 
+// Known permalink ids for the page's recurring promotional posts. Facebook only
+// embeds post ids intermittently in the anonymous DOM, so this keeps "Open on
+// Facebook" working even when a scrape can't discover them dynamically. New
+// posts still get ids from the page data (see findPostId below).
+const KNOWN_POST_IDS = [
+  { match: /big news|big boy catering/i,                         id: '1592191682935787' },
+  { match: /gift card bonus|it.s back.*gift card/i,              id: '1591260033028952' },
+  { match: /family tradition since 1954/i,                       id: '1590095783145377' },
+  { match: /big flavor.*big savings|7\.99 big boy meal/i,        id: '1589030993251856' },
+  { match: /let.s talk sides/i,                                  id: '1587906313364324' },
+  { match: /crispy.*cheesy.*oh.so.tasty/i,                       id: '1586592133495742' },
+  { match: /bring the big boy flavor home/i,                     id: '1585444516943837' },
+  { match: /spice up your sip|hot.n.tot/i,                       id: '1584187913736164' },
+  { match: /honoring our heroes|veterans day/i,                  id: '1583115303843425' },
+];
+
 // ---------------------------------------------------------------------------
 // Deal-expiry parsing — read time-bound language off Facebook post text.
 // Returns an ISO Date string for when the deal expires, or null (no expiry).
@@ -110,8 +126,11 @@ function parseExpiry(text, from){
 
 // Drop junk that's not really a deal/promo (Facebook page metadata).
 function looksLikeNoise(text){
-  return /Address|Contact info|Details|See more|Bismarck, ND|58501-5042|\(701\)|bismarckbigboy\.com|foodtruck@|Posts|Photos|Videos|Reels|Log in|On Facebook|shares|likes? and|\d+ share|\d+ like|\d+ views|\d+ comments?/i.test(text)
-       || /user-content|full-screen|see-all/i.test(text);
+  return /Address|Contact info|Details|See more|Bismarck, ND|58501-5042|\(701\)|bismarckbigboy\.com|foodtruck@|Posts|Photos|Videos|Reels|Log in|On Facebook|shares|likes? and|\d+ share|\d+ like|\d+ views|\d+ comments?|AI content/i.test(text)
+       || /user-content|full-screen|see-all/i.test(text)
+       // Facebook UI glyphs live in the Unicode private-use area; real post
+       // copy never contains them, so any text with them is page chrome.
+       || /[\u{F0000}-\u{FFFFD}\u{E000}-\u{F8FF}]/u.test(text);
 }
 
 function extractText(html) {
@@ -154,33 +173,57 @@ function extractText(html) {
     }
     await page.waitForTimeout(2000); // settle
 
-    // Gather all candidate post texts from the page (mixed DOM + text scrape)
-    const allTexts = await page.evaluate(() => {
-      const seen = new Set(); const out = [];
+    // Gather post texts (original full-text walk) + a map of text-prefix → post id.
+    // Facebook only serves a truncated preview anonymously, so the "full" text is
+    // the longest preview available; the post URL lets readers see the rest.
+    const scraped = await page.evaluate(() => {
+      const seen = new Set(); const texts = [];
       const walk = n => {
         if (n.nodeType === 3){
           const t = n.textContent.trim().replace(/\s+/g, ' ');
-          if (t && !seen.has(t)) { seen.add(t); out.push(t); }
+          if (t && !seen.has(t)) { seen.add(t); texts.push(t); }
         } else if (n.nodeType === 1 && !n.closest('script, style, noscript')){
           n.childNodes.forEach(walk);
           if (n.shadowRoot) n.shadowRoot.childNodes.forEach(walk);
         }
       };
       document.body.childNodes.forEach(walk);
-      return out.filter(t => t.length > 25);
-    }).catch(() => []);
+
+      // Map a normalised text prefix to the nearest post id found in ancestors.
+      const idMap = {};
+      document.querySelectorAll('[data-mcomponent="TextArea"]').forEach(ta => {
+        const nt = ta.querySelector('.native-text');
+        if (!nt) return;
+        const text = (nt.innerText || nt.textContent || '').replace(/\s+/g, ' ').trim();
+        const prefix = text.replace(/[^a-z0-9]+/gi, ' ').trim().slice(0, 30).toLowerCase();
+        if (!prefix) return;
+        let id = null, el = ta;
+        for (let i = 0; i < 14 && el; i++) {
+          const attrs = [...el.attributes].map(a => a.value || '').join(' ');
+          const m = attrs.match(/\b(1[0-9]{15,17})\b/);
+          if (m) { id = m[1]; break; }
+          el = el.parentElement;
+        }
+        if (id) idMap[prefix] = id;
+      });
+      return { texts, idMap };
+    }).catch(() => ({ texts: [], idMap: {} }));
+    const allTexts = scraped.texts;
+    const idMap = scraped.idMap || {};
 
     const more = extractText(raw).split('\n').map(s => s.trim()).filter(s => s.length > 25);
 
-    // Combine, dedupe, filter
-    const seen = new Set();
-    const candidates = [];
+    // Combine and dedupe, keeping the LONGEST variant of each post. Facebook
+    // renders both a short aria-hidden preview and a longer copy of the same
+    // post; keeping the longest recovers as much text as is available.
+    const byKey = new Map();
     for (const t of [...allTexts, ...more]){
+      if (t.length <= 25) continue;
       const key = t.slice(0, 60).toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      candidates.push(t);
+      const prev = byKey.get(key);
+      if (!prev || t.length > prev.length) byKey.set(key, t);
     }
+    const candidates = [...byKey.values()];
 
     const scrapeTime = Date.now();
 
@@ -189,7 +232,20 @@ function extractText(html) {
       DEAL_WORDS.test(t) && !CHROME.test(t) && !looksLikeNoise(t)
     );
 
-    // Structure: title = first sentence before period/emoji; add expiry info
+    // Look up a post id: first from ids discovered in this scrape, then from
+    // the curated map of recurring promotional posts.
+    const findPostId = text => {
+      const prefix = text.replace(/[^a-z0-9]+/gi, ' ').trim().slice(0, 30).toLowerCase();
+      if (idMap[prefix]) return idMap[prefix];
+      for (let n = 24; n >= 12; n -= 4) {
+        const p = prefix.slice(0, n);
+        for (const k of Object.keys(idMap)) if (k.startsWith(p)) return idMap[k];
+      }
+      const known = KNOWN_POST_IDS.find(k => k.match.test(text));
+      return known ? known.id : null;
+    };
+
+    // Structure: title = first sentence before period/emoji; add expiry + post URL.
     const structured = [];
     const seenTitles = new Set();
     for (const t of deals){
@@ -200,14 +256,40 @@ function extractText(html) {
       const expires = parseExpiry(t, scrapeTime);
       if (expires && expires.getTime() < Date.now() - 86400000) continue;  // already expired by >1 day
       seenTitles.add(tKey);
+      const id = findPostId(t);
       structured.push({
         title,
-        text: t.slice(0, 350).trim(),
+        text: t.trim(),
         expires: expires ? expires.toISOString() : null,
+        url: id ? `https://www.facebook.com/bismarckbigboy/posts/${id}/` : null,
       });
     }
 
-    fs.writeFileSync(OUT, JSON.stringify(structured, null, 2));
+    // Facebook's anonymous DOM is flaky: a scrape may expose only some posts,
+    // or a shorter preview than a previous run. Merge with the last good output
+    // so a partial scrape never drops deals or truncates text.
+    if (fs.existsSync(OUT)) {
+      try {
+        const previous = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+        if (Array.isArray(previous)) {
+          for (const d of structured) {
+            const old = previous.find(p => (p.url && p.url === d.url) || p.title === d.title);
+            if (!old) continue;
+            if (typeof old.text === 'string' && old.text.length > d.text.length) d.text = old.text;
+            if (!d.url && old.url) d.url = old.url;
+            if (!d.expires && old.expires) d.expires = old.expires;
+          }
+          const known = new Set(structured.map(d => (d.url || d.title).toLowerCase()));
+          for (const old of previous) {
+            if (!known.has((old.url || old.title).toLowerCase())) structured.push(old);
+          }
+        }
+      } catch (_) {}
+    }
+
+    // Drop anything that has expired since it was last scraped.
+    const live = structured.filter(d => !d.expires || new Date(d.expires) > new Date());
+    fs.writeFileSync(OUT, JSON.stringify(live, null, 2));
     console.log('Wrote', structured.length, 'deals to', OUT);
   } catch (e) {
     console.log('ERROR', e.message);
