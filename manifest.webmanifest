@@ -1,16 +1,40 @@
 {
   "name": "Bismarck Big Boy",
   "short_name": "Big Boy",
-  "description": "Bismarck's original drive-in since 1954 — menu, hours, ordering, delivery and rewards.",
+  "description": "Bismarck Big Boy — the original 1954 drive-in: full menu with photos, live hours, delivery via Uber Eats / DoorDash / Food Dudes, Big Boy Rewards, and our app-exclusive mini game. Bismarck, ND.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFF6E5",
+  "background_color": "#1E1E1E",
   "theme_color": "#C8102E",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "monochrome" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Menu",
+      "short_name": "Menu",
+      "description": "Browse all 58 menu items with photos",
+      "url": "./#menu",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Order Online",
+      "short_name": "Order",
+      "description": "Order online via Toast for pickup",
+      "url": "./",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Directions",
+      "short_name": "Directions",
+      "description": "2511 E Main Ave, Bismarck, ND — call us",
+      "url": "./",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

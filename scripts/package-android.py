@@ -26,7 +26,6 @@ KEYSTORE_B64 = os.environ["ANDROID_KEYSTORE_B64"]
 KEYSTORE_PW  = os.environ["ANDROID_KEYSTORE_PASSWORD"]
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 
-REPO   = os.environ.get("GITHUB_REPOSITORY", "")
 ASSET_SUFFIX = os.environ.get("APK_SUFFIX", APP_VERSION)
 
 HEADERS = {
@@ -50,7 +49,7 @@ def options():
     return {
         "appVersion": APP_VERSION,
         "appVersionCode": 1,  # kept constant so the signature is stable
-        "backgroundColor": "#FFF6E5",
+        "backgroundColor": "#1E1E1E",
         "display": "standalone",
         "enableNotifications": True,
         "enableSiteSettingsShortcut": True,
