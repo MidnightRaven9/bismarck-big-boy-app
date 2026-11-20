@@ -866,7 +866,9 @@ async function renderFbDeals(){
   try {
     const data = await fetch('facebook_deals.json').then(r => r.ok ? r.json() : null);
     if (!Array.isArray(data) || !data.length){ el.innerHTML = ''; return; }
-    el.innerHTML = data.map(d => `
+    // Hide deals/specials that have expired (scraped by the cron with an expiry timestamp)
+    const live = data.filter(d => !d.expires || new Date(d.expires) > new Date());
+    el.innerHTML = live.map(d => `
       <div class="fb-deal-card">
         <strong>${d.title}</strong>
         <p>${d.text}</p>
