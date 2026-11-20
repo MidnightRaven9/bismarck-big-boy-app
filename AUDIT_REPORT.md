@@ -66,4 +66,4 @@ Audit date: 2026-11-20. Original audit baseline: `374cc4f`. Full-remediation bas
 | External image reliability | Low | **Confirmed** — broken images were hidden, leaving an empty tile. | Global `error` handler set `display:none` for all failed images. | **Fixed** — local CSP-allowed SVG placeholder, lazy loading, stable tile, preserved alt text, retry loop guard. | Unit 17; browser 20 |
 | Favorites persistence failures | Low | **Confirmed** — `localStorage` exceptions were swallowed. | `saveFavs()`/`store.set()` ignored errors and malformed saved data was silently reset. | **Fixed** — throttled `#appToast` notices, in-memory behavior retained, malformed data reported, existing storage format unchanged. | Unit 17; browser 6, 21 |
 
-Final counts: **17/17 unit**, **24/24 browser**, **0 npm audit vulnerabilities**. See `TEST_REPORT.md` for exact commands and limitations.
+Final counts: **17/17 unit**, **25/25 browser**, **0 npm audit vulnerabilities**. See `TEST_REPORT.md` for exact commands and limitations.

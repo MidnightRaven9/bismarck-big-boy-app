@@ -27,7 +27,7 @@
 ## Validation of this change
 
 - YAML parse: pass for both workflows.
-- Syntax, JSON, unit (**17/17**) and browser (**24/24**) checks: pass; `npm audit` reports 0 vulnerabilities.
+- Syntax, JSON, unit (**17/17**) and browser (**25/25**) checks: pass; `npm audit` reports 0 vulnerabilities.
 - `git`: all changes remain uncommitted; nothing was pushed or published.
 
 ## Not included

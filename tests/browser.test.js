@@ -261,6 +261,36 @@ const server = http.createServer((req, res) => {
     await page.setViewportSize({ width:390, height:844 });
   });
 
+  check('closed status text stays inside the header pill on narrow screens', async () => {
+    for (const width of [360, 320, 195]){
+      await page.setViewportSize({ width, height:720 });
+      await page.goto(base, { waitUntil:'networkidle' });
+      await page.waitForFunction(() => {
+        const t = document.querySelector('#statusMain')?.textContent || '';
+        return t !== 'Checking…';
+      });
+      await page.evaluate(() => {
+        document.querySelector('#statusMain').textContent = 'Closed';
+        document.querySelector('#statusSub').textContent = 'Opens 10:30 AM';
+      });
+      const m = await page.evaluate(() => {
+        const status = document.querySelector('#status');
+        const sub = document.querySelector('#statusSub');
+        return {
+          scroll: status.scrollWidth,
+          client: status.clientWidth,
+          subRight: sub.getBoundingClientRect().right,
+          statusRight: status.getBoundingClientRect().right,
+          overflow: document.documentElement.scrollWidth - window.innerWidth
+        };
+      });
+      ok(m.scroll <= m.client + 1, `${width}px status clips its text: ${JSON.stringify(m)}`);
+      ok(m.subRight <= m.statusRight + 1, `${width}px AM text escapes the pill: ${JSON.stringify(m)}`);
+      ok(m.overflow <= 1, `${width}px layout overflows horizontally`);
+    }
+    await page.setViewportSize({ width:390, height:844 });
+  });
+
   check('200% zoom reflow (195 CSS px) has no horizontal scroll', async () => {
     await page.setViewportSize({ width:195, height:720 });
     await page.goto(base + '#menu', { waitUntil:'networkidle' });

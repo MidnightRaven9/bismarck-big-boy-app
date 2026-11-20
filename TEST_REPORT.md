@@ -19,7 +19,7 @@ Repository was clean at `8a2092f` before any edit. `package.json` exposes only `
 | `npm ci` | pass — 2 packages, 0 vulnerabilities |
 | `npm audit` | pass — **0 vulnerabilities** |
 | `npm test` | **17/17 pass** |
-| `npm run test:browser` | **24/24 pass** |
+| `npm run test:browser` | **25/25 pass** |
 | `npm run test:all` | pass — both suites above, sequential |
 | `node --check core.js` | pass |
 | `node --check app.js` | pass |
@@ -70,7 +70,7 @@ The service worker and registration URL derive the release version from a SHA-25
 16. Service worker versions atomically from the full hash, validates JSON schema, scopes cleanup — pass.
 17. App rendering escapes menu data, uses a local image placeholder and reports storage failures — pass.
 
-## Browser integration tests (24/24, headless Chromium, 390×844 unless noted)
+## Browser integration tests (25/25, headless Chromium, 390×844 unless noted)
 
 1. Shell, 56 menu items, 8 chips and resolved status — pass.
 2. Malicious menu values render as text; no injected scripts/handlers/URLs execute — pass.
@@ -83,21 +83,22 @@ The service worker and registration URL derive the release version from a SHA-25
 9. Service worker takes control, installs cleanly and serves the cached menu offline — pass.
 10. Menu search, category filters and safe empty state — pass.
 11. No horizontal overflow at 320px and 360px — pass.
-12. 200% zoom reflow at 195 CSS px has no horizontal scroll — pass.
-13. Keyboard navigation reaches and activates tabs with a visible focus outline — pass.
-14. Reduced motion disables transitions and animations — pass.
-15. Key text meets 4.5:1 colour contrast — pass.
-16. Basic accessibility semantics: unique IDs, named buttons, image alt text, iframe title, dialog role, live status region — pass.
-17. Offline startup with caches deleted returns the 503 fallback with no inline handler, a working retry link and a strict CSP header — pass.
-18. Failed shell installation is reported, never activates an incomplete worker, and shows a retry — pass.
-19. Failed install recovers after reconnection; marker and notice are cleared — pass.
-20. Broken external images use a local `data:image/svg+xml` placeholder with stable layout and preserved alt text — pass.
-21. Favorites storage failure is reported once and favorites remain usable in memory — pass.
-22. Content-addressed updates replace old caches, keep both tabs in control and preserve unrelated caches — pass.
-23. External actions (ordering, rewards, gift cards, delivery, directions) use the expected URLs and safe handoffs; Food Dudes remains framed — pass.
-24. No page errors or CSP violations — pass.
+12. Closed-status text stays inside the header pill at 360px, 320px and 195px — pass.
+13. 200% zoom reflow at 195 CSS px has no horizontal scroll — pass.
+14. Keyboard navigation reaches and activates tabs with a visible focus outline — pass.
+15. Reduced motion disables transitions and animations — pass.
+16. Key text meets 4.5:1 colour contrast — pass.
+17. Basic accessibility semantics: unique IDs, named buttons, image alt text, iframe title, dialog role, live status region — pass.
+18. Offline startup with caches deleted returns the 503 fallback with no inline handler, a working retry link and a strict CSP header — pass.
+19. Failed shell installation is reported, never activates an incomplete worker, and shows a retry — pass.
+20. Failed install recovers after reconnection; marker and notice are cleared — pass.
+21. Broken external images use a local `data:image/svg+xml` placeholder with stable layout and preserved alt text — pass.
+22. Favorites storage failure is reported once and favorites remain usable in memory — pass.
+23. Content-addressed updates replace old caches, keep both tabs in control and preserve unrelated caches — pass.
+24. External actions (ordering, rewards, gift cards, delivery, directions) use the expected URLs and safe handoffs; Food Dudes remains framed — pass.
+25. No page errors or CSP violations — pass.
 
-Defects found and fixed by the regression work: manual cache versioning that ignored later shell inputs; a failed install being activated with an empty cache; a failure notice that could not clear after recovery; malformed JSON reaching the page; and unescaped menu values at several HTML sinks.
+Defects found and fixed by the regression work: manual cache versioning that ignored later shell inputs; a failed install being activated with an empty cache; a failure notice that could not clear after recovery; malformed JSON reaching the page; unescaped menu values at several HTML sinks; and the closed-status “Opens 10:30 AM” pill clipping on narrow headers.
 
 ## Data and source verification (read-only)
 

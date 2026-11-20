@@ -26,7 +26,7 @@
 - JSON handling distinguishes syntax from schema validation, preserves last-known-good cached data, and reports fallbacks to the page.
 - Workflows add concurrency groups, explicit `main`/repository guards, token-only git extraheaders, and shared `assertDealsPayload` validation in scraper, workflow and service worker.
 - External image failures use a local CSP-allowed SVG placeholder; favorites/storage failures show throttled live-region notices.
-- Test suites expanded from 11/19 to **17/24**; final `npm audit` reports 0 vulnerabilities.
+- Test suites expanded from 11/19 to **17/25**; final `npm audit` reports 0 vulnerabilities.
 
 ## Deferred — requires explicit approval
 

@@ -418,8 +418,13 @@ nav.tabbar{
   .logo{gap:8px}
   .logo-text .t1{font-size:23px}
   .logo-text .t2{font-size:8.5px;letter-spacing:.16em}
-  .status{padding:6px 9px;font-size:11px;gap:5px;min-width:0;overflow:hidden}
-  .status small{font-size:9.5px}
+  .brand{flex-wrap:wrap;row-gap:6px}
+  .status{
+    padding:6px 9px;font-size:11px;gap:5px;
+    flex:0 1 auto;white-space:normal;overflow:visible;
+  }
+  .status > span:last-child{min-width:0}
+  .status small{font-size:9.5px;line-height:1.2;overflow-wrap:anywhere}
 }
 /* Reflow at ~200% zoom on a small phone (≈195 CSS px). No redesign: just let
    fixed-size tiles shrink and wrap instead of forcing horizontal scroll. */
