@@ -26,14 +26,14 @@
       "name": "Order Online",
       "short_name": "Order",
       "description": "Order online via Toast for pickup",
-      "url": "./",
+      "url": "./#order",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Directions",
       "short_name": "Directions",
       "description": "2511 E Main Ave, Bismarck, ND — call us",
-      "url": "./",
+      "url": "./#directions",
       "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
