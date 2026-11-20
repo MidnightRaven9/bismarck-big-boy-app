@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 
 require('../core.js');
 const C = globalThis.BigBoyCore;
@@ -150,4 +151,105 @@ test('manifest and shell wiring are internally consistent', () => {
   const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
   assert.ok(sw.includes('res.ok') && sw.includes('SHELL_INSTALL_FAILED'));
   assert.ok(!/cache\.addAll/.test(sw));
+  assert.ok(csp.includes('https://openstreetmap.org'), 'CSP must match canEmbed allowlist');
+  assert.ok(csp.includes('https://www.fooddudesdelivery.com'), 'CSP must match canEmbed allowlist');
+});
+
+test('APP_SHELL_HASH is reproducible from the committed shell inputs', () => {
+  const root = path.join(__dirname, '..');
+  const files = [
+    'index.html', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
+    'manifest.webmanifest', 'sw.js', 'icons/apple-touch-icon-180.png',
+    'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png',
+    'icons/icon-maskable-512.png'
+  ];
+  const computed = files
+    .map(f => crypto.createHash('sha256').update(fs.readFileSync(path.join(root, f))).digest('hex'))
+    .join('');
+  const committed = fs.readFileSync(path.join(root, 'APP_SHELL_HASH.txt'), 'utf8').trim();
+  assert.match(committed, /^[a-f0-9]{768}$/);
+  assert.equal(committed, computed, 'shell hash is stale; rerun the workflow hash command');
+
+  const workflow = fs.readFileSync(path.join(root, '.github/workflows/auto-package.yml'), 'utf8');
+  assert.match(workflow, /LC_ALL=C sha256sum index\.html core\.js app\.js menu\.json hours_overrides\.json manifest\.webmanifest sw\.js icons\/\*\.png/);
+});
+
+test('menu validation rejects unsafe ids, media ids and non-numeric prices', () => {
+  const out = C.validateMenu([{
+    id:'safe-group', name:'<b>Deals</b>', items:[
+      { id:'ok-item', n:'Burger & Shake', img:'063b6c_abc~mv2.jpg', d:'A < B & "C"', s:[['Small', 3.5]] },
+      { id:'bad', n:'X', img:'javascript:alert(1)', d:'x', s:[['Large', null]] },
+      { id:'also-bad', n:'Y', img:'x" onerror="alert(1)', d:'y', s:[['Large', true]] },
+      { id:'" onmouseover="alert(1)', n:'Z', img:'ok.jpg', d:'z', s:[['Small', 1]] }
+    ]
+  }]);
+  assert.equal(out[0].items.length, 1);
+  assert.equal(out[0].items[0].n, 'Burger & Shake');
+  assert.equal(out[0].items[0].img, '063b6c_abc~mv2.jpg');
+  assert.equal(C.isValidWixImageId('063b6c_abc~mv2.jpg'), true);
+  assert.equal(C.isValidWixImageId('javascript:alert(1)'), false);
+  assert.equal(C.isValidWixImageId('../escape.jpg'), false);
+  assert.equal(C.isValidMenuId('ok-item'), true);
+  assert.equal(C.isValidMenuId('a"b'), false);
+});
+
+test('generated deal payloads use the strict shared schema gate', () => {
+  assert.doesNotThrow(() => C.assertDealsPayload([
+    { title:'Save & smile', text:'<b>Today</b>', url:'https://www.facebook.com/bismarckbigboy/posts/1/' }
+  ]));
+  assert.throws(() => C.assertDealsPayload({ broken:true }), /not an array/);
+  assert.throws(() => C.assertDealsPayload([
+    { title:'Bad', text:'x', url:'javascript:alert(1)' }
+  ]), /host is not allowlisted/);
+  assert.throws(() => C.assertDealsPayload([
+    { title:'Bad', text:'x', expires:'not-a-date' }
+  ]), /expiry is invalid/);
+});
+
+test('workflow safeguards prevent overlapping or unsafe writes', () => {
+  const root = path.join(__dirname, '..');
+  const auto = fs.readFileSync(path.join(root, '.github/workflows/auto-package.yml'), 'utf8');
+  const validate = fs.readFileSync(path.join(root, '.github/workflows/validate.yml'), 'utf8');
+  assert.match(auto, /concurrency:\s*\n\s*group: auto-package-main\s*\n\s*cancel-in-progress: false/);
+  assert.match(validate, /concurrency:\s*\n\s*group: validate-/);
+  assert.ok(auto.includes('persist-credentials: false'));
+  assert.ok(validate.includes('persist-credentials: false'));
+  assert.ok(auto.includes('ref: main'));
+  assert.ok(auto.includes("github.ref == 'refs/heads/main'"));
+  assert.ok(auto.includes('C.assertDealsPayload(d)'));
+  assert.ok(auto.includes('[[ "$HASH" =~ ^[a-f0-9]{768}$ ]]'));
+  assert.ok(!/continue-on-error|push --force|git push -f|git add -A/.test(auto));
+  assert.equal((auto.match(/uses: actions\/(checkout|setup-node)@[a-f0-9]{40}/g) || []).length, 5);
+});
+
+test('service worker versions atomically and validates cached JSON schemas', () => {
+  const root = path.join(__dirname, '..');
+  const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+  assert.ok(sw.includes("importScripts('core.js')"));
+  assert.ok(sw.includes("const CACHE_PREFIX = 'bb-app-'"));
+  assert.ok(!/const CACHE = ['"]bb-app-v/.test(sw), 'manual cache version must be removed');
+  assert.ok(sw.includes('APP_SHELL_HASH.txt'));
+  assert.ok(sw.includes("crypto.subtle.digest('SHA-256', new TextEncoder().encode(hashText))"),
+    'cache version must derive from the full shell hash');
+  assert.ok(app.includes("crypto.subtle.digest('SHA-256', new TextEncoder().encode(hash))"),
+    'registration URL must derive from the full shell hash');
+  assert.ok(sw.includes('assertDealsPayload'));
+  assert.ok(sw.includes('SHELL_INSTALL_OK'));
+  assert.ok(sw.includes('X-BigBoy-Content-Fallback'));
+  assert.ok(sw.includes("k.startsWith(CACHE_PREFIX)"), 'cleanup must be prefix-scoped');
+  assert.ok(!/cache\.put\(key/.test(sw), 'fetch handler must not mutate a versioned cache');
+});
+
+test('app rendering escapes menu data and reports storage failures', () => {
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  assert.ok(app.includes('escapeHtml(it.n)'));
+  assert.ok(app.includes('escapeHtml(g.name)'));
+  assert.ok(app.includes('escapeHtml(s[0])'));
+  assert.ok(app.includes('escapeHtml(c.id)'));
+  assert.ok(app.includes('data:image/svg+xml'));
+  assert.ok(app.includes('favorites-write'));
+  assert.ok(app.includes('SHELL_INSTALL_OK'), 'recovery must clear the failure notice');
+  assert.ok(app.includes('bb_sw_retry_v1'), 'retry must force a fresh worker URL');
+  assert.ok(!/\[data-fav="\$\{id\}"\]/.test(app), 'ids must not be interpolated into selectors');
 });

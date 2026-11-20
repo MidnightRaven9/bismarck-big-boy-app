@@ -16,16 +16,18 @@
   2. `package` — `needs: validate`; preserves the existing package ID, version, release tag, APK URL and signing secrets.
   3. `deals` — `needs: [validate, package]`; scrape/data commit only, no signing secrets, runs after packaging to avoid concurrent pushes.
 - Guarded the scraper with temp output (`DEALS_OUTPUT`/`DEALS_PREVIOUS`), a non-empty candidate check, schema and Facebook-URL validation, `process.exitCode = 1`, and atomic replacement only after a separate CI validation step succeeds. A failed scrape leaves the last good file alone.
+- Added `concurrency` groups to both workflows (`auto-package-main` with `cancel-in-progress: false`; `validate-<workflow>-<ref>` with cancellation). Both jobs that write now require `github.ref == 'refs/heads/main'` and the canonical repository, check out `main` explicitly, disable persisted credentials, and use token-only `git` extraheaders. No force push or `git add -A` is used.
 - Hash now covers every shell input:
-  `sha256sum index.html core.js app.js menu.json hours_overrides.json manifest.webmanifest sw.js icons/*.png | awk '{printf "%s", $1}' > /tmp/shell-hash.txt`
+  `LC_ALL=C sha256sum index.html core.js app.js menu.json hours_overrides.json manifest.webmanifest sw.js icons/*.png | awk '{printf "%s", $1}' > /tmp/shell-hash.txt`
   `APP_SHELL_HASH.txt` was resynced to the matching value. `facebook_deals.json` is excluded because the scraper refreshes it independently.
+- Scraper, CI gate and service worker all use the same `assertDealsPayload()` schema check.
 - Hash commit reports success without a no-op commit when the hash is already current; real commit/push failures still fail the job.
 - No change to signing identity, keystore, package ID, release config, APK/AAB assets or repository secrets.
 
 ## Validation of this change
 
 - YAML parse: pass for both workflows.
-- Syntax, JSON, unit (11/11) and browser (19/19) checks: pass.
+- Syntax, JSON, unit (**17/17**) and browser (**24/24**) checks: pass; `npm audit` reports 0 vulnerabilities.
 - `git`: all changes remain uncommitted; nothing was pushed or published.
 
 ## Not included

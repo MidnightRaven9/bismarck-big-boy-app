@@ -8,6 +8,10 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
+/* Reuse the app's deal policy instead of maintaining a second, weaker regex. */
+require('../core.js');
+const { assertDealsPayload } = globalThis.BigBoyCore;
+
 const TARGET = 'https://www.facebook.com/bismarckbigboy/';
 /* DEALS_OUTPUT/DEALS_PREVIOUS let the release workflow write to a temporary
    file and only replace the committed data after output validation succeeds. */
@@ -307,17 +311,10 @@ function extractText(html) {
       if (Number.isFinite(seen) && now - seen > STALE_AFTER_DAYS * 86400000) return false;
       return true;
     });
-    // Validate our own output before it can be published. An empty result is
-    // allowed only when real deals were found and then expired/aged out.
-    if (!Array.isArray(live)) throw new Error('Scraper output is not an array');
-    for (const d of live){
-      if (!d || typeof d !== 'object' || typeof d.title !== 'string' || typeof d.text !== 'string'){
-        throw new Error('Scraper produced a malformed deal');
-      }
-      if (d.url && !/^https:\/\/(www\.)?facebook\.com\//.test(d.url)){
-        throw new Error('Scraper produced an unsafe deal URL');
-      }
-    }
+    // Validate our own output before it can be published, using the same
+    // policy the app and the workflow gate use. An empty result is allowed
+    // only when real deals were found and then expired/aged out.
+    assertDealsPayload(live);
     fs.mkdirSync(path.dirname(OUT), { recursive: true });
     fs.writeFileSync(OUT, JSON.stringify(live, null, 2));
     console.log('Wrote', live.length, 'deals to', OUT);

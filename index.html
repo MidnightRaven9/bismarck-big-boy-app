@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#C8102E">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -443,6 +443,7 @@ nav.tabbar{
 }
 .app-notice{position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 10px);z-index:60;background:#2A2A2A;color:#fff;border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.55)}
 .app-notice button{margin-left:8px;background:var(--yellow);color:#1E1E1E;border:0;border-radius:8px;padding:5px 10px;font-weight:800;cursor:pointer}
+.app-toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 10px);transform:translateX(-50%);z-index:61;width:max-content;max-width:calc(100vw - 24px);background:#2A2A2A;color:#fff;border:1px solid var(--line);border-left:4px solid var(--red);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.55);text-align:center}
 .fb-deal-caveat{display:block;margin-top:8px;font-size:11px;color:#8E8E8E;font-style:italic}
 /* ---- audit: accessibility + device-safe layout ---- */
 nav.tabbar{padding:0 8px env(safe-area-inset-bottom)}

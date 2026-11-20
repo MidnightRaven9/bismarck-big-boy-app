@@ -3,6 +3,7 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const { chromium } = require('playwright');
 
 const ROOT = path.join(__dirname, '..');
@@ -11,14 +12,34 @@ const MIME = { '.html':'text/html', '.js':'text/javascript', '.json':'applicatio
 const results = [];
 const check = (name, fn) => results.push({ name, fn });
 
-// Used by the failed-shell-install test: service-worker fetches are not
-// interceptable with context.route, so the server itself must fail the asset.
-let failMenu = false;
+// Service-worker fetches are not reliably interceptable with context.route,
+// so server-side flags drive the failure/fallback scenarios.
+let failMenu = false, badMenuSchema = false;
+const SHELL_HASH_FILES = [
+  'index.html', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
+  'manifest.webmanifest', 'sw.js', 'icons/apple-touch-icon-180.png',
+  'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png',
+  'icons/icon-maskable-512.png'
+];
+function computeShellHash(overrides = {}){
+  return SHELL_HASH_FILES.map(f => {
+    const body = overrides[f] || fs.readFileSync(path.join(ROOT, f));
+    return crypto.createHash('sha256').update(body).digest('hex');
+  }).join('');
+}
+function versionFromHash(hash){
+  return crypto.createHash('sha256').update(hash).digest('hex').slice(0, 24);
+}
 const server = http.createServer((req, res) => {
   const clean = decodeURIComponent(req.url.split('?')[0]);
   if (failMenu && clean === '/menu.json'){
     res.writeHead(500, { 'Content-Type':'application/json' });
     res.end('{}');
+    return;
+  }
+  if (badMenuSchema && clean === '/menu.json'){
+    res.writeHead(200, { 'Content-Type':'application/json' });
+    res.end('{"oops":true}');
     return;
   }
   let file = path.join(ROOT, clean === '/' ? 'index.html' : clean);
@@ -43,15 +64,71 @@ const server = http.createServer((req, res) => {
   await context.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
 
   const ok = (cond, msg) => { if (!cond) throw new Error(msg); };
+  const stableEval = async (p, fn, tries = 40) => {
+    for (let i = 0; i < tries; i++){
+      try { return await p.evaluate(fn); }
+      catch (e) { await p.waitForTimeout(250); }
+    }
+    throw new Error('page never became stable');
+  };
+  const shellVersions = async p => stableEval(p, async () => {
+    const state = await caches.open('bb-shell-state');
+    const res = await state.match('./version');
+    const version = res ? (await res.text()).trim() : null;
+    return { version, keys: await caches.keys() };
+  });
 
   check('app shell, menu and status render', async () => {
     await page.goto(base, { waitUntil:'networkidle' });
     await page.waitForSelector('#menuList .item', { state:'attached' });
     ok(await page.locator('#menuList .item').count() === 56, 'expected 56 menu items');
     ok(await page.locator('#chips .chip').count() === 8, 'expected 8 category chips');
+    // The first controllerchange reload can replace the DOM mid-check.
+    await page.waitForFunction(() => {
+      const t = document.querySelector('#statusMain')?.textContent || '';
+      return t !== 'Checking…' && /^(Open now|Closed|Closed today)$/.test(t.trim());
+    }, null, { timeout:10000 });
     const status = await page.locator('#statusMain').textContent();
     ok(status !== 'Checking…', 'status never resolved');
     ok(/^(Open now|Closed|Closed today)$/.test(status.trim()), 'unexpected status: ' + status);
+  });
+
+  check('malicious menu content is displayed as text, never executed', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    const payload = [{
+      id:'specials',
+      name:'<img src=x onerror="window.__xss=1">Specials & More',
+      items:[{
+        id:'ok-item',
+        n:'" onerror="window.__xss=2 <script>window.__xss=3</script> Burger',
+        img:'x" onerror="window.__xss=4',
+        d:"O'Brien's <b>fries</b> & gravy",
+        s:[['<svg onload="window.__xss=5">Small', 5.25]]
+      }, {
+        id:'safe-item', n:'Normal Item', img:'063b6c_abc~mv2.jpg',
+        d:'Plain description', s:[['Regular', 4.5]]
+      }]
+    }];
+    await ctx.route('**/menu.json', r => r.fulfill({
+      status:200, contentType:'application/json', body:JSON.stringify(payload)
+    }));
+    const p = await ctx.newPage();
+    await p.goto(base + '#menu', { waitUntil:'networkidle' });
+    await p.waitForSelector('#menuList .item');
+    ok(await p.evaluate(() => window.__xss === undefined), 'injected script executed');
+    const injected = await p.locator('#menuList script, #menuList img[onerror], #menuList svg[onload], #chips [onerror], #chips [onload]').count();
+    ok(injected === 0, 'malicious markup became a live element');
+    ok((await p.locator('#menuList .cat-head').first().textContent()).includes('<img src=x onerror='), 'category name was not shown as text');
+    ok((await p.locator('#menuList .item').first().locator('h4').textContent()).includes('<script>'), 'item name was not shown as text');
+    ok((await p.locator('#menuList .item').first().locator('.desc').textContent()).includes("O'Brien's"), 'legitimate characters were stripped');
+    ok(await p.locator('#menuList .item').first().locator('img').count() === 0, 'unsafe media id produced an image');
+    ok((await p.locator('#menuList .item').first().locator('.price').textContent()).trim() === '$5.25', 'price rendering broke');
+    await p.locator('#menuList .item').first().locator('.fav').click();
+    ok((await p.locator('#favBadge').textContent()).trim() === '1', 'favorites broke with escaped ids');
+    await p.fill('#search', 'Normal');
+    ok(await p.locator('#menuList .item').count() === 1, 'search broke with escaped content');
+    await ctx.close();
   });
 
   check('navigation, aria-current and hash deep links', async () => {
@@ -104,13 +181,46 @@ const server = http.createServer((req, res) => {
     ok((await page.locator('#favBadge').textContent()).trim() === '0', 'corrupt storage left stale badge');
   });
 
-  check('malformed deals data shows a safe empty state', async () => {
-    await context.route('**/facebook_deals.json', r => r.fulfill({ status:200, contentType:'application/json', body:'{"broken":true}' }));
-    await page.goto(base + '#info', { waitUntil:'networkidle' });
-    await page.waitForFunction(() => !document.querySelector('#fbDealsList').textContent.includes('Loading'));
-    const text = await page.locator('#fbDealsList').textContent();
+  check('malformed deals data shows a safe empty state without a cached copy', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    await ctx.route('**/facebook_deals.json', r => r.fulfill({
+      status:200, contentType:'application/json', body:'{"broken":true}'
+    }));
+    const p = await ctx.newPage();
+    await p.goto(base + '#info', { waitUntil:'networkidle' });
+    await p.waitForFunction(() => !document.querySelector('#fbDealsList').textContent.includes('Loading'));
+    const text = await p.locator('#fbDealsList').textContent();
     ok(/No current deals|unavailable/.test(text), 'unsafe deals state: ' + text);
-    await context.unroute('**/facebook_deals.json');
+    await ctx.close();
+  });
+
+  check('service worker rejects malformed JSON and serves last known good data', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'allow' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    const p = await ctx.newPage();
+    await p.goto(base, { waitUntil:'networkidle' });
+    await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout:10000 });
+    // The first activation reloads once; let it finish before changing state.
+    await p.waitForTimeout(1000);
+    badMenuSchema = true;
+    try {
+      await p.reload({ waitUntil:'networkidle' });
+      await p.waitForFunction(() => document.querySelectorAll('#menuList .item').length === 56, null, { timeout:10000 });
+      ok(await p.locator('#menuList .item').count() === 56, 'schema-invalid menu replaced the cached copy');
+      await p.waitForSelector('#appToast', { timeout:5000 });
+      ok(/Showing saved menu/.test(await p.locator('#appToast').textContent()), 'cached fallback was not reported');
+      const cachedIsArray = await stableEval(p, async () => {
+        const state = await caches.open('bb-shell-state');
+        const v = await (await state.match('./version')).text();
+        const cache = await caches.open('bb-app-' + v.trim());
+        return Array.isArray(await (await cache.match('./menu.json')).json());
+      });
+      ok(cachedIsArray, 'malformed schema overwrote the last known good menu');
+    } finally {
+      badMenuSchema = false;
+      await ctx.close();
+    }
   });
 
   check('service worker caches the shell for offline use', async () => {
@@ -288,8 +398,8 @@ const server = http.createServer((req, res) => {
       }, null, { timeout:15000 });
       const notice = await p.locator('#appNotice').textContent();
       ok(/Offline setup did not finish/.test(notice), 'shell install notice missing: ' + notice);
-      const failed = await p.evaluate(async () => {
-        const cache = await caches.open('bb-app-v16');
+      const failed = await stableEval(p, async () => {
+        const cache = await caches.open('bb-shell-state');
         const res = await cache.match('./__shell_install_failed');
         return res ? (await res.json()).map(f => f.u) : [];
       });
@@ -302,13 +412,114 @@ const server = http.createServer((req, res) => {
     }
   });
 
-  check('service worker updates replace old caches and keep control', async () => {
+  check('failed shell install recovers after reconnection', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'allow' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    failMenu = true;
+    try {
+      const p = await ctx.newPage();
+      await p.goto(base, { waitUntil:'networkidle' });
+      try {
+        await p.waitForFunction(() => {
+          const el = document.querySelector('#appNotice');
+          return el && !el.hidden;
+        }, null, { timeout:15000 });
+      } catch (e) { throw new Error('failure notice never appeared: ' + e.message); }
+      failMenu = false;
+      // The UI retry clears the marker and registers with a fresh script URL.
+      await p.locator('#appNotice button').click();
+      let recovered = false, last = null;
+      const deadline = Date.now() + 20000;
+      while (Date.now() < deadline && !recovered){
+        try {
+          last = await p.evaluate(async () => {
+            const state = await caches.open('bb-shell-state');
+            return {
+              version: !!(await state.match('./version')),
+              failure: !!(await state.match('./__shell_install_failed')),
+              controlled: !!navigator.serviceWorker.controller,
+              noticeHidden: document.querySelector('#appNotice')?.hidden !== false,
+              menu: document.querySelectorAll('#menuList .item').length,
+              script: (await navigator.serviceWorker.getRegistration())?.active?.scriptURL || null
+            };
+          });
+          if (last.version && !last.failure && last.controlled && last.noticeHidden && last.menu === 56) recovered = true;
+        } catch (e) { last = { error: e.message }; }
+        if (!recovered) await p.waitForTimeout(250);
+      }
+      ok(recovered, 'shell did not recover after reconnection: ' + JSON.stringify(last));
+      // The final controllerchange reload can land after `recovered` was set.
+      // Wait for a settled DOM before reading the two final assertions.
+      let final = null;
+      const settleDeadline = Date.now() + 10000;
+      while (Date.now() < settleDeadline){
+        try {
+          final = await p.evaluate(() => ({
+            hidden: document.querySelector('#appNotice')?.hidden !== false,
+            menu: document.querySelectorAll('#menuList .item').length
+          }));
+          if (final.hidden && final.menu === 56) break;
+        } catch (e) { /* reload in progress */ }
+        await p.waitForTimeout(250);
+      }
+      ok(final && final.hidden, 'failure notice survived a successful retry');
+      ok(final && final.menu === 56, 'menu missing after recovery: ' + JSON.stringify(final));
+    } finally {
+      failMenu = false;
+      await ctx.close();
+    }
+  });
+
+  check('broken external images use a local placeholder without layout shift', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    const p = await ctx.newPage();
+    await p.goto(base + '#menu', { waitUntil:'networkidle' });
+    const img = p.locator('#menuList .item img').first();
+    await p.waitForFunction(() => {
+      const i = document.querySelector('#menuList .item img');
+      return i && i.dataset.bbFallback === '1';
+    }, null, { timeout:10000 });
+    const tile = p.locator('#menuList .item .pic').first();
+    const box = await tile.boundingBox();
+    ok(box && box.width > 0 && box.height > 0, 'image tile collapsed');
+    const src = await img.getAttribute('src');
+    ok(src && src.startsWith('data:image/svg+xml'), 'local placeholder was not applied');
+    ok((await img.getAttribute('alt') || '').length > 0, 'placeholder removed alt text');
+    await ctx.close();
+  });
+
+  check('favorites storage failures are reported once and kept in memory', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block' });
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    await ctx.addInitScript(() => {
+      Object.defineProperty(window.localStorage, 'setItem', {
+        configurable: true,
+        value(){ throw new DOMException('Quota exceeded', 'QuotaExceededError'); }
+      });
+    });
+    const p = await ctx.newPage();
+    await p.goto(base + '#menu', { waitUntil:'networkidle' });
+    await p.waitForSelector('#menuList .fav');
+    await p.locator('#menuList .fav').nth(0).click();
+    await p.waitForSelector('#appToast', { timeout:5000 });
+    ok(/Saved for this visit only/.test(await p.locator('#appToast').textContent()), 'storage failure was not explained');
+    ok((await p.locator('#favBadge').textContent()).trim() === '1', 'in-memory favorite was lost');
+    await p.locator('#menuList .fav').nth(1).click();
+    ok(await p.locator('#appToast').count() === 1, 'storage notice was repeated');
+    ok((await p.locator('#favBadge').textContent()).trim() === '2', 'second in-memory favorite was lost');
+    await ctx.close();
+  });
+
+  check('content-addressed updates replace old caches and keep both tabs in control', async () => {
     // Dedicated origin serving the original worker until the test explicitly
-    // allows the new one. The app's own reg.update() therefore cannot trigger
-    // the update before the stale cache has been planted.
+    // allows a new one. The hash file changes with it so registration URLs and
+    // the install-time hash check both agree on the new release.
     const swSource = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-    const newSwSource = swSource.replace(
-      "const CACHE = 'bb-app-v16';", "const CACHE = 'bb-app-v16-update-test';");
+    const newSwSource = swSource + '\n/* updated release */\n';
+    const oldHash = computeShellHash();
+    const newHash = computeShellHash({ 'sw.js': Buffer.from(newSwSource) });
+    const oldVersion = versionFromHash(oldHash), newVersion = versionFromHash(newHash);
     let allowUpdate = false, newSwFetches = 0;
     const updateServer = http.createServer((req, res) => {
       const clean = decodeURIComponent(req.url.split('?')[0]);
@@ -317,6 +528,11 @@ const server = http.createServer((req, res) => {
         if (allowUpdate) newSwFetches++;
         res.writeHead(200, { 'Content-Type':'text/javascript', 'Cache-Control':'no-store' });
         res.end(src);
+        return;
+      }
+      if (clean === '/APP_SHELL_HASH.txt'){
+        res.writeHead(200, { 'Content-Type':'text/plain', 'Cache-Control':'no-store' });
+        res.end(allowUpdate ? newHash : oldHash);
         return;
       }
       const file = path.join(ROOT, clean === '/' ? 'index.html' : clean);
@@ -330,53 +546,56 @@ const server = http.createServer((req, res) => {
     const updateBase = `http://127.0.0.1:${updateServer.address().port}/`;
     const ctx = await browser.newContext({ serviceWorkers:'allow' });
     await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
-    const p = await ctx.newPage();
-    await p.goto(updateBase, { waitUntil:'networkidle' });
+    const p1 = await ctx.newPage(), p2 = await ctx.newPage();
+    for (const p of [p1, p2]){
+      await p.goto(updateBase, { waitUntil:'networkidle' });
+      await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout:10000 });
+    }
 
-    // The first activation reloads the page; retry until the context is stable.
-    const evalStable = async fn => {
-      for (let i = 0; i < 30; i++){
-        try { return await p.evaluate(fn); }
-        catch (e) { await p.waitForTimeout(250); }
-      }
-      throw new Error('page never became stable');
-    };
-    await evalStable(async () => {
-      await navigator.serviceWorker.ready;
-      if (!navigator.serviceWorker.controller){
-        await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once:true }));
-      }
+    // Plant one obsolete release cache and one unrelated origin cache.
+    await stableEval(p1, async () => {
       const stale = await caches.open('bb-app-old');
       await stale.put('./stale', new Response('stale'));
+      const unrelated = await caches.open('unrelated-cache');
+      await unrelated.put('./keep', new Response('keep'));
     });
+    const before = await shellVersions(p1);
+    ok(before.version === oldVersion, 'initial release version was not content-addressed');
+    ok(before.keys.includes('bb-app-' + oldVersion), 'initial release cache missing');
 
     allowUpdate = true;
-    // Fire and forget: activation deliberately reloads the page, so do not
-    // hold an execution context across controllerchange.
-    await evalStable(() => {
+    // Activation reloads both tabs; fire-and-forget so no execution context is
+    // held across controllerchange.
+    await Promise.all([p1, p2].map(p => stableEval(p, () => {
       navigator.serviceWorker.getRegistration().then(reg => reg.update()).catch(() => {});
-    });
+      return true;
+    })));
 
-    // Poll until the new worker has activated and cleaned up old caches.
-    let state;
-    const deadline = Date.now() + 12000;
-    while (Date.now() < deadline && !state){
+    const healthy = s => s.version === newVersion &&
+      s.keys.includes('bb-app-' + newVersion) &&
+      !s.keys.includes('bb-app-' + oldVersion) &&
+      !s.keys.includes('bb-app-old') &&
+      s.keys.includes('unrelated-cache') &&
+      s.controlled;
+    let s1, s2;
+    const deadline = Date.now() + 15000;
+    while (Date.now() < deadline && !(s1 && s2)){
       try {
-        const s = await p.evaluate(async () => ({
-          keys: await caches.keys(),
-          controlled: !!navigator.serviceWorker.controller
-        }));
-        if (s.keys.includes('bb-app-v16-update-test') &&
-            !s.keys.includes('bb-app-old') &&
-            !s.keys.includes('bb-app-v16') && s.controlled) state = s;
+        const [a, b] = await Promise.all([shellVersions(p1), shellVersions(p2)]);
+        const [ca, cb] = await Promise.all([
+          stableEval(p1, () => !!navigator.serviceWorker.controller),
+          stableEval(p2, () => !!navigator.serviceWorker.controller)
+        ]);
+        if (healthy({ ...a, controlled:ca }) && healthy({ ...b, controlled:cb })){ s1 = a; s2 = b; }
       } catch (e) { /* deliberate reload destroyed the context */ }
-      if (!state) await p.waitForTimeout(250);
+      if (!(s1 && s2)) await p1.waitForTimeout(250);
     }
-    ok(!!state, 'page never became stable after the service worker update');
+    ok(!!(s1 && s2), 'tabs did not settle on the updated release: ' +
+      JSON.stringify({ oldVersion, newVersion, newSwFetches, s1, s2 }));
     ok(newSwFetches >= 1, 'updated service worker was never fetched');
-    ok(!state.keys.includes('bb-app-old'), 'stale cache survived activation');
-    ok(state.keys.includes('bb-app-v16-update-test'), 'updated cache was not created');
-    ok(state.controlled, 'control lost after update');
+    const kept = await stableEval(p1, async () =>
+      !!(await (await caches.open('unrelated-cache')).match('./keep')));
+    ok(kept, 'unrelated cache was deleted by release cleanup');
     await ctx.close();
     await new Promise(r => updateServer.close(r));
   });

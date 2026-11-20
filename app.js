@@ -1,13 +1,26 @@
 /* ============================================================
    BISMARCK BIG BOY — menu data + photos from bismarckbigboy.com
    ============================================================ */
-const wix = (id, w, h) =>
-  `https://static.wixstatic.com/media/${id}/v1/fill/w_${w},h_${h},al_c,q_85,enc_auto/${id}`;
-
 /* Pure helpers live in core.js so they can be unit-tested without a DOM. */
 const { RESTAURANT, WEEKDAYS, parseHHMM, formatTime, businessNow, addDaysUTC,
         normalizeOverrides, effectiveHours, nextOpening, validateMenu,
-        normalizeDeals, hostnameOf, canEmbed, shouldHandoff } = globalThis.BigBoyCore;
+        isValidMenuId, isValidWixImageId, normalizeDeals,
+        hostnameOf, canEmbed, shouldHandoff } = globalThis.BigBoyCore;
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const money = n => '$' + n.toFixed(2);
+// HTML-escape helper for inserting dynamic strings into innerHTML safely.
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
+
+/* Media ids are allowlisted in core.js, then encoded into the fixed Wix host.
+   An invalid id returns '' so callers can omit the <img> entirely. */
+const wix = (id, w, h) => {
+  if (!isValidWixImageId(id)) return '';
+  const media = encodeURIComponent(id);
+  return `https://static.wixstatic.com/media/${media}/v1/fill/w_${w},h_${h},al_c,q_85,enc_auto/${media}`;
+};
+
 let HOUR_OVERRIDES = new Map();
 let MENU = [];
 
@@ -17,20 +30,58 @@ async function loadMenu(){
   MENU = validateMenu(await res.json());
 }
 
-
 /* ============================================================
-   State
+   State + nonintrusive, throttled status notices
    ============================================================ */
 const FAV_KEY = 'bb_favs_v1';
-const state = { tab:'home', cat:'all', q:'', favs:loadFavs() };
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const money = n => '$' + n.toFixed(2);
-// HTML-escape helper for inserting dynamic strings into innerHTML safely.
-const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
+const NOTICE_MS = 30000;
+const noticeTimes = new Map();
+let storageReadBlocked = false, storageReadMalformed = false;
 
-function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch(e){ return new Set(); } }
-function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs])); } catch(e){} }
+function notifyOnce(key, message){
+  const now = Date.now();
+  if (noticeTimes.has(key) && now - noticeTimes.get(key) < NOTICE_MS) return;
+  noticeTimes.set(key, now);
+  let el = document.getElementById('appToast');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'appToast';
+    el.className = 'app-toast';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  clearTimeout(notifyOnce._timer);
+  notifyOnce._timer = setTimeout(() => { el.remove(); }, 6000);
+}
+
+const state = { tab:'home', cat:'all', q:'', favs:loadFavs() };
+
+function loadFavs(){
+  let raw;
+  try { raw = localStorage.getItem(FAV_KEY); }
+  catch (e) { storageReadBlocked = true; return new Set(); }
+  if (raw === null) return new Set();
+  try {
+    const saved = JSON.parse(raw);
+    if (!Array.isArray(saved)) throw new Error('Favorites payload is not an array');
+    // Keep the existing format; ignore only ids that could never be menu ids.
+    return new Set(saved.filter(isValidMenuId));
+  } catch (e){
+    storageReadMalformed = true;
+    return new Set();
+  }
+}
+function saveFavs(){
+  try {
+    localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs]));
+    return true;
+  } catch (e){
+    notifyOnce('favorites-write', 'Saved for this visit only — your browser blocked favorite storage.');
+    return false;
+  }
+}
 
 let BY_ID = {};
 function buildMenuIndex(){
@@ -153,7 +204,13 @@ document.addEventListener('click', e => {
    preference stop the rest of the app from initialising. */
 const store = {
   get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
-  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  set(k,v){
+    try { localStorage.setItem(k,v); return true; }
+    catch(e){
+      notifyOnce('prefs-write', 'Preferences are available for this visit only — your browser blocked storage.');
+      return false;
+    }
+  }
 };
 const NOTIF = {
   get on(){ return store.get('bb_notif') === '1'; },
@@ -275,10 +332,11 @@ function renderChips(){
     }
   });
   $('#chips').innerHTML = CATS.map(c => {
-    const imgId = imgMap[c.id];
-    const imgSrc = imgId ? wix(imgId, 16, 16) : '';
-    const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">` : '';
-    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${c.id}">${imgHtml}${c.name}</button>`;
+    const imgSrc = wix(imgMap[c.id], 16, 16);
+    const imgHtml = imgSrc
+      ? `<img class="chip-thumb" src="${escapeHtml(imgSrc)}" alt="" style="width:16px;height:16px;flex-shrink:0;margin-right:8px;">`
+      : '';
+    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${escapeHtml(c.id)}">${imgHtml}${escapeHtml(c.name)}</button>`;
   }).join('');
   $$('.chip').forEach(ch => ch.addEventListener('click', () => {
     state.cat = ch.dataset.cat; renderChips(); renderMenu();
@@ -287,23 +345,28 @@ function renderChips(){
 
 function picHTML(it, cls){
   const src = wix(it.img, 300, 300);
-  return `<div class="pic ph ${cls||''}"><span class="fb"></span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}"></div>`;
+  const img = src
+    ? `<img alt="${escapeHtml(it.n)}" loading="lazy" decoding="async" src="${escapeHtml(src)}">`
+    : '';
+  return `<div class="pic ph ${escapeHtml(cls||'')}"><span class="fb" aria-hidden="true"></span>${img}</div>`;
 }
 
 function itemHTML(it){
+  const id = escapeHtml(it.id);
+  const name = escapeHtml(it.n);
   const sizes = it.s.map((s,i) =>
-    `<button class="size ${i===0?'on':''}" data-price="${s[1]}">${s[0]} ${money(s[1])}</button>`
+    `<button class="size ${i===0?'on':''}" data-price="${s[1]}">${escapeHtml(s[0])} ${money(s[1])}</button>`
   ).join('');
   const fav = state.favs.has(it.id);
   return `
-  <div class="item" data-id="${it.id}">
+  <div class="item" data-id="${id}">
     ${picHTML(it)}
     <div class="body">
       <div class="top">
-        <h4>${it.n}</h4>
-        <button class="fav ${fav?'on':''}" data-fav="${it.id}" aria-label="Save ${it.n}"><svg><use href="#i-heart"/></svg></button>
+        <h4>${name}</h4>
+        <button class="fav ${fav?'on':''}" data-fav="${id}" aria-label="Save ${name}"><svg><use href="#i-heart"/></svg></button>
       </div>
-      ${it.d ? `<p class="desc">${it.d}</p>` : ''}
+      ${it.d ? `<p class="desc">${escapeHtml(it.d)}</p>` : ''}
       <div class="sizes">${sizes}</div>
       <div class="price-row"><span class="price">${money(it.s[0][1])}</span></div>
     </div>
@@ -322,7 +385,7 @@ function renderMenu(){
     );
     if (!items.length) return;
     shown += items.length;
-    html += `<div class="cat-head">${g.name}<span>${items.length} ITEM${items.length>1?'S':''}</span></div>`;
+    html += `<div class="cat-head">${escapeHtml(g.name)}<span>${items.length} ITEM${items.length>1?'S':''}</span></div>`;
     html += items.map(itemHTML).join('');
   });
   if (!shown){
@@ -356,9 +419,10 @@ document.addEventListener('click', e => {
     const id = favBtn.dataset.fav;
     if (state.favs.has(id)) state.favs.delete(id); else state.favs.add(id);
     saveFavs(); updateBadge();
-    $$(`[data-fav="${id}"]`).forEach(b => {
-      const on = state.favs.has(id);
-      b.classList.toggle('on', on);
+    // Compare dataset values instead of interpolating an id into a CSS selector.
+    $$('[data-fav]').forEach(b => {
+      if (b.dataset.fav !== id) return;
+      b.classList.toggle('on', state.favs.has(id));
     });
     if (state.tab==='favs') renderFavs();
   }
@@ -393,7 +457,7 @@ function renderFavs(){
     (groups[it._cat] = groups[it._cat] || []).push(it);
   });
   box.innerHTML = Object.entries(groups).map(([cat, items]) =>
-    `<div class="cat-head">${cat}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
+    `<div class="cat-head">${escapeHtml(cat)}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
   ).join('') + `<div style="margin-top:18px">
       <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
     </div>`;
@@ -457,6 +521,7 @@ function openIAB({src, url, title}){
     ? `${escTitle}<small>${escHost}</small>`
     : `<span>${escHost}</span>`;
   const fav = $('#iabFav');
+  delete fav.dataset.bbFallback;
   fav.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=64`;
   fav.alt = (title || host) + ' website favicon';
   fav.hidden = false;
@@ -577,10 +642,21 @@ document.addEventListener('click', e => {
   }
 });
 
-/* image-load failure handling (was: inline) */
+/* Image-load failures swap in a local, CSP-allowed SVG instead of hiding the
+   image. The tile keeps its fixed size and the original alt text stays in the
+   accessibility tree; the dataset flag prevents retry loops. */
+const IMAGE_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+  '<rect width="64" height="64" fill="#2A2A2A"/>' +
+  '<text x="32" y="41" text-anchor="middle" font-family="system-ui,sans-serif" ' +
+  'font-size="26" font-weight="700" fill="#C8102E">BB</text></svg>'
+);
 document.addEventListener('error', e => {
   const t = e.target;
-  if (t && t.tagName === 'IMG') t.style.display = 'none';
+  if (!(t instanceof HTMLImageElement) || t.id === 'iabFav' || t.dataset.bbFallback) return;
+  t.dataset.bbFallback = '1';
+  t.removeAttribute('loading');
+  t.src = IMAGE_PLACEHOLDER;
 }, true);
 
 /* ============================================================
@@ -604,6 +680,11 @@ async function initApp(){
   renderHours();
   updateStatus();
   updateBadge();
+  if (storageReadBlocked){
+    notifyOnce('favorites-read', 'Favorites could not be read — your browser blocked storage. New picks are kept for this visit only.');
+  } else if (storageReadMalformed){
+    notifyOnce('favorites-read', 'Saved favorites could not be read and were reset. New picks can still be used for this visit.');
+  }
   setInterval(updateStatus, 30000);
   NOTIF.init();
   renderFbDeals();
@@ -628,13 +709,34 @@ function applyHash(){
    PWA — installable + offline shell
    ============================================================ */
 if ('serviceWorker' in navigator) {
-  /* Activation takes control and the app reloads once, so a failure message
-     received just before that reload would otherwise disappear. Remember it
-     for this tab and redraw the notice on the replacement page. */
+  /* A failed install is never activated, so it cannot always message the page.
+     The marker in Cache Storage is the reliable cross-reload source of truth. */
   const SHELL_NOTICE_KEY = 'bb_shell_notice_v1';
+  const RETRY_KEY = 'bb_sw_retry_v1';
+  const FAILURE_KEY = './__shell_install_failed';
   const shellNoticePending = () => {
     try { return sessionStorage.getItem(SHELL_NOTICE_KEY) === '1'; } catch (e) { return false; }
   };
+  const retryCount = () => {
+    try { return Math.max(0, parseInt(sessionStorage.getItem(RETRY_KEY) || '0', 10) || 0); }
+    catch (e) { return 0; }
+  };
+  const clearShellFailure = async () => {
+    try { await (await caches.open('bb-shell-state')).delete(FAILURE_KEY); } catch (e) {}
+  };
+  const checkShellFailure = async (tries = 40) => {
+    // The install attempt may still be in flight when this script runs, so
+    // watch the persisted marker briefly instead of assuming it exists yet.
+    for (let i = 0; i < tries; i++){
+      try {
+        const state = await caches.open('bb-shell-state');
+        if (await state.match(FAILURE_KEY)){ showShellInstallNotice(); return true; }
+      } catch (e) {}
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    return false;
+  };
+
   const showShellInstallNotice = () => {
     try { sessionStorage.setItem(SHELL_NOTICE_KEY, '1'); } catch (e) {}
     const el = $('#appNotice');
@@ -643,31 +745,73 @@ if ('serviceWorker' in navigator) {
     el.textContent = 'Offline setup did not finish. Some pages may not load without a connection. ';
     const btn = document.createElement('button');
     btn.type = 'button'; btn.textContent = 'RETRY';
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       try { sessionStorage.removeItem(SHELL_NOTICE_KEY); } catch (e) {}
+      await clearShellFailure();
+      // A new script URL forces the browser to run install again even when
+      // sw.js bytes and the shell hash are unchanged.
+      try { sessionStorage.setItem(RETRY_KEY, String(retryCount() + 1)); } catch (e) {}
       location.reload();
     });
     el.appendChild(btn);
   };
   if (shellNoticePending()) showShellInstallNotice();
+  checkShellFailure();
 
   navigator.serviceWorker.addEventListener('message', e => {
-    if (!e.data || e.data.type !== 'SHELL_INSTALL_FAILED') return;
-    showShellInstallNotice();
+    if (!e.data) return;
+    if (e.data.type === 'SHELL_INSTALL_FAILED'){
+      showShellInstallNotice();
+      return;
+    }
+    if (e.data.type === 'SHELL_INSTALL_OK'){
+      try { sessionStorage.removeItem(SHELL_NOTICE_KEY); } catch (err) {}
+      const el = $('#appNotice');
+      if (el){ el.hidden = true; el.textContent = ''; }
+      return;
+    }
+    if (e.data.type === 'CONTENT_FALLBACK'){
+      const file = String(e.data.url || 'content').split('/').pop().replace(/\.json$/, '');
+      notifyOnce('content-' + file,
+        'Showing saved ' + file + ' because the latest copy could not be validated.');
+    }
   });
+
+  /* The committed app-shell hash changes whenever any shipped asset changes.
+     Adding its derived version to the script URL makes the browser treat the
+     same static sw.js as a new worker, so a menu/icon/markup change still
+     triggers a fresh, content-addressed cache install. */
+  async function swScriptUrl(){
+    try {
+      const res = await fetch('APP_SHELL_HASH.txt', { cache:'no-store' });
+      if (res.ok){
+        const hash = (await res.text()).trim();
+        if (/^[a-f0-9]{768}$/.test(hash)){
+          // Derive from the full hash: a prefix would ignore later inputs such
+          // as sw.js, manifest and icons.
+          const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(hash));
+          const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+          const retry = retryCount();
+          return 'sw.js?v=' + hex.slice(0, 16) + (retry ? '&retry=' + retry : '');
+        }
+      }
+    } catch (e) {}
+    return 'sw.js';
+  }
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
-      reg.update().catch(() => {});
-      // Reload once when a new worker takes over so fresh content shows immediately.
-      let reloaded = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (reloaded) return;
-        reloaded = true;
-        location.reload();
-      });
-    }).catch(() => {});
+    // Register the listener before activation can claim this tab.
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloaded) return;
+      reloaded = true;
+      location.reload();
+    });
+    swScriptUrl()
+      .then(url => navigator.serviceWorker.register(url, { updateViaCache:'none' }))
+      .catch(() => {});
   });
-  // Ask the active worker for any persisted install failure from this session.
+  // Ask an existing active worker for any failure from this session.
   navigator.serviceWorker.ready
     .then(reg => reg.active && reg.active.postMessage({ type:'CHECK_SHELL' }))
     .catch(() => {});

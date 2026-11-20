@@ -15,6 +15,17 @@ const RESTAURANT = {
 };
 const WEEKDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
+/* Stable identifiers and Wix media ids are allowlisted before they reach a URL
+   or a CSS selector. Everything else in menu content is escaped at render time. */
+const MENU_ID_RE = /^[A-Za-z0-9_-]{1,80}$/;
+const WIX_ID_RE = /^[A-Za-z0-9][A-Za-z0-9_~.-]{0,159}$/;
+function isValidMenuId(v){
+  return typeof v === 'string' && MENU_ID_RE.test(v);
+}
+function isValidWixImageId(v){
+  return typeof v === 'string' && WIX_ID_RE.test(v) && !v.includes('..');
+}
+
 function parseHHMM(v){
   if (typeof v !== 'string') return null;
   const m = /^(\d{1,2}):(\d{2})$/.exec(v.trim());
@@ -85,19 +96,26 @@ function validateMenu(data){
   if (!Array.isArray(data) || !data.length) throw new Error('Menu data is empty');
   const ids = new Set(), out = [];
   for (const g of data){
-    if (!g || typeof g.id !== 'string' || typeof g.name !== 'string' || !Array.isArray(g.items)) continue;
+    if (!g || !isValidMenuId(g.id) || typeof g.name !== 'string' || !Array.isArray(g.items)) continue;
     const items = [];
     for (const it of g.items){
-      if (!it || typeof it.id !== 'string' || !it.id || ids.has(it.id)) continue;
+      if (!it || !isValidMenuId(it.id) || ids.has(it.id)) continue;
       if (typeof it.n !== 'string' || !Array.isArray(it.s) || !it.s.length) continue;
       const sizes = it.s
-        .filter(x => Array.isArray(x) && typeof x[0] === 'string' && Number.isFinite(+x[1]) && +x[1] >= 0)
-        .map(x => [x[0].slice(0,40), +x[1]]);
+        .filter(x => {
+          if (!Array.isArray(x) || typeof x[0] !== 'string') return false;
+          const n = typeof x[1] === 'number' ? x[1]
+            : (typeof x[1] === 'string' && x[1].trim() ? Number(x[1]) : NaN);
+          return Number.isFinite(n) && n >= 0;
+        })
+        .map(x => [x[0].slice(0,40), typeof x[1] === 'number' ? x[1] : Number(x[1])]);
       if (!sizes.length) continue;
       ids.add(it.id);
       items.push({
         id:it.id, n:it.n.slice(0,120),
-        img: typeof it.img === 'string' ? it.img : '',
+        // Unsafe media ids become an empty value; the renderer shows a local
+        // placeholder instead of building a URL from arbitrary data.
+        img: isValidWixImageId(it.img) ? it.img : '',
         d: typeof it.d === 'string' ? it.d.slice(0,300) : '',
         s:sizes
       });
@@ -139,6 +157,31 @@ function normalizeDeals(data){
   }
   return out.slice(0,20);
 }
+/* Stricter gate for generated/cached data. normalizeDeals() filters bad records
+   so one stale post cannot break the page; this assertion is used before a
+   payload is written to disk or promoted to a service-worker cache, so a bad
+   deployment is rejected instead of silently becoming "last known good". */
+function assertDealsPayload(data){
+  if (!Array.isArray(data)) throw new Error('Deals payload is not an array');
+  for (const d of data){
+    if (!d || typeof d !== 'object') throw new Error('Malformed deal record');
+    if (typeof d.title !== 'string' || typeof d.text !== 'string'){
+      throw new Error('Deal title and text must be strings');
+    }
+    if (d.url !== undefined && d.url !== null){
+      if (typeof d.url !== 'string') throw new Error('Deal URL must be a string');
+      let u;
+      try { u = new URL(d.url); } catch (e) { throw new Error('Deal URL is invalid'); }
+      if (u.protocol !== 'https:' || (u.hostname !== 'facebook.com' && u.hostname !== 'www.facebook.com')){
+        throw new Error('Deal URL host is not allowlisted');
+      }
+    }
+    if (d.expires !== undefined && d.expires !== null && !Number.isFinite(Date.parse(d.expires))){
+      throw new Error('Deal expiry is invalid');
+    }
+  }
+  return normalizeDeals(data);
+}
 
 /* Only these origins may be framed. Everything else is a handoff. */
 const EMBED_HOSTS = new Set([
@@ -169,6 +212,7 @@ function shouldHandoff(url){
   root.BigBoyCore = {
     RESTAURANT, WEEKDAYS, parseHHMM, formatTime, businessNow, addDaysUTC,
     normalizeOverrides, effectiveHours, nextOpening, validateMenu,
-    normalizeDeals, hostnameOf, canEmbed, shouldHandoff
+    isValidMenuId, isValidWixImageId, normalizeDeals, assertDealsPayload,
+    hostnameOf, canEmbed, shouldHandoff
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
