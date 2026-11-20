@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#C8102E">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'-inline'; img-src * data:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org; object-src 'none'; base-uri 'self';">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Big Boy">
@@ -411,10 +412,10 @@ nav.tabbar{
 
 <header>
   <div class="brand">
-    <a class="logo" href="#" onclick="go('home');return false;">
+    <a class="logo" href="#home" data-goto="home">
       <span class="logo-badge">
         <span class="fb"></span>
-        <img src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" alt="Big Boy" onerror="this.remove()">
+        <img src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" alt="Big Boy">
       </span>
       <span class="logo-text">
         <span class="t1">BIG BOY</span>
@@ -431,7 +432,7 @@ nav.tabbar{
 <!-- ============ HOME ============ -->
 <section class="screen active" id="s-home">
   <div class="hero">
-    <img class="hero-bg" alt="" src="https://static.wixstatic.com/media/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg/v1/fill/w_1100,h_700,al_c,q_80,enc_auto/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg" onerror="this.remove()">
+    <img class="hero-bg" alt="" src="https://static.wixstatic.com/media/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg/v1/fill/w_1100,h_700,al_c,q_80,enc_auto/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg">
     <div class="hero-tint"></div>
     <div class="hero-check"></div>
     <p class="eyebrow">A FAMILY TRADITION</p>
@@ -452,34 +453,34 @@ nav.tabbar{
     <a href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
        data-title="Directions"><span class="ico"><svg><use href="#i-pin"/></svg></span>Directions</a>
-    <a href="#rewards" onclick="go('rewards');return false;"><span class="ico"><svg><use href="#i-gift"/></svg></span>Gift Cards</a>
+    <a href="#rewards" data-goto="rewards"><span class="ico"><svg><use href="#i-gift"/></svg></span>Gift Cards</a>
   </div>
 
   <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
   <div class="specials">
     <div class="special">
-      <div class="pic ph"><span class="fb"></span><img alt="Flying style burger" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Flying style burger" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg"></div>
       <div>
         <h3>Flying Style</h3>
         <p>We are the only Big Boy that sells flying style. Ask for it by name.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb"></span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg"></div>
       <div>
         <h3>Hot-N-Tot</h3>
         <p>Cinnamon syrup blended into a delicious Coke — a warm, spiced soda you won't find anywhere else.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb"></span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg"></div>
       <div>
         <h3>Fries &amp; Gravy</h3>
         <p>There's no debate: dipping fries in gravy is the ultimate way to enjoy them.</p>
       </div>
     </div>
     <div class="special">
-      <div class="pic ph"><span class="fb"></span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg" onerror="this.remove()"></div>
+      <div class="pic ph"><span class="fb"></span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg"></div>
       <div>
         <h3>Big Boy Snow</h3>
         <p>Pebble ice topped with your syrup of choice. Cherry and marshmallow are customer favorites.</p>
@@ -558,29 +559,29 @@ nav.tabbar{
   <p class="screen-sub">Loyalty perks and gift cards for the Big Boy faithful.</p>
 
   <div class="reward-hero">
-    <div class="avatar ph"><span class="fb"></span><img alt="Big Boy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg" onerror="this.remove()"></div>
+    <div class="avatar ph"><span class="fb"></span><img alt="Big Boy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg"></div>
     <h2>EAT. EARN. REPEAT.</h2>
     <p>Join Big Boy Rewards and start collecting on every order — then treat somebody else to a gift card.</p>
   </div>
 
   <div class="reward-grid">
     <a class="reward-card" href="https://www.toasttab.com/loyalty/welcome/RQQO1ZM52u5HXnVX" data-title="Loyalty Sign Up">
-      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_c4cabc6af5544f708841e1a00808216f~mv2.jpg"></span>
       <span class="txt"><h3>Loyalty Sign Up</h3><p>Create your free rewards account in under a minute.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://www.toasttab.com/big-boy-2511-east-main-avenue/giftcards" data-title="eGift Card">
-      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg"></span>
       <span class="txt"><h3>Purchase eGift Card</h3><p>Send a taste of Big Boy to friends and family instantly.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://www.bismarckbigboy.com/category/all-products" data-title="Big Boy Shop">
-      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg"></span>
       <span class="txt"><h3>Big Boy Shop</h3><p>Merch, gear, and good stuff from the original location.</p></span>
       <span class="arrow">›</span>
     </a>
     <a class="reward-card" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
-      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg" onerror="this.remove()"></span>
+      <span class="ico ph"><span class="fb"></span><img alt="" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_200,h_200,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg"></span>
       <span class="txt"><h3>Order Online</h3><p>Skip the line with Toast pickup ordering.</p></span>
       <span class="arrow">›</span>
     </a>
@@ -594,8 +595,7 @@ nav.tabbar{
 
   <div class="card">
     <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
-         src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg"
-         onerror="this.remove()">
+         src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg">
     <div class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</div>
 
     <div class="timeline">
@@ -686,10 +686,10 @@ nav.tabbar{
 
   <div class="socials">
     <a class="ig" href="https://www.instagram.com/bismarck_big_boy/" data-title="Instagram">
-      <img alt="" src="https://static.wixstatic.com/media/81af6121f84c41a5b4391d7d37fce12a.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/81af6121f84c41a5b4391d7d37fce12a.png" onerror="this.remove()">Instagram
+      <img alt="" src="https://static.wixstatic.com/media/81af6121f84c41a5b4391d7d37fce12a.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/81af6121f84c41a5b4391d7d37fce12a.png">Instagram
     </a>
     <a class="fb" href="https://www.facebook.com/bismarckbigboy/" data-title="Facebook">
-      <img alt="" src="https://static.wixstatic.com/media/23fd2a2be53141ed810f4d3dcdcd01fa.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/23fd2a2be53141ed810f4d3dcdcd01fa.png" onerror="this.remove()">Facebook
+      <img alt="" src="https://static.wixstatic.com/media/23fd2a2be53141ed810f4d3dcdcd01fa.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/23fd2a2be53141ed810f4d3dcdcd01fa.png">Facebook
     </a>
   </div>
 
@@ -701,7 +701,7 @@ nav.tabbar{
 <!-- sticky order bar (menu screen) -->
 <div class="orderbar" id="orderbar">
   <a href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
-    <span class="ico"><img alt="" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_80,h_80,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg" onerror="this.remove()"></span>
+    <span class="ico"><img alt="" src="https://static.wixstatic.com/media/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg/v1/fill/w_80,h_80,al_c,q_85,enc_auto/063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg"></span>
     ORDER ONLINE FOR PICKUP
   </a>
 </div>
@@ -870,8 +870,8 @@ async function renderFbDeals(){
     const live = data.filter(d => !d.expires || new Date(d.expires) > new Date());
     el.innerHTML = live.map(d => `
       <div class="fb-deal-card">
-        <strong>${d.title}</strong>
-        <p>${d.text}</p>
+        <strong>${escapeHtml(d.title)}</strong>
+        <p>${escapeHtml(d.text)}</p>
       </div>`).join('');
   } catch(e){ el.innerHTML = ''; }
 }
@@ -997,7 +997,7 @@ function renderChips(){
 
 function picHTML(it, cls){
   const src = wix(it.img, 300, 300);
-  return `<div class="pic ph ${cls||''}"><span class="fb"></span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}" onerror="this.remove()"></div>`;
+  return `<div class="pic ph ${cls||''}"><span class="fb"></span><img alt="${it.n}" loading="lazy" decoding="async" src="${src}"></div>`;
 }
 
 function itemHTML(it){
@@ -1035,15 +1035,19 @@ function renderMenu(){
     html += items.map(itemHTML).join('');
   });
   if (!shown){
+    const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
     html = `<div class="empty">
       <div class="big">Search</div>
       <h3>Nothing found</h3>
-      <p>We couldn't match “${state.q}”. Try “fries”, “shake”, or “dog”.</p>
-      <button class="btn ghost" onclick="clearSearch()">CLEAR SEARCH</button>
+      <p>We couldn't match “${esc(state.q)}”. Try “fries”, “shake”, or “dog”.</p>
+      <button class="btn ghost" id="clearSearchEmpty" data-action="clearSearch">CLEAR SEARCH</button>
     </div>`;
   }
   $('#menuList').innerHTML = html;
 }
+
+// HTML-escape helper for inserting dynamic strings into innerHTML safely.
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]));
 
 function clearSearch(){
   state.q = ''; $('#search').value = ''; $('#searchWrap').classList.remove('has'); renderMenu();
@@ -1090,7 +1094,7 @@ function renderFavs(){
       <div class="big">Empty</div>
       <h3>No favorites yet</h3>
       <p>Tap the heart on any menu item and it'll show up here for quick reordering.</p>
-      <button class="btn" onclick="go('menu')">BROWSE THE MENU</button>
+      <button class="btn" data-goto="menu">BROWSE THE MENU</button>
     </div>`;
     return;
   }
@@ -1163,9 +1167,11 @@ function openIAB({src, url, title}){
   } catch(e){ host = url; }
 
   const label = title || host;
-  $('#iabHost').innerHTML = (title && host)
-    ? `${title}<small>${host}</small>`
-    : `<span>${host}</span>`;
+  // Escape for display — hostnames could theoretically contain special chars from URLs
+  const escTitle = escapeHtml(title || ''), escHost = escapeHtml(host);
+  $('#iabHost').innerHTML = escTitle
+    ? `${escTitle}<small>${escHost}</small>`
+    : `<span>${escHost}</span>`;
   const fav = $('#iabFav');
   fav.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=64`;
   fav.hidden = false;
@@ -1180,7 +1186,7 @@ function openIAB({src, url, title}){
     iabBody.className = 'iab-body handoff';
     const isOrdering = host === 'order.toasttab.com';
     $('#hoInner').innerHTML = `
-      <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128" onerror="this.style.visibility='hidden'">
+      <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128">
       <h3>${label}</h3>
       <div class="host">${host}</div>
       <p>${NOTES[hostRaw] || NOTES[host] || "This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved."}</p>
@@ -1256,6 +1262,24 @@ document.addEventListener('click', e => {
     title: a.dataset.title || ''
   });
 }, false);
+
+/* internal navigation via data-goto + data-action (replaces inline onclick handlers) */
+document.addEventListener('click', e => {
+  if (!(e.target instanceof Element)) return;
+  const nav = e.target.closest('[data-goto]');
+  if (nav){ e.preventDefault(); go(nav.dataset.goto); return; }
+  const act = e.target.closest('[data-action]');
+  if (act){
+    e.preventDefault();
+    if (act.dataset.action === 'clearSearch') clearSearch();
+  }
+});
+
+/* image-load failure handling (was: inline onerror="this.remove()") */
+document.addEventListener('error', e => {
+  const t = e.target;
+  if (t && t.tagName === 'IMG') t.style.display = 'none';
+}, true);
 
 /* ============================================================
    Init
