@@ -295,7 +295,7 @@ const NOTIF = {
 /* ============================================================
    Navigation
    ============================================================ */
-const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', delivery:'#s-delivery', info:'#s-info' };
+const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
 function go(tab){
   state.tab = tab;
   Object.entries(SCREENS).forEach(([k,sel]) => $(sel).classList.toggle('active', k===tab));
@@ -553,9 +553,9 @@ function openIAB({src, url, title}){
     if (isOrdering){
       $('#hoDelivery').addEventListener('click', () => {
         closeIAB();
-        go('delivery');
+        go('home');
         setTimeout(() => {
-          const el = document.getElementById('deliveryProviders');
+          const el = document.getElementById('delivery');
           if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
         }, 180);
       });

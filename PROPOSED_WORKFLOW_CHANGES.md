@@ -1,6 +1,6 @@
 # Proposed changes to `.github/workflows/auto-package.yml`
 
-**Status: APPLIED AND PUSHED.** The hardening below is included in the final commit on `origin/main`. No manual workflow run, release, deployment, credential rotation or publish action was triggered.
+**Status: APPLIED LOCALLY, NOT COMMITTED OR PUSHED.** The hardening below is present in the working tree as a reviewable change. No workflow run, release, deployment, credential rotation or publish action was triggered.
 
 ## What was applied
 
@@ -27,8 +27,8 @@
 ## Validation of this change
 
 - YAML parse: pass for both workflows.
-- Syntax, JSON, unit (**17/17**) and browser (**26/26**) checks: pass; `npm audit` reports 0 vulnerabilities.
-- `git`: all changes were committed and pushed to `origin/main`; no release or publish action was performed.
+- Syntax, JSON, unit (**17/17**) and browser (**24/24**) checks: pass; `npm audit` reports 0 vulnerabilities.
+- `git`: all changes remain uncommitted; nothing was pushed or published.
 
 ## Not included
 

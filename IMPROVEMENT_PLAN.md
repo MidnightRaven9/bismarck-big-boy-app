@@ -11,7 +11,7 @@
 7. **Maintainability** — pure logic in `core.js`, app logic in `app.js`, markup/styles in `index.html`. No frameworks, build step, analytics, accounts or backend added.
 8. **Testing** — `tests/unit.test.js` and `tests/browser.test.js`, plus a new secret-free `.github/workflows/validate.yml` for pull requests.
 
-## Applied in the final hardening pass
+## Applied in the final hardening pass (uncommitted)
 
 - `.github/workflows/auto-package.yml` was hardened locally with three gated jobs (`validate`, `package`, `deals`), pinned Actions/Playwright, `npm ci`, least-privilege permissions, `set -euo pipefail`, a guarded scraper, and a hash covering every shell input. See `PROPOSED_WORKFLOW_CHANGES.md`.
 - Test tooling is pinned in `package.json` + `package-lock.json`; validation CI uses `npm ci`.
@@ -19,31 +19,26 @@
 - 195 CSS px / ~200% zoom reflow and the install-notice reload race were fixed.
 - `APP_SHELL_HASH.txt` is synced to the new full-shell hash so the cron will not repackage unexpectedly from these web-only changes.
 
-## Applied in the full-remediation pass
+## Applied in the full-remediation pass (uncommitted)
 
 - Every menu/deal string is escaped at render time; IDs and Wix media IDs are allowlisted, and URLs are built from a fixed host with encoded ids.
 - Service worker versioning now hashes the complete 768-character shell hash, so changes to `sw.js`, manifest or icons also create a new cache version; failed installs are rejected before activation and recovered through a retry URL.
 - JSON handling distinguishes syntax from schema validation, preserves last-known-good cached data, and reports fallbacks to the page.
 - Workflows add concurrency groups, explicit `main`/repository guards, token-only git extraheaders, and shared `assertDealsPayload` validation in scraper, workflow and service worker.
 - External image failures use a local CSP-allowed SVG placeholder; favorites/storage failures show throttled live-region notices.
-- Test suites expanded from 11/19 to **17/26**; final `npm audit` reports 0 vulnerabilities.
-
-## Applied in the modern-retro redesign pass
-
-- Rebuilt the shared visual system in `index.html`: cream canvas, white cards, charcoal type, Big Boy red, yellow accents, checkerboard details, 16px radii, 8px rhythm, 44px touch targets and reduced-motion support.
-- Redesigned Home, Menu, Favorites, Rewards and Info in place and added a dedicated Delivery screen/tab; all item/category/price data, links and `localStorage` keys are unchanged.
-- Kept the original logo, mascot, Wix imagery, Bismarck hours logic, external-link policy and PWA shell intact; regenerated `APP_SHELL_HASH.txt` from the 12 canonical inputs.
-- Added browser coverage for the six labeled tabs and the `#delivery` deep link; the final suite is 17/17 unit and 26/26 browser.
-- Regenerated all six 390×844 screenshots from the redesigned local build, including the dedicated Delivery tab.
+- Test suites expanded from 11/19 to **17/24**; final `npm audit` reports 0 vulnerabilities.
 
 ## Deferred — requires explicit approval
 
+- Committing and pushing the workflow and code changes.
 - Releasing a new APK/AAB. The TWA loads the live site, so a repackage is not required for these web-only changes.
 - Credential rotation: a targeted current-tree/history scan found no live secret and no GitHub token or private-key pattern; current workflows use `GITHUB_TOKEN` and the scraper needs no Facebook password. No rotation is needed unless a real credential was exposed outside the repository, and any rotation remains owner-controlled.
+- Regenerating screenshots: existing binary assets were intentionally left untouched.
 - Confirming whether the legacy "Shake Flavors" menu item should be removed from `menu.json` — **confirmed 2026-11-20: keep all Shake Flavors entries unchanged**.
 
 ## Recommended next steps
 
-1. Verify the manual checklist in `TEST_REPORT.md` on a physical Android device (Chrome PWA and installed TWA) and on iOS Safari.
-2. Supply official holiday/exception dates, if any, for `hours_overrides.json` — leave empty until then.
-3. Approve any release, deployment or workflow dispatch explicitly; credential rotation is unnecessary unless a real credential was exposed outside the repository.
+1. Review the working tree locally, then merge only when ready.
+2. Verify the manual checklist in `TEST_REPORT.md` on a physical Android device (Chrome PWA and installed TWA) and on iOS Safari.
+3. Ask the owner to approve any commit/push, release or deployment explicitly; credential rotation is unnecessary unless a real credential was exposed outside the repository.
+4. Supply official holiday/exception dates, if any, for `hours_overrides.json` — leave empty until then.
