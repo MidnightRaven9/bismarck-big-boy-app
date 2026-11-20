@@ -23,7 +23,6 @@ const CHROME = /^(profile for|home|posts|notifications?|about|photos|videos|ment
 // ---------------------------------------------------------------------------
 function parseExpiry(text, from){
   const now = new Date(from);
-  const asDate = (str) => new Date(`${str} 2026`);          // assume 2026
   const nextWeekday = (d, dayName) => {
     const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
     const target = days.indexOf(dayName.toLowerCase());
