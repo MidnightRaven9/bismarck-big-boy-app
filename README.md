@@ -5,7 +5,7 @@
 [![Built with: OpenCode](https://img.shields.io/badge/Built%20with-OpenCode-4da167)](https://opencode.ai)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
-A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS and JavaScript — no build step, framework, analytics or backend. The installable Progressive Web App opens like a native app on Android and iPhone. The current design uses a warm cream and white background, Big Boy red action accents, heritage navy navigation, and light cards with subtle borders.
+A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS and JavaScript — no build step, framework, analytics or backend. The installable Progressive Web App opens like a native app on Android and iPhone. The current design uses a modern Americana palette: classic red, heritage navy, and crisp white, with subtle vintage-gold accents and deliberate color blocking inspired by Big Boy's 1954 brand heritage.
 
 ## Features
 

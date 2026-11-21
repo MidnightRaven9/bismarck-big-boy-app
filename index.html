@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFF8F2">
+<meta name="theme-color" content="#F5F7FA">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,29 +21,32 @@
 <style>
 :root{
   /* ---- brand ---- */
-  --red:#C8102E;        /* primary action */
-  --red-dark:#9B0B23;   /* pressed red */
-  --navy:#203D60;       /* heritage navy */
-  --navy-dark:#152A45;  /* pressed navy */
+  --red:#C8102E;        /* signature red */
+  --red-dark:#A50D26;   /* deep red */
+  --navy:#193B63;       /* heritage navy */
+  --navy-dark:#0F2540;  /* pressed navy */
+  --gold:#D4A63A;       /* vintage gold */
+  --gold-dark:#B08A2A;  /* pressed gold */
 
   /* ---- surfaces ---- */
-  --bg:#FFF8F2;         /* warm cream page background */
-  --paper:#FFFFFF;      /* pure white surfaces */
-  --card:#FFFFFF;       /* light cards */
-  --card-raised:#F1E7DD;/* light diner beige */
-  --nav:#203D60;        /* navy bottom nav */
+  --bg:#F5F7FA;         /* cool gray page background */
+  --paper:#FFFFFF;      /* classic white */
+  --card:#FFFFFF;       /* white cards */
+  --card-raised:#F5F7FA;/* cool gray raised surface */
+  --ice:#DCEAF5;        /* ice-blue milestone panels */
+  --nav:#193B63;        /* navy bottom nav */
 
   /* ---- text ---- */
-  --ink:#252525;
-  --ink-soft:#666666;
-  --on-card:#252525;     /* text on light cards */
-  --on-card-soft:#666666;
+  --ink:#262626;
+  --ink-soft:#5A5A5A;
+  --on-card:#262626;     /* text on light cards */
+  --on-card-soft:#5A5A5A;
   --on-dark:#FFFFFF;
   --on-dark-soft:rgba(255,255,255,.82);
 
   /* ---- lines ---- */
-  --line:#E6DCD2;
-  --line-dark:#D8CFC6;
+  --line:#E5E9EF;
+  --line-dark:#D1D8E2;
 
   /* ---- elevation (minimal) ---- */
   --shadow:0 1px 2px rgba(0,0,0,.08);
@@ -121,33 +124,32 @@ header{
   position:sticky;top:0;z-index:40;
   background:var(--paper);
   color:var(--ink);
-  padding:10px var(--pad) 11px;
+  padding:8px 14px 9px;
   border-bottom:1px solid var(--line);
-  box-shadow:var(--shadow-soft);
 }
-.brand{display:flex;align-items:center;gap:12px;justify-content:space-between;min-height:42px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand{display:flex;align-items:center;gap:10px;justify-content:space-between;min-height:40px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
 .logo-badge{
-  width:42px;height:42px;border-radius:50%;
+  width:38px;height:38px;border-radius:50%;
   background:var(--paper);position:relative;overflow:hidden;flex:none;
-  border:3px solid var(--line);box-shadow:var(--shadow-soft);
-  display:grid;place-items:center;font-size:20px;
+  border:2px solid var(--line);box-shadow:var(--shadow-soft);
+  display:grid;place-items:center;font-size:18px;
 }
 .logo-badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.logo-text .t1{font-family:'Bebas Neue','Arial Narrow',Impact,sans-serif;font-size:26px;line-height:.9;letter-spacing:.07em;color:var(--navy)}
-.logo-text .t2{font-size:9px;letter-spacing:.2em;color:var(--ink-soft);font-weight:700;margin-top:3px}
+.logo-text .t1{font-family:'Bebas Neue','Arial Narrow',Impact,sans-serif;font-size:24px;line-height:.9;letter-spacing:.07em;color:var(--navy)}
+.logo-text .t2{font-size:8.5px;letter-spacing:.18em;color:var(--ink-soft);font-weight:800;margin-top:2px}
 .status{
-  display:flex;align-items:center;gap:7px;
+  display:flex;align-items:center;gap:6px;
   background:var(--paper);
   border:1px solid var(--line);
   color:var(--ink);
-  padding:7px 11px;border-radius:var(--radius-pill);font-size:12px;font-weight:700;
+  padding:6px 10px;border-radius:var(--radius-pill);font-size:11.5px;font-weight:700;
   white-space:nowrap;
 }
 .status.closed{background:var(--paper);color:var(--red-dark);border-color:var(--red)}
-.status .dot{width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px rgba(37,37,37,.12);flex:none}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 3px rgba(25,59,99,.12);flex:none}
 .status.closed .dot{background:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,.18)}
-.status small{display:block;font-weight:500;color:var(--ink-soft);font-size:10.5px;line-height:1.25}
+.status small{display:block;font-weight:500;color:var(--ink-soft);font-size:10px;line-height:1.25}
 .status.closed small{color:var(--red-dark)}
 
 /* ---------- screens ---------- */
@@ -169,53 +171,91 @@ header{
 /* ---------- hero ---------- */
 .hero{
   position:relative;overflow:hidden;border-radius:var(--radius);
-  background:var(--navy);color:var(--on-dark);padding:30px 20px 24px;
-  border:1px solid rgba(255,255,255,.25);box-shadow:var(--shadow);
-  min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;
+  background:var(--navy);color:var(--on-dark);padding:32px 22px 26px 32px;
+  box-shadow:var(--shadow);
+  min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;
 }
-.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.6}
-.hero-tint{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(32,61,96,.45) 0%,rgba(32,61,96,.78) 60%,rgba(21,42,69,.95) 100%)}
+.hero::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:12px;background:var(--red);z-index:4;
+}
+.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:10px;z-index:4;
+  background-color:var(--red);
+  background-image:
+    linear-gradient(45deg,rgba(255,255,255,.9) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.9) 75%),
+    linear-gradient(45deg,rgba(255,255,255,.9) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.9) 75%);
+  background-size:10px 10px;background-position:0 0,5px 5px;
+}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55}
+.hero-tint{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,rgba(25,59,99,.92) 0%,rgba(25,59,99,.72) 45%,rgba(25,59,99,.88) 100%)}
 .hero-check{
-  position:absolute;inset:0;z-index:1;opacity:.12;
+  position:absolute;inset:0;z-index:1;opacity:.08;
   background-image:
     linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.12) 75%),
     linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.12) 75%);
   background-size:28px 28px;background-position:0 0,14px 14px;
 }
 .hero>*:not(.hero-bg):not(.hero-tint):not(.hero-check){position:relative;z-index:2}
-.hero .eyebrow{font-size:11px;letter-spacing:.3em;font-weight:800;color:var(--on-dark);margin:0 0 8px}
-.hero h1{font-size:52px;margin:0;line-height:.9;letter-spacing:.005em}
-.hero p{margin:12px 0 0;font-size:14.5px;line-height:1.55;color:var(--on-dark-soft);max-width:34ch}
+.hero .eyebrow{font-size:10.5px;letter-spacing:.32em;font-weight:800;color:var(--on-dark);margin:0 0 10px}
+.hero-since{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;
+  background:var(--gold);color:var(--navy-dark);
+  font-weight:800;font-size:10px;letter-spacing:.14em;
+  padding:5px 11px;border-radius:var(--radius-pill);align-self:flex-start;
+}
+.hero h1{font-size:56px;margin:0;line-height:.88;letter-spacing:.01em;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.hero p{margin:12px 0 0;font-size:15px;line-height:1.55;color:var(--on-dark-soft);max-width:36ch}
 .hero .years{
   display:inline-flex;align-items:center;gap:8px;margin-top:16px;
   background:var(--red);color:var(--on-dark);
   font-weight:800;font-size:12px;letter-spacing:.06em;
-  padding:8px 13px;border-radius:var(--radius-pill);align-self:flex-start;
+  padding:8px 14px;border-radius:var(--radius-pill);align-self:flex-start;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
 }
 .hero .addr{margin-top:14px;font-size:13px;color:var(--on-dark-soft);line-height:1.6}
 
 /* ---------- quick actions ---------- */
-.qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
-.qa a{aspect-ratio:1/1;padding:14px 8px}
-.qa .icon{width:46px;height:46px}
-.qa .label{font-size:12.5px;font-weight:700}
+.qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.qa a{aspect-ratio:1/1;padding:16px 8px;border-radius:var(--radius)}
+.qa .icon{width:44px;height:44px}
+.qa .label{font-size:12.5px;font-weight:800;letter-spacing:.02em}
 .qa a[data-title="Call"] .icon svg{transform:rotate(-18deg)}
+.qa .retro-icon-button.primary{grid-row:span 1;aspect-ratio:1/1;background:var(--red);border-color:var(--red-dark)}
+.qa .retro-icon-button.primary .icon{width:50px;height:50px}
+.qa .retro-icon-button.primary .label{font-size:13.5px}
 @media(min-width:520px){
   .qa{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 
 /* ---------- specials ---------- */
-.specials{display:grid;gap:12px}
+.specials{display:grid;gap:14px}
 .special{
-  display:flex;gap:14px;align-items:center;
-  background:var(--card);border:1px solid var(--line-dark);border-radius:var(--radius);
-  padding:14px;box-shadow:var(--shadow-soft);
-  transition:border-color .18s ease;
+  position:relative;display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;
+  border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+  overflow:hidden;min-height:132px;
+  transition:transform .15s ease,box-shadow .15s ease;
 }
-.special:hover{border-color:#5A5A5E}
-.special .pic{width:66px;height:66px;border-radius:var(--radius-md);flex:none;border:1px solid var(--line-dark)}
-.special h3{margin:0;font-size:22px;line-height:1;color:var(--on-card)}
-.special p{margin:5px 0 0;font-size:13px;color:var(--on-card-soft);line-height:1.45}
+.special:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.special .pic{width:110px;height:110px;border-radius:var(--radius-md);flex:none;overflow:hidden}
+.special .pic img{object-fit:cover;object-position:center}
+.special h3{margin:0;font-size:26px;line-height:1}
+.special p{margin:6px 0 0;font-size:13.5px;line-height:1.5}
+
+.special--navy{background:var(--navy);color:var(--on-dark)}
+.special--navy p{color:var(--on-dark-soft)}
+.special--navy .pic{border:3px solid rgba(255,255,255,.25)}
+
+.special--white{background:var(--card);border-left:6px solid var(--red);color:var(--ink)}
+.special--white p{color:var(--ink-soft)}
+.special--white .pic{border:3px solid var(--line)}
+
+.special--ice{background:var(--ice);color:var(--navy-dark)}
+.special--ice p{color:rgba(25,59,99,.82)}
+.special--ice .pic{border:3px solid rgba(25,59,99,.15)}
+
+.special--navy-alt{background:var(--card);border-top:5px solid var(--navy);color:var(--ink)}
+.special--navy-alt p{color:var(--ink-soft)}
+.special--navy-alt .pic{border:3px solid var(--line)}
 
 /* ---------- hours ---------- */
 .hours-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}
@@ -338,45 +378,82 @@ header{
 .reward-card p{margin:3px 0 0;font-size:12.5px;color:var(--on-card-soft);line-height:1.45}
 .reward-card .arrow{color:var(--navy);font-size:22px;font-weight:700}
 
-/* ---------- info ---------- */
-.timeline{position:relative;padding-left:22px}
-.timeline::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line-dark)}
-.tl-item{position:relative;padding-bottom:20px}
-.tl-item::before{content:"";position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--ink);border:3px solid var(--card);box-shadow:0 0 0 2px var(--line-dark)}
-.tl-item .yr{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--ink);line-height:1}
-.tl-item h3{margin:3px 0 5px;font-size:20px;color:var(--ink)}
-.tl-item p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.65}
-.card .tl-item .yr,.card .tl-item h3{color:var(--on-card)}
-.card .tl-item p{color:var(--on-card-soft)}
-.card .tl-item::before{background:var(--on-card-soft);border-color:var(--card);box-shadow:0 0 0 2px var(--line-dark)}
-.story-photo{width:100%;max-height:300px;object-fit:contain;object-position:top;background:var(--card-raised);border:1px solid var(--line-dark);border-radius:var(--radius-sm);margin-bottom:16px;display:block}
-.photo-cap{font-size:11px;color:var(--on-card-soft);text-align:center;margin:-8px 0 16px;letter-spacing:.06em}
-blockquote{margin:0;padding:16px 18px;background:var(--card);border:1px solid var(--line-dark);border-left:4px solid var(--red);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:13.5px;line-height:1.7;color:var(--on-card)}
-blockquote cite{display:block;margin-top:9px;font-style:normal;font-weight:700;font-size:12px;color:var(--on-card-soft)}
-.contact-row{display:flex;gap:13px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line);text-decoration:none}
-.card .contact-row{border-bottom-color:var(--line-dark)}
-.contact-row:last-of-type{border-bottom:none}
-.contact-row .ico{width:42px;height:42px;border-radius:var(--radius-sm);background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;flex:none;color:var(--ink)}
-.contact-row .ico svg{width:19px;height:19px;display:block}
-.contact-row .lab{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--ink-soft);text-transform:uppercase}
-.contact-row .val{font-size:14.5px;font-weight:600;margin-top:2px;display:block;color:var(--ink)}
-.card .contact-row .lab{color:var(--on-card-soft)}
-.card .contact-row .val{color:var(--on-card)}
-.socials{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.socials a{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;border-radius:var(--radius-md);border:1px solid var(--line-dark);text-decoration:none;font-weight:700;font-size:13.5px;color:var(--on-card);background:var(--card);transition:border-color .15s ease}
-.socials a:hover{border-color:#5A5A5E}
-.socials a img{width:19px;height:19px;object-fit:contain}
-.note-box{background:var(--card);border:1px solid var(--line-dark);border-radius:var(--radius-md);padding:14px 16px;font-size:13px;line-height:1.6;color:var(--on-card-soft)}
-.note-box strong{color:var(--on-card)}
-.fb-card{background:var(--card);border:1px solid var(--line-dark);border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow-soft);margin-top:12px}
-.fb-card-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.fb-icon{width:36px;height:36px;border-radius:50%;background:var(--card-raised);border:1px solid var(--line-dark);color:var(--on-card);display:grid;place-items:center;font-size:18px;font-weight:800}
-.fb-name{font-size:16px;font-weight:700;color:var(--on-card)}
-.fb-follow{background:var(--card-raised);color:var(--on-card);border:1px solid var(--line-dark);padding:11px 16px;border-radius:var(--radius-pill);font-weight:800;font-size:14px;text-align:center;display:block;margin-bottom:12px;transition:border-color .15s ease}
-.fb-follow:hover{border-color:#5A5A5E}
-.fb-footer{display:flex;gap:8px;flex-wrap:wrap}
-.fb-link{flex:1;min-width:55px;padding:10px 8px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;text-align:center;color:var(--on-card);background:var(--card-raised);border:1px solid var(--line-dark);text-decoration:none;transition:border-color .15s ease}
-.fb-link:hover{border-color:#5A5A5E}
+/* ---------- info / heritage ---------- */
+.heritage{
+  background:var(--navy);color:var(--on-dark);border-radius:var(--radius);
+  padding:26px 18px 28px;margin-top:14px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.heritage::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:6px;
+  background:linear-gradient(90deg,var(--gold) 0 33%,var(--red) 33% 66%,var(--paper) 66% 100%);
+}
+.heritage::after{
+  content:"1954";position:absolute;right:0;top:0;
+  font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,255,255,.06);line-height:1;pointer-events:none;
+}
+.heritage-header{position:relative;z-index:1;margin-bottom:22px;}
+.heritage-eyebrow{font-size:10.5px;letter-spacing:.3em;font-weight:800;color:var(--gold);margin:0 0 8px;}
+.heritage h2{font-size:36px;color:var(--on-dark);margin:0;line-height:.95;}
+
+.heritage-feature{position:relative;z-index:1;margin-bottom:6px;}
+.story-photo{width:100%;max-height:260px;object-fit:contain;object-position:top;background:var(--paper);border:4px solid var(--gold);border-radius:var(--radius-md);display:block}
+.photo-cap{font-size:11px;color:var(--on-dark-soft);text-align:center;margin:10px 0 24px;letter-spacing:.08em;font-weight:600}
+
+.timeline{position:relative;padding-left:34px;z-index:1;}
+.timeline::before{content:"";position:absolute;left:11px;top:8px;bottom:8px;width:3px;background:linear-gradient(to bottom,var(--gold),rgba(212,166,58,.25));border-radius:3px;}
+.tl-item{position:relative;margin-bottom:18px;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-item::before{content:"";position:absolute;left:-29px;top:6px;width:16px;height:16px;border-radius:50%;background:var(--gold);border:3px solid var(--navy);box-shadow:0 0 0 2px var(--gold);z-index:2;}
+.tl-item--featured::before{width:22px;height:22px;left:-32px;top:3px;background:var(--red);box-shadow:0 0 0 3px var(--gold);}
+.tl-item--today::before{background:var(--red);box-shadow:0 0 0 2px var(--red);}
+
+.tl-panel{background:var(--paper);color:var(--ink);border-radius:var(--radius-md);padding:16px 18px;box-shadow:var(--shadow);}
+.tl-panel--ice{background:var(--ice);color:var(--navy-dark);}
+.tl-panel--red{border-left:5px solid var(--red);}
+.tl-panel .yr{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);line-height:1;margin-bottom:2px;}
+.tl-panel h3{margin:0 0 6px;font-size:20px;color:var(--navy);}
+.tl-panel p{margin:0;font-size:13.5px;line-height:1.65;color:var(--ink-soft);}
+.tl-panel--ice h3{color:var(--navy-dark);}
+.tl-panel--ice p{color:rgba(25,59,99,.82);}
+
+.owner-quote{
+  position:relative;margin:26px 0 0;padding:26px 24px 24px 56px;
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  color:var(--ink);font-size:14px;line-height:1.75;
+}
+.owner-quote::before{
+  content:"“";position:absolute;left:14px;top:6px;font-family:'Bebas Neue',sans-serif;font-size:78px;color:var(--gold);line-height:1;
+}
+.owner-quote cite{display:block;margin-top:14px;font-style:normal;font-weight:800;font-size:12.5px;color:var(--navy);letter-spacing:.04em;}
+
+.contact-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-top:12px;}
+.contact-row{display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line);text-decoration:none;}
+.contact-row:last-of-type{border-bottom:none;}
+.contact-row .ico{width:44px;height:44px;border-radius:50%;background:var(--navy);display:grid;place-items:center;flex:none;color:var(--on-dark);}
+.contact-row .ico svg{width:20px;height:20px;display:block;}
+.contact-row .lab{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--ink-soft);text-transform:uppercase;}
+.contact-row .val{font-size:15px;font-weight:700;margin-top:2px;display:block;color:var(--ink);}
+
+.social-blocks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.social-blocks a{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;border-radius:var(--radius-md);text-decoration:none;font-weight:800;font-size:13.5px;background:var(--navy);color:var(--on-dark);transition:background-color .15s ease,transform .12s ease;}
+.social-blocks a:hover{background:var(--navy-dark);}
+.social-blocks a:active{transform:scale(.98);}
+.social-blocks a img{width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);}
+@media (max-width:340px){
+  .social-blocks{grid-template-columns:1fr}
+  .social-blocks a{padding:12px;gap:8px;font-size:13px}
+}
+
+.fb-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-top:16px;}
+.fb-card-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.fb-icon{width:38px;height:38px;border-radius:50%;background:var(--navy);color:var(--on-dark);display:grid;place-items:center;font-size:18px;font-weight:800;}
+.fb-name{font-size:16px;font-weight:700;color:var(--ink);}
+.fb-follow{background:var(--red);color:var(--on-dark);padding:12px 16px;border-radius:var(--radius-pill);font-weight:800;font-size:14px;text-align:center;display:block;margin-bottom:12px;transition:background-color .15s ease;text-decoration:none;}
+.fb-follow:hover{background:var(--red-dark);}
+.fb-footer{display:flex;gap:8px;flex-wrap:wrap;}
+.fb-link{flex:1;min-width:55px;padding:10px 8px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;text-align:center;color:var(--navy);background:var(--card-raised);text-decoration:none;transition:background-color .15s ease;}
+.fb-link:hover{background:var(--ice);}
 .fb-deals-list{display:grid;gap:10px;margin-top:4px}
 .fb-deals-empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:16px}
 .fb-deal-card{background:var(--card);border:1px solid var(--line-dark);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-soft);transition:border-color .15s ease;cursor:pointer}
@@ -587,6 +664,7 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
     <div class="hero-tint"></div>
     <div class="hero-check"></div>
     <p class="eyebrow">A FAMILY TRADITION</p>
+    <span class="hero-since">★ EST. 1954</span>
     <h1>Stop By and<br>See Us Today</h1>
     <p>Bismarck's first local drive-through and the city's oldest continuously operating restaurant.</p>
     <span class="years">70 YEARS</span>
@@ -619,28 +697,28 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
 
   <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
   <div class="specials">
-    <div class="special">
+    <div class="special special--navy">
       <div class="pic ph"><span class="fb"></span><img alt="Flying style burger — pizza sauce and American cheese on toasted bun" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg"></div>
       <div>
         <h3>Flying Style</h3>
         <p>We are the only Big Boy that sells flying style. Ask for it by name.</p>
       </div>
     </div>
-    <div class="special">
+    <div class="special special--white">
       <div class="pic ph"><span class="fb"></span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg"></div>
       <div>
         <h3>Hot-N-Tot</h3>
         <p>Cinnamon syrup blended into a delicious Coke — a warm, spiced soda you won't find anywhere else.</p>
       </div>
     </div>
-    <div class="special">
+    <div class="special special--ice">
       <div class="pic ph"><span class="fb"></span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg"></div>
       <div>
         <h3>Fries &amp; Gravy</h3>
         <p>There's no debate: dipping fries in gravy is the ultimate way to enjoy them.</p>
       </div>
     </div>
-    <div class="special">
+    <div class="special special--navy-alt">
       <div class="pic ph"><span class="fb"></span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg"></div>
       <div>
         <h3>Big Boy Snow</h3>
@@ -764,43 +842,56 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
   <h1 class="screen-title">OUR STORY</h1>
   <p class="screen-sub">70 years of comfort food, community, and nostalgic flavor.</p>
 
-  <div class="card">
-    <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
-         src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg">
-    <div class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</div>
+  <div class="heritage">
+    <div class="heritage-header">
+      <p class="heritage-eyebrow">OUR HISTORY</p>
+      <h2>Seven Decades of Big Boy</h2>
+    </div>
+    <div class="heritage-feature">
+      <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
+           src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg">
+      <div class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</div>
+    </div>
 
     <div class="timeline">
-      <div class="tl-item">
-        <div class="yr">1954</div>
-        <h3>The Beginning</h3>
-        <p>Harley McDowell opened Big Boy in Bismarck after eating at one on a business trip. That same year he became the fourth KFC franchisee — and "Colonel" Harland Sanders and McDowell ultimately became close friends.</p>
+      <div class="tl-item tl-item--featured">
+        <div class="tl-panel">
+          <div class="yr">1954</div>
+          <h3>The Beginning</h3>
+          <p>Harley McDowell opened Big Boy in Bismarck after eating at one on a business trip. That same year he became the fourth KFC franchisee — and "Colonel" Harland Sanders and McDowell ultimately became close friends.</p>
+        </div>
       </div>
       <div class="tl-item">
-        <div class="yr">1978</div>
-        <h3>The Rothenberger Years</h3>
-        <p>McDowell sold the Bismarck restaurants to Stan and Bonnie Rothenberger. He wasn't the highest of five bids — McDowell chose him for "his established reputation for honest business and quality food service."</p>
+        <div class="tl-panel">
+          <div class="yr">1978</div>
+          <h3>The Rothenberger Years</h3>
+          <p>McDowell sold the Bismarck restaurants to Stan and Bonnie Rothenberger. He wasn't the highest of five bids — McDowell chose him for "his established reputation for honest business and quality food service."</p>
+        </div>
       </div>
       <div class="tl-item">
-        <div class="yr">2017</div>
-        <h3>Where We Are Now</h3>
-        <p>Chad Wachter, a lifelong Bismarck resident and Big Boy fan, took over. He added an easier-to-read menu board, a second drive-through exit, and a park with picnic benches — while keeping every recipe exactly the same.</p>
+        <div class="tl-panel tl-panel--ice">
+          <div class="yr">2017</div>
+          <h3>Where We Are Now</h3>
+          <p>Chad Wachter, a lifelong Bismarck resident and Big Boy fan, took over. He added an easier-to-read menu board, a second drive-through exit, and a park with picnic benches — while keeping every recipe exactly the same.</p>
+        </div>
       </div>
-      <div class="tl-item" style="padding-bottom:0">
-        <div class="yr">TODAY</div>
-        <h3>The Sole Survivor</h3>
-        <p>Regional locations once existed in downtown Bismarck, Fargo, Minot, Dickinson, and Medora. The original Bismarck restaurant remains the sole survivor.</p>
+      <div class="tl-item tl-item--today">
+        <div class="tl-panel tl-panel--red">
+          <div class="yr">TODAY</div>
+          <h3>The Sole Survivor</h3>
+          <p>Regional locations once existed in downtown Bismarck, Fargo, Minot, Dickinson, and Medora. The original Bismarck restaurant remains the sole survivor.</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <h2 class="section-title">FROM THE OWNER</h2>
-  <blockquote>
+  <blockquote class="owner-quote">
     "We are proud to be part of many memories that center around family and food. Food from Big Boy brings back fond family memories for me. We made improvements to the property, but the food is the same. There was no need to mess with perfection. Our food will taste the same way it did when you ate it with your family, on that first date, or on some other special day in your life."
     <cite>— Chad Wachter, Owner</cite>
   </blockquote>
 
   <h2 class="section-title">CONTACT</h2>
-  <div class="card">
+  <div class="contact-card">
     <a class="contact-row" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
        data-title="Directions">
@@ -817,7 +908,6 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
     </div>
   </div>
 
-  <!-- On Facebook section -->
   <h2 class="section-title">ON FACEBOOK</h2>
   <div class="fb-card">
     <div class="fb-card-head">
@@ -836,7 +926,7 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
   <h2 class="section-title">FACEBOOK DEALS &amp; SPECIALS</h2>
   <div class="fb-deals-list" id="fbDealsList"><span class="fb-deals-empty">Loading Facebook deals…</span></div>
 
-  <div class="socials">
+  <div class="social-blocks">
     <a class="ig" href="https://www.instagram.com/bismarck_big_boy/" data-title="Instagram">
       <img alt="" src="https://static.wixstatic.com/media/81af6121f84c41a5b4391d7d37fce12a.png/v1/fill/w_80,h_80,al_c,q_85,enc_auto/81af6121f84c41a5b4391d7d37fce12a.png">Instagram
     </a>

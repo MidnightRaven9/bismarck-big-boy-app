@@ -3,6 +3,30 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
+## 2026-11-21 — Modern Americana redesign (Home + Info)
+
+### Changed
+- Rebuilt the design system around a Modern Americana identity:
+  signature red `#C8102E`, deep red `#A50D26`, heritage navy `#193B63`,
+  classic white `#FFFFFF`, ice blue `#DCEAF5`, cool gray `#F5F7FA`, and
+  vintage gold `#D4A63A` used sparingly for heritage highlights.
+- Redesigned the Home hero with stronger red/navy color blocking, a gold
+  "Est. 1954" badge, checkerboard accents, and a more dramatic typographic
+  composition while keeping the existing restaurant photo.
+- Transformed the Info timeline into a premium heritage exhibit: deep navy
+  section background, large gold year labels, gold timeline line and milestone
+  rings, red accents for 1954 and Today, white and ice-blue milestone panels,
+  and a distinctive owner-quote treatment.
+- Reworked signature-food cards (Flying Style, Hot-N-Tot, Fries & Gravy,
+  Big Boy Snow) with larger photography and varied color-blocked treatments.
+- Improved contact and social sections with navy icon buttons and clearer
+  hierarchy.
+- Updated the bottom navigation to heritage navy with a red active tab.
+
+### Fixed
+- Prevented horizontal overflow on the Info screen at 195 px zoom by switching
+  social buttons to a single column on very narrow viewports.
+
 ## 2026-11-20 — Brand-aligned red, white, and blue refresh
 
 ### Changed
