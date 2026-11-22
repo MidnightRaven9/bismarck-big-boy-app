@@ -314,6 +314,44 @@ const server = http.createServer((req, res) => {
     await page.setViewportSize({ width:390, height:844 });
   });
 
+  check('status glow follows Bismarck opening, closing, and unknown states', async () => {
+    const ctx = await browser.newContext({
+      serviceWorkers:'block', timezoneId:'Pacific/Honolulu', reducedMotion:'reduce',
+      viewport:{ width:390, height:844 }, isMobile:true, hasTouch:true
+    });
+    try {
+      await ctx.route(/^https:\/\//, r => r.abort());
+      const p = await ctx.newPage();
+      await p.clock.install({ time:new Date('2026-01-15T16:29:45Z') });
+      await p.goto(base, { waitUntil:'domcontentloaded' });
+
+      const expectStatus = async (text, color, glowing) => {
+        await p.waitForFunction(expected => document.querySelector('#statusMain')?.textContent === expected, text);
+        const dot = await p.locator('#status .dot').evaluate(el => {
+          const css = getComputedStyle(el);
+          return { color:css.backgroundColor, glow:css.boxShadow, width:css.width, height:css.height };
+        });
+        ok(dot.color === color, 'incorrect indicator color for ' + text);
+        ok((dot.glow !== 'none') === glowing, 'incorrect glow for ' + text);
+        ok(dot.width === '7px' && dot.height === '7px', 'indicator size changed');
+      };
+
+      await expectStatus('Closed', 'rgb(239, 35, 60)', true);
+      await p.clock.runFor(31000);
+      await expectStatus('Open now', 'rgb(34, 197, 94)', true);
+      await p.clock.setSystemTime(new Date('2026-01-16T02:59:45Z'));
+      await p.clock.runFor(31000);
+      await expectStatus('Closed', 'rgb(239, 35, 60)', true);
+      await p.evaluate(() => {
+        Intl.DateTimeFormat.prototype.formatToParts = () => { throw new RangeError('Test clock unavailable'); };
+      });
+      await p.clock.runFor(31000);
+      await expectStatus('Status unavailable', 'rgb(220, 234, 245)', false);
+    } finally {
+      await ctx.close();
+    }
+  });
+
   check('closed status text stays inside the header pill on narrow screens', async () => {
     for (const width of [360, 320, 195]){
       await page.setViewportSize({ width, height:720 });

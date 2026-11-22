@@ -88,23 +88,33 @@ function buildMenuIndex(){
 
 /* Open / closed status — 10:30 AM to 9:00 PM, 7 days */
 function updateStatus(){
-  const now = businessNow();
-  const h = effectiveHours(now, HOUR_OVERRIDES);
   const el = $('#status'), main = $('#statusMain'), sub = $('#statusSub');
   if (!el || !main || !sub) return;
+  let now;
+  try { now = businessNow(); } catch {
+    // If the local clock cannot be resolved, keep the indicator neutral.
+  }
+  const h = now && effectiveHours(now, HOUR_OVERRIDES);
+  if (!h || !Number.isFinite(now.minutes) ||
+      (!h.closed && !(Number.isFinite(h.open) && h.close > h.open && h.close <= 1440))){
+    el.dataset.state = 'unknown';
+    main.textContent = 'Status unavailable';
+    sub.textContent = '';
+    return;
+  }
   if (h.closed){
-    el.classList.add('closed');
+    el.dataset.state = 'closed';
     main.textContent = 'Closed today';
     sub.textContent = h.note || 'Check our Facebook for updates.';
     return;
   }
   if (now.minutes >= h.open && now.minutes < h.close){
-    el.classList.remove('closed');
+    el.dataset.state = 'open';
     main.textContent = 'Open now';
     sub.textContent = 'Closes ' + formatTime(h.close);
     return;
   }
-  el.classList.add('closed');
+  el.dataset.state = 'closed';
   main.textContent = 'Closed';
   if (now.minutes < h.open){
     sub.textContent = 'Opens ' + formatTime(h.open);
