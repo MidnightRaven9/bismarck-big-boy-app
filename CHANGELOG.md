@@ -3,32 +3,6 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
-## 2026-11-22 — Security hardening, cleanup, and open-source polish
-
-### Security
-- Removed local signing-key text file and stale build artifacts from `release/`.
-- Tightened Content-Security-Policy by dropping `style-src 'unsafe-inline'`;
-  replaced all inline `style=""` attributes with utility classes.
-- Removed the hidden `#notifTest` debug button from the Alerts card.
-- Disabled `ignoreHTTPSErrors` in the Facebook scraper so TLS certificates are
-  verified.
-- Verified no live secrets or credentials are tracked in git; `.env` remains
-  gitignored and `.env.example` contains only placeholders.
-
-### Cleanup
-- Removed unused `OPEN_MIN`/`CLOSE_MIN` constants from `app.js`.
-- Removed orphaned planning/review docs: `ABOUT.md`, `AUDIT_REPORT.md`,
-  `IMPROVEMENT_PLAN.md`, `PROPOSED_WORKFLOW_CHANGES.md`, `SECURITY_REVIEW.md`,
-  `TEST_REPORT.md`, and `UI_UX_REVIEW.md`.
-- Replaced heavy decorative comment banners with concise, purposeful comments.
-- Added styled menu skeleton and `.hidden` utility so the loading placeholder
-  behaves as intended.
-
-### Repository
-- Rewrote `README.md` as a concise, badge-driven open-source project page.
-- Updated `SECURITY.md` to point to the README for the security overview.
-- Regenerated `APP_SHELL_HASH.txt` for the updated shell inputs.
-
 ## 2026-11-21 — Modern Americana redesign (Home + Info)
 
 ### Changed

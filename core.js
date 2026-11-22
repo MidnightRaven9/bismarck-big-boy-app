@@ -3,7 +3,11 @@
 (function (root) {
   'use strict';
 
-/* Restaurant hours are Bismarck Central Time; overrides are opt-in. */
+/* ============================================================
+   Restaurant facts — SINGLE SOURCE OF TRUTH
+   Hours are Bismarck local time. Overrides are opt-in and must be
+   supplied by the restaurant; nothing here invents a schedule.
+   ============================================================ */
 const RESTAURANT = {
   timeZone: 'America/Chicago',
   // Index 0 = Sunday ... 6 = Saturday. Minutes from local midnight.
