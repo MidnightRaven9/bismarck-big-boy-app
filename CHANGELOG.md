@@ -3,6 +3,12 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`. The web app shell cache version is derived from `APP_SHELL_HASH.txt`.
 
+## 2026-11-22 — Splash startup and status indicator
+
+- Updated the Android TWA splash artwork and published replacement signed APK and AAB assets under `v1.0.0`.
+- Kept the web splash visible until the initial screen is ready, with a retry link if startup fails or stalls.
+- Added green and red status glows that follow the existing Bismarck hours calculation.
+
 ## 2026-11-22 — Big Boy After Dark and maintenance
 
 - Updated the Home and Info layouts, near-black palette, compact Menu cards, Favorites empty state, and Rewards banner.

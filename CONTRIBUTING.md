@@ -1,74 +1,14 @@
 # Contributing
 
-Thank you for your interest in contributing to Bismarck Big Boy! We welcome community contributions.
+Use [GitHub Issues](https://github.com/MidnightRaven9/bismarck-big-boy-app/issues) to report an app bug or propose a feature. Include the device, browser or Android build, affected screen, and the steps you took. For a menu correction, include the item name and a source. Send order and restaurant questions to [Bismarck Big Boy](https://www.bismarckbigboy.com/), and report vulnerabilities through the [private security channel](SECURITY.md).
 
-## Table of Contents
-- [Getting started](#getting-started)
-- [Development setup](#development-setup)
-- [Working on a change](#working-on-a-change)
-- [Code style](#code-style)
-- [Submitting a pull request](#submitting-a-pull-request)
-- [Community guidelines](#community-guidelines)
+## Make a change
 
-## Getting started
+1. Fork the repository and create a branch from `main`.
+2. Follow the [local setup](README.md#getting-started). Use the existing HTML, CSS, and JavaScript conventions.
+3. Check the affected screen and any shared navigation at a mobile width. For visual changes, include screenshots. For behavior changes, cover the affected path with the [relevant checks](README.md#checks-and-releases).
+4. Open a pull request against `main`. Describe what changed, why it matters, and which checks you ran.
 
-1. Fork the repo on GitHub.
-2. Clone your fork locally.
-3. Set up the dev environment (see [Developer Setup](README.md#developer-setup)).
-4. Create a branch for your work.
+Reuse the CSS variables and shared helpers where they fit. Preserve keyboard focus and reduced-motion behavior when editing interactions. Treat external data as untrusted and follow the existing validation and escaping patterns.
 
-## Development setup
-
-```bash
-git clone https://github.com/YOUR_USERNAME/bismarck-big-boy-app.git
-cd bismarck-big-boy-app
-python3 -m http.server 8000   # or: npm -g serve / npx serve
-```
-
-Then open http://localhost:8000/
-
-## Working on a change
-
-1. Pick an issue or feature to work on.
-2. Create a branch (e.g., `feature/live-music`).
-3. Make your changes.
-4. Test locally (`python3 -m http.server 8000` + visit the page).
-5. Verify nothing broke (menu, search, favs, etc.).
-
-## Code style
-
-- **Single-file app**: keep edits in `index.html`; do not split the app into modules.
-- **Comments**: only the *why*, not the *what* — if a line is obvious, don't comment it.
-- **No emojis in UI text.** Use words or SVGs (the app uses SVGs from an inline sprite).
-- **HTML changes**: prefer semantic markup (`<section id="...">`, `data-*` attributes).
-- **CSS**: use the CSS variables from `:root` (don't hardcode brand colors elsewhere).
-- **JS**: keep it plain — no build step, no webpack, no TypeScript.
-- **XSS-safe**: any dynamic string inserted into `innerHTML` must be escaped via `escapeHtml()`.
-- **Touch-friendly**: buttons and targets ≥ 40px.
-- **Reduced motion**: add transitions to `.anim` classes and honor `prefers-reduced-motion`.
-
-## Submitting a pull request
-
-1. Push your branch to your fork.
-2. Open a PR against `main` on the original repo.
-3. Use the PR template (problem, solution, how-verified).
-4. Before submitting, run:
-   ```bash
-   node --check scripts/scrape_fb_deals.js && node --check scripts/capture_screenshots.js
-   python3 -m py_compile scripts/package-android.py
-   ```
-   Then load `index.html` through a local server and confirm every tab still works.
-
-## Community guidelines
-
-- **Be respectful.** Be kind to contributors and users.
-- **No harassment.** Targeted harassment of any contributor will result in mute/block.
-- **Safe spaces.** Report issues at any time; we take feedback seriously.
-
-## Questions?
-
-File an issue or message the maintainer directly. We try to respond within 48 hours.
-
----
-
-Thanks for making the Bismarck Big Boy app better for everyone!
+Keep discussions focused on the work. Give specific feedback and respect other contributors.

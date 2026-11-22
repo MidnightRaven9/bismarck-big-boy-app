@@ -1,17 +1,11 @@
-## Problem
+## Change
 
-What does this change fix or improve?
+What does this change, and why?
 
-## Solution
+## Verification
 
-What did you change?
-
-## How verified
-
-- [ ] Loaded the app locally and checked every tab
-- [ ] Checked the affected menu categories, search, and favorites
-- [ ] Ran the JS syntax checks and Python compile check
+List the checks you ran and any device or browser you used. Note any relevant checks you could not run.
 
 ## Screenshots
 
-If this changes the UI, add before/after screenshots.
+For visual changes, include a before-and-after capture at a comparable viewport.
