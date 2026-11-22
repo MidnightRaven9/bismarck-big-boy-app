@@ -80,7 +80,7 @@ Then open http://localhost:8000/ in Chrome.
 | `hours_overrides.json` | Optional, validated holiday/exceptional-hours overrides |
 | `manifest.webmanifest` | PWA manifest: name, icons, standalone display |
 | `sw.js` | Service worker — content-addressed, atomic offline app-shell cache |
-| `APP_SHELL_HASH.txt` | SHA-256 manifest for the 12 shell inputs; derives the cache version |
+| `APP_SHELL_HASH.txt` | SHA-256 manifest for the 13 shell inputs; derives the cache version |
 | `tests/` | Unit and browser integration tests |
 | `icons/` | App icon in 5 sizes (192, 512, maskable, apple-touch, favicon) |
 | `scripts/package-android.py` | Packages the PWA into an Android APK via PWABuilder CloudAPK |

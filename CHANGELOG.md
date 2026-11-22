@@ -14,12 +14,13 @@ build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
 ### Security
 - Removed local signing-key text file and stale build artifacts from `release/`.
-- Dropped `style-src 'unsafe-inline'` from the CSP and replaced all inline
-  `style=""` attributes with utility classes.
+- Dropped `style-src 'unsafe-inline'` from the CSP, moved the inline `<style>`
+  block to an external `styles.css`, and replaced all inline `style=""`
+  attributes with utility classes.
 - Removed the hidden `#notifTest` debug button.
 - Disabled `ignoreHTTPSErrors` in the Facebook scraper.
 - Replaced realistic keystore placeholder in `.env.example` with a generic one.
-- Regenerated `APP_SHELL_HASH.txt` for the updated shell inputs.
+- Regenerated `APP_SHELL_HASH.txt` for the updated 13 shell inputs.
 
 ## 2026-11-21 — Modern Americana redesign (Home + Info)
 

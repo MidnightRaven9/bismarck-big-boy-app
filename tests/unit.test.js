@@ -158,7 +158,7 @@ test('manifest and shell wiring are internally consistent', () => {
 test('APP_SHELL_HASH is reproducible from the committed shell inputs', () => {
   const root = path.join(__dirname, '..');
   const files = [
-    'index.html', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
+    'index.html', 'styles.css', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
     'manifest.webmanifest', 'sw.js', 'icons/apple-touch-icon-180.png',
     'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png',
     'icons/icon-maskable-512.png'
@@ -167,11 +167,11 @@ test('APP_SHELL_HASH is reproducible from the committed shell inputs', () => {
     .map(f => crypto.createHash('sha256').update(fs.readFileSync(path.join(root, f))).digest('hex'))
     .join('');
   const committed = fs.readFileSync(path.join(root, 'APP_SHELL_HASH.txt'), 'utf8').trim();
-  assert.match(committed, /^[a-f0-9]{768}$/);
+  assert.match(committed, /^[a-f0-9]{832}$/);
   assert.equal(committed, computed, 'shell hash is stale; rerun the workflow hash command');
 
   const workflow = fs.readFileSync(path.join(root, '.github/workflows/auto-package.yml'), 'utf8');
-  assert.match(workflow, /LC_ALL=C sha256sum index\.html core\.js app\.js menu\.json hours_overrides\.json manifest\.webmanifest sw\.js icons\/\*\.png/);
+  assert.match(workflow, /LC_ALL=C sha256sum index\.html styles\.css core\.js app\.js menu\.json hours_overrides\.json manifest\.webmanifest sw\.js icons\/\*\.png/);
 });
 
 test('menu validation rejects unsafe ids, media ids and non-numeric prices', () => {
@@ -217,7 +217,7 @@ test('workflow safeguards prevent overlapping or unsafe writes', () => {
   assert.ok(auto.includes('ref: main'));
   assert.ok(auto.includes("github.ref == 'refs/heads/main'"));
   assert.ok(auto.includes('C.assertDealsPayload(d)'));
-  assert.ok(auto.includes('[[ "$HASH" =~ ^[a-f0-9]{768}$ ]]'));
+  assert.ok(auto.includes('[[ "$HASH" =~ ^[a-f0-9]{832}$ ]]'));
   assert.ok(!/continue-on-error|push --force|git push -f|git add -A/.test(auto));
   assert.equal((auto.match(/uses: actions\/(checkout|setup-node)@[a-f0-9]{40}/g) || []).length, 5);
 });

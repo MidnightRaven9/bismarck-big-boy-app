@@ -786,7 +786,7 @@ if ('serviceWorker' in navigator) {
       const res = await fetch('APP_SHELL_HASH.txt', { cache:'no-store' });
       if (res.ok){
         const hash = (await res.text()).trim();
-        if (/^[a-f0-9]{768}$/.test(hash)){
+        if (/^[a-f0-9]{832}$/.test(hash)){
           // Derive from the full hash: a prefix would ignore later inputs such
           // as sw.js, manifest and icons.
           const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(hash));

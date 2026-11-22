@@ -15,6 +15,7 @@ const FAILURE_KEY = './__shell_install_failed';
 const SHELL = [
   './',
   './index.html',
+  './styles.css',
   './app.js',
   './core.js',
   './menu.json',
@@ -31,6 +32,7 @@ const SHELL = [
 /* Exact 12-file list produced by .github/workflows/auto-package.yml. */
 const HASH_SOURCES = [
   './index.html',
+  './styles.css',
   './core.js',
   './app.js',
   './menu.json',
@@ -62,7 +64,7 @@ function toHex(buf){
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function validHash(h){
-  return typeof h === 'string' && /^[a-f0-9]{768}$/.test(h);
+  return typeof h === 'string' && /^[a-f0-9]{832}$/.test(h);
 }
 /* The committed hash is a concatenation of 12 per-file digests. Hashing that
    entire string (not a prefix) means every shell input affects the version. */
