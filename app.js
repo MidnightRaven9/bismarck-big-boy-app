@@ -320,10 +320,16 @@ function renderChips(){
     const imgHtml = imgSrc
       ? `<img class="chip-thumb" src="${escapeHtml(imgSrc)}" alt="">`
       : '';
-    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${escapeHtml(c.id)}">${imgHtml}${escapeHtml(c.name)}</button>`;
+    return `<button class="chip ${state.cat===c.id?'on':''}" data-cat="${escapeHtml(c.id)}" aria-pressed="${state.cat===c.id}">${imgHtml}${escapeHtml(c.name)}</button>`;
   }).join('');
   $$('.chip').forEach(ch => ch.addEventListener('click', () => {
-    state.cat = ch.dataset.cat; renderChips(); renderMenu();
+    state.cat = ch.dataset.cat;
+    $$('.chip').forEach(chip => {
+      const selected = chip === ch;
+      chip.classList.toggle('on', selected);
+      chip.setAttribute('aria-pressed', selected);
+    });
+    renderMenu();
   }));
 }
 

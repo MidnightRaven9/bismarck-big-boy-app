@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#252525">
+<meta name="theme-color" content="#24272D">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +47,7 @@
     <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
     <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8c-1.5-4.5-6-4.5-6-1.5 0 2 2.5 2.5 6 1.5Zm0 0c1.5-4.5 6-4.5 6-1.5 0 2-2.5 2.5-6 1.5Z"/></g></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></g></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></g></symbol>
     <symbol id="i-external" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h6v6"/><path d="M19 5 11 13"/><path d="M19 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4"/></g></symbol>
@@ -55,7 +56,7 @@
   </defs>
 </svg>
 
-<div class="checker"></div>
+<div class="checker" aria-hidden="true"></div>
 
 <header>
   <div class="brand">
@@ -80,23 +81,22 @@
 <section class="screen active" id="s-home">
   <div class="hero">
     <img class="hero-bg" alt="" src="https://static.wixstatic.com/media/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg/v1/fill/w_1100,h_700,al_c,q_80,enc_auto/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg">
-    <div class="hero-tint"></div>
-    <div class="hero-check"></div>
-    <p class="eyebrow">A FAMILY TRADITION</p>
-    <span class="hero-since">★ EST. 1954</span>
-    <h1>Stop By and<br>See Us Today</h1>
-    <p>Bismarck's first local drive-through and the city's oldest continuously operating restaurant.</p>
-    <span class="years">70 YEARS</span>
-    <div class="addr">
-      2511 E Main Ave, Bismarck, ND 58501<br>
-      <span data-hours-summary></span>
+    <div class="hero-copy">
+      <p class="eyebrow">A Family Tradition · Since 1954</p>
+      <h1>Bismarck<br>Big Boy</h1>
+      <p>Bismarck's first local drive-through and the city's oldest continuously operating restaurant.</p>
+      <div class="addr">
+        2511 E Main Ave, Bismarck, ND 58501
+        <span data-hours-summary></span>
+      </div>
     </div>
   </div>
 
   <div class="qa">
     <a class="retro-icon-button primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
       <span class="icon"><svg aria-hidden="true"><use href="#i-bag"/></svg></span>
-      <span class="label">Order<br>Online</span>
+      <span class="label">Order Online</span>
+      <span class="go" aria-hidden="true">→</span>
     </a>
     <a class="retro-icon-button" href="tel:7012234125">
       <span class="icon"><svg aria-hidden="true"><use href="#i-call"/></svg></span>
@@ -116,28 +116,28 @@
 
   <h2 class="section-title">WHAT MAKES US SPECIAL</h2>
   <div class="specials">
-    <div class="special special--navy">
+    <div class="special special--featured">
       <div class="pic ph"><span class="fb"></span><img alt="Flying style burger — pizza sauce and American cheese on toasted bun" loading="lazy" src="https://static.wixstatic.com/media/063b6c_daa1906f875d432e923207f603970489~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_daa1906f875d432e923207f603970489~mv2.jpg"></div>
       <div>
         <h3>Flying Style</h3>
         <p>We are the only Big Boy that sells flying style. Ask for it by name.</p>
       </div>
     </div>
-    <div class="special special--red-edge">
+    <div class="special special--deep">
       <div class="pic ph"><span class="fb"></span><img alt="Hot-N-Tot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_f27d3ecd1aa9453095a8cd8685b4b404~mv2.jpg"></div>
       <div>
         <h3>Hot-N-Tot</h3>
         <p>Cinnamon syrup blended into a delicious Coke — a warm, spiced soda you won't find anywhere else.</p>
       </div>
     </div>
-    <div class="special special--panel">
+    <div class="special">
       <div class="pic ph"><span class="fb"></span><img alt="Fries and gravy" loading="lazy" src="https://static.wixstatic.com/media/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_52eb90df4b634da6b74baa89ac22d86a~mv2.jpg"></div>
       <div>
         <h3>Fries &amp; Gravy</h3>
         <p>There's no debate: dipping fries in gravy is the ultimate way to enjoy them.</p>
       </div>
     </div>
-    <div class="special special--red-top">
+    <div class="special special--compact">
       <div class="pic ph"><span class="fb"></span><img alt="Big Boy Snow" loading="lazy" src="https://static.wixstatic.com/media/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_6d1ae6a53a9c4a959de074911361171a~mv2.jpg"></div>
       <div>
         <h3>Big Boy Snow</h3>
@@ -257,26 +257,27 @@
 
 <!-- ============ INFO ============ -->
 <section class="screen" id="s-info">
-  <h1 class="screen-title">OUR STORY</h1>
-  <p class="screen-sub">70 years of comfort food, community, and nostalgic flavor.</p>
+  <div class="info-intro">
+    <h1 class="screen-title">OUR STORY</h1>
+    <p class="screen-sub">70 years of comfort food, community, and nostalgic flavor.</p>
+  </div>
 
   <div class="heritage">
     <div class="heritage-header">
       <p class="heritage-eyebrow">OUR HISTORY</p>
       <h2>Seven Decades of Big Boy</h2>
     </div>
-    <div class="heritage-feature">
-      <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
-           src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg">
-      <div class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</div>
-    </div>
-
     <div class="timeline">
       <div class="tl-item tl-item--featured">
         <div class="tl-panel">
           <div class="yr">1954</div>
           <h3>The Beginning</h3>
           <p>Harley McDowell opened Big Boy in Bismarck after eating at one on a business trip. That same year he became the fourth KFC franchisee — and "Colonel" Harland Sanders and McDowell ultimately became close friends.</p>
+          <figure class="heritage-feature">
+            <img class="story-photo" alt="Big Boy Restaurant Opens" loading="lazy"
+                 src="https://static.wixstatic.com/media/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg/v1/fill/w_300,h_960,al_c,q_85,enc_auto/063b6c_54fa68bed98248668b5e2661d2628736~mv2.jpg">
+            <figcaption class="photo-cap">FROM THE BISMARCK BIG BOY ARCHIVES</figcaption>
+          </figure>
         </div>
       </div>
       <div class="tl-item">
@@ -287,14 +288,14 @@
         </div>
       </div>
       <div class="tl-item">
-        <div class="tl-panel tl-panel--ice">
+        <div class="tl-panel tl-panel--deep">
           <div class="yr">2017</div>
           <h3>Where We Are Now</h3>
           <p>Chad Wachter, a lifelong Bismarck resident and Big Boy fan, took over. He added an easier-to-read menu board, a second drive-through exit, and a park with picnic benches — while keeping every recipe exactly the same.</p>
         </div>
       </div>
       <div class="tl-item tl-item--today">
-        <div class="tl-panel tl-panel--red">
+        <div class="tl-panel">
           <div class="yr">TODAY</div>
           <h3>The Sole Survivor</h3>
           <p>Regional locations once existed in downtown Bismarck, Fargo, Minot, Dickinson, and Medora. The original Bismarck restaurant remains the sole survivor.</p>
@@ -304,6 +305,7 @@
   </div>
 
   <blockquote class="owner-quote">
+    <span class="quote-mark" aria-hidden="true">“</span>
     "We are proud to be part of many memories that center around family and food. Food from Big Boy brings back fond family memories for me. We made improvements to the property, but the food is the same. There was no need to mess with perfection. Our food will taste the same way it did when you ate it with your family, on that first date, or on some other special day in your life."
     <cite>— Chad Wachter, Owner</cite>
   </blockquote>
@@ -313,15 +315,15 @@
     <a class="contact-row" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
        data-title="Directions">
-      <span class="ico"><svg><use href="#i-pin"/></svg></span>
+      <span class="ico"><svg aria-hidden="true"><use href="#i-pin"/></svg></span>
       <span><span class="lab">Address</span><span class="val">2511 E Main Ave, Bismarck, ND 58501</span></span>
     </a>
     <a class="contact-row" href="tel:7012234125">
-      <span class="ico"><svg><use href="#i-phone"/></svg></span>
+      <span class="ico"><svg aria-hidden="true"><use href="#i-phone"/></svg></span>
       <span><span class="lab">Telephone</span><span class="val">701-223-4125</span></span>
     </a>
     <div class="contact-row">
-      <span class="ico"><svg><use href="#i-info"/></svg></span>
+      <span class="ico"><svg aria-hidden="true"><use href="#i-clock"/></svg></span>
       <span><span class="lab">Hours</span><span class="val"><span data-hours-summary></span></span></span>
     </div>
   </div>
@@ -387,19 +389,19 @@
 
 <!-- ============ TAB BAR ============ -->
 <nav class="tabbar" aria-label="Main navigation">
-  <button class="retro-icon-button tab on" data-tab="home" aria-label="Home" aria-current="page">
+  <button class="tab on" data-tab="home" aria-label="Home" aria-current="page">
     <span class="icon"><svg aria-hidden="true"><use href="#i-home"/></svg></span><span class="label">Home</span>
   </button>
-  <button class="retro-icon-button tab" data-tab="menu" aria-label="Menu">
+  <button class="tab" data-tab="menu" aria-label="Menu">
     <span class="icon"><svg aria-hidden="true"><use href="#i-menu"/></svg></span><span class="label">Menu</span>
   </button>
-  <button class="retro-icon-button tab" data-tab="favs" aria-label="Favorites">
+  <button class="tab" data-tab="favs" aria-label="Favorites">
     <span class="icon"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="label">Favorites</span><span class="badge" id="favBadge">0</span>
   </button>
-  <button class="retro-icon-button tab" data-tab="rewards" aria-label="Rewards">
+  <button class="tab" data-tab="rewards" aria-label="Rewards">
     <span class="icon"><svg aria-hidden="true"><use href="#i-star"/></svg></span><span class="label">Rewards</span>
   </button>
-  <button class="retro-icon-button tab" data-tab="info" aria-label="Info">
+  <button class="tab" data-tab="info" aria-label="Info">
     <span class="icon"><svg aria-hidden="true"><use href="#i-info"/></svg></span><span class="label">Info</span>
   </button>
 </nav>

@@ -1,12 +1,12 @@
 # Bismarck Big Boy
 
-> A modern-retro mobile app for Bismarck's original 1954 drive-in.
+> An installable menu, ordering, and restaurant guide for Bismarck’s original 1954 drive-in.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](https://github.com/MidnightRaven9/bismarck-big-boy-app/blob/main/LICENSE)
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
-Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and pairs the original Big Boy identity with a retro-modern American drive-in look: dark charcoal surfaces, navy cards, Big Boy red, restrained vintage gold, and a launch screen that uses the bundled app icon.
+Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and pairs the original Big Boy identity with the Premium Dark Americana design. The charcoal canvas, navy panels, red ordering button, and checkerboard accents frame the original food photography. The Info screen tells the restaurant’s story through an illustrated timeline, including the 1954 newspaper clipping and the owner’s message.
 
 ## Features
 
@@ -22,7 +22,7 @@ Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2
 
 ## Screenshots
 
-Screenshots are captured at 390 × 844 from the current app. Drop replacement images in `assets/screenshots/` with the same filenames, then run `APP_URL=http://127.0.0.1:8765/ node scripts/capture_screenshots.js` to regenerate them from a local server.
+Screen previews were captured in Chromium at 390 × 844. To refresh the six viewport screenshots from a local server, run `APP_URL=http://127.0.0.1:8000/ node scripts/capture_screenshots.js`.
 
 | Home | Menu | Favorites |
 | :---: | :---: | :---: |
@@ -31,6 +31,8 @@ Screenshots are captured at 390 × 844 from the current app. Drop replacement im
 | Delivery | Rewards | Info |
 | :---: | :---: | :---: |
 | ![Delivery](assets/screenshots/6-delivery.png) | ![Rewards screen](assets/screenshots/4-rewards.png) | ![Info screen](assets/screenshots/5-info.png) |
+
+[View the full history timeline](assets/screenshots/7-history.png)
 
 ## Install
 
@@ -72,7 +74,7 @@ Then open http://localhost:8000/ in Chrome.
 | File | Purpose |
 |------|---------|
 | `index.html` | App shell and markup; loads `styles.css`, `core.js`, and `app.js` |
-| `styles.css` | Retro-modern styling: charcoal canvas, navy cards, red/navy/white accents, responsive layout |
+| `styles.css` | Premium Dark Americana palette, responsive layout, and screen styles |
 | `core.js` | Pure, testable logic: Bismarck time, validation, URL policy |
 | `app.js` | Rendering, navigation, favorites, deals, and external-link handling |
 | `menu.json` | Validated menu data with photos and prices |

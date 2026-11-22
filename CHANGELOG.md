@@ -1,7 +1,20 @@
 # Changelog
 
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
-build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
+build uses release tag `v1.0.0`. The web app shell cache version is derived from `APP_SHELL_HASH.txt`.
+
+## 2026-11-22 — Premium Dark Americana
+
+- Reworked Home around the original food photography, a prominent red ordering
+  button, and distinct layouts for the drive-in specialties.
+- Rebuilt the Info timeline with navy milestone panels, gold year markers, and
+  the original newspaper clipping displayed with the 1954 story. Refreshed the
+  owner’s quote and contact sections while preserving their content.
+- Updated the palette, compact header, and safe-area navigation. Menu category
+  filters retain their circular imagery and now expose their pressed state
+  while preserving keyboard focus.
+- Refreshed the README previews and app-shell hash. Verified the layout in
+  Chromium at 320, 360, 390, and 768 CSS pixels.
 
 ## 2026-11-22 — Art-directed retro-modern redesign
 
