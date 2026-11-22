@@ -4,7 +4,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](https://github.com/MidnightRaven9/bismarck-big-boy-app/blob/main/LICENSE)
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
-[![Tests](https://img.shields.io/badge/Tests-17%2F17%20pass-4da167)](TEST_REPORT.md)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
 Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and keeps the original Big Boy logo, mascot, and signature red on a clean black background with 1950s drive-in diner details.
