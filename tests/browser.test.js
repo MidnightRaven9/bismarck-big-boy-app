@@ -16,7 +16,7 @@ const check = (name, fn) => results.push({ name, fn });
 // so server-side flags drive the failure/fallback scenarios.
 let failMenu = false, badMenuSchema = false;
 const SHELL_HASH_FILES = [
-  'index.html', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
+  'index.html', 'styles.css', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
   'manifest.webmanifest', 'sw.js', 'icons/apple-touch-icon-180.png',
   'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png',
   'icons/icon-maskable-512.png'

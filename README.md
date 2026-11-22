@@ -6,7 +6,7 @@
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
-Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and keeps the original Big Boy logo, mascot, and signature red on a dark charcoal background with navy blocks and 1950s drive-in diner details.
+Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and pairs the original Big Boy identity with a retro-modern American drive-in look: dark charcoal surfaces, navy cards, Big Boy red, restrained vintage gold, and a launch screen that uses the bundled app icon.
 
 ## Features
 
@@ -22,7 +22,7 @@ Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2
 
 ## Screenshots
 
-Screenshots are captured at 390 × 844 from the live app. Drop replacement images in `assets/screenshots/` with the same filenames, then run `node scripts/capture_screenshots.js` to regenerate them.
+Screenshots are captured at 390 × 844 from the current app. Drop replacement images in `assets/screenshots/` with the same filenames, then run `APP_URL=http://127.0.0.1:8765/ node scripts/capture_screenshots.js` to regenerate them from a local server.
 
 | Home | Menu | Favorites |
 | :---: | :---: | :---: |
@@ -72,7 +72,7 @@ Then open http://localhost:8000/ in Chrome.
 | File | Purpose |
 |------|---------|
 | `index.html` | App shell and markup; loads `styles.css`, `core.js`, and `app.js` |
-| `styles.css` | Modern-retro styling: black background, red accents, rounded cards, responsive layout |
+| `styles.css` | Retro-modern styling: charcoal canvas, navy cards, red/navy/white accents, responsive layout |
 | `core.js` | Pure, testable logic: Bismarck time, validation, URL policy |
 | `app.js` | Rendering, navigation, favorites, deals, and external-link handling |
 | `menu.json` | Validated menu data with photos and prices |

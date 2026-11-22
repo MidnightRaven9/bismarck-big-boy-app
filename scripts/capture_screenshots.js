@@ -13,7 +13,8 @@ const OUT = path.join(__dirname, '..', 'assets', 'screenshots');
 
 async function shot(page, name, actions) {
   await page.goto(BASE, { waitUntil: 'networkidle', timeout: 60000 });
-  await page.waitForTimeout(1200);
+  // Let the CSS launch overlay finish before capturing the app itself.
+  await page.waitForTimeout(2600);
   if (actions) await actions(page);
   await page.screenshot({ path: path.join(OUT, name), fullPage: false });
   console.log('  ✓', name);

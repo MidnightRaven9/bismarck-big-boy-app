@@ -3,25 +3,34 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
-## 2026-11-22 — Modern-retro redesign with dark charcoal + navy blocks
+## 2026-11-22 — Art-directed retro-modern redesign
 
 ### Changed
-- Complete visual refresh across Home, Menu, Favorites, Rewards, Delivery, and
-  Info with a modern-retro 1950s American drive-in aesthetic.
-- Default palette now uses a dark charcoal background (`#171719`) with navy
-  blue blocks (`#193B63`), Big Boy red `#C8102E` for primary actions, and white
-  text. The look is the same in light mode and dark mode.
-- Rounded cards, consistent spacing rhythm, 44 px touch targets, checkerboard
-  strips, and bold Bebas Neue headings paired with Inter body text.
-- Updated `manifest.webmanifest` and `theme-color` to match the dark charcoal
-  background.
-- Refreshed all six README screenshots at 390 × 844.
+- Rebuilt the shared design system around a dark charcoal canvas (`#252525`),
+  deep navy cards and navigation (`#193B63`), Big Boy red (`#C8102E`), classic
+  white, ice blue, and vintage gold (`#D4A63A`) used only for small heritage
+  details and milestone markers.
+- Strengthened the Home hero and signature-food treatments with larger
+  photography, red/navy color blocking, restrained checkerboard details, and
+  varied card layouts while keeping every image and description unchanged.
+- Rebuilt the Info history as a navy heritage exhibit with light milestone
+  panels, large year labels, gold rings, red accents for major moments, a
+  refined timeline, and a distinct owner-quote treatment.
+- Converted menu category thumbnails to 40 px circles and kept their images,
+  labels, order, selected states, and horizontal scrolling intact.
+- Reworked the launch overlay to use the bundled APK app icon instead of a
+  remote image; it remains CSS-only and respects reduced-motion settings.
+- Set `theme-color` and the manifest colors to the charcoal canvas and updated
+  README wording for the current visual direction.
 
 ### Fixed
-- Ensured `styles.css` is included in the service-worker shell and app-shell
-  hash lists so offline caching stays consistent.
-- Removed inline `style=""` attributes and the hidden `#notifTest` debug button
-  so the strict CSP stays valid.
+- Corrected text colors on navy surfaces, including the header logo, section
+  headings, menu items, rewards, and cards, so body and small text stay legible.
+- Replaced semantically misleading card class names and removed unused tokens.
+- Kept the strict CSP, all required IDs/data attributes, and the existing
+  business logic unchanged.
+- Regenerated `APP_SHELL_HASH.txt` and refreshed all six screenshots at
+  390 × 844.
 
 ## 2026-11-22 — Dark mode + re-applied security fixes
 
