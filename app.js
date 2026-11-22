@@ -458,7 +458,7 @@ function renderFavs(){
   });
   box.innerHTML = Object.entries(groups).map(([cat, items]) =>
     `<div class="cat-head">${escapeHtml(cat)}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
-  ).join('') + `<div style="margin-top:18px">
+  ).join('') + `<div class="mt-18">
       <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
     </div>`;
 }
@@ -487,7 +487,7 @@ function openExternal(url){
   const a = document.createElement('a');
   a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
   a.setAttribute('data-raw', ''); // do not let the global interceptor re-open this link
-  a.style.display = 'none';
+  a.hidden = true;
   document.body.appendChild(a);
   try { a.click(); } finally { a.remove(); }
 }

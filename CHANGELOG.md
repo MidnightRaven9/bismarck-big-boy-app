@@ -3,6 +3,24 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
+## 2026-11-22 — Dark mode + re-applied security fixes
+
+### Added
+- System-level dark mode via `prefers-color-scheme: dark`. Backgrounds switch to
+  near-black, cards to dark gray, and text to light gray/white while keeping
+  the red, navy, and gold brand accents.
+- Dark `theme-color` meta tag so the browser/OS chrome matches the black
+  background in dark mode.
+
+### Security
+- Removed local signing-key text file and stale build artifacts from `release/`.
+- Dropped `style-src 'unsafe-inline'` from the CSP and replaced all inline
+  `style=""` attributes with utility classes.
+- Removed the hidden `#notifTest` debug button.
+- Disabled `ignoreHTTPSErrors` in the Facebook scraper.
+- Replaced realistic keystore placeholder in `.env.example` with a generic one.
+- Regenerated `APP_SHELL_HASH.txt` for the updated shell inputs.
+
 ## 2026-11-21 — Modern Americana redesign (Home + Info)
 
 ### Changed

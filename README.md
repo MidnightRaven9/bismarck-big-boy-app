@@ -17,6 +17,7 @@ A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigb
 - **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
 - **External links** — the map and Food Dudes open inside the app; ordering, rewards, gift cards, social pages and other third-party sites hand off safely to the browser or their own app.
 - **Offline** — the service worker caches the app shell, menu and hours for use without a signal. Remote photos, maps, deals and ordering need a connection.
+- **Dark mode** — respects your system dark mode preference for a black background and adjusted contrast.
 - **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
 
 ## Screenshots

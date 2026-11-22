@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F5F7FA">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="theme-color" content="#F5F7FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -82,6 +83,12 @@ h1,h2,h3{font-family:'Bebas Neue','Arial Narrow',Impact,sans-serif;font-weight:4
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 a{color:inherit}
 img{max-width:100%}
+
+/* utility classes used in place of inline style attributes so the CSP can disallow unsafe-inline */
+.sprite{position:absolute;width:0;height:0}
+.mt-16{margin-top:16px}
+.mt-18{margin-top:18px}
+.park-icon{width:15px;height:15px;display:inline-block;vertical-align:-2px;margin-right:8px;fill:currentColor}
 
 /* ---------- raised icon buttons / quick actions ---------- */
 .retro-icon-button{
@@ -610,12 +617,42 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
+/* ---------- dark mode ---------- */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a0a0a;
+    --paper:#141414;
+    --card:#1a1a1a;
+    --card-raised:#222222;
+    --ice:#1a2530;
+    --nav:#0a0a0a;
+    --ink:#f2f2f2;
+    --ink-soft:#b0b0b0;
+    --on-card:#f2f2f2;
+    --on-card-soft:#b0b0b0;
+    --line:#2a2a2a;
+    --line-dark:#3a3a3a;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --shadow-soft:0 1px 1px rgba(0,0,0,.3);
+  }
+  .retro-icon-button:hover,.del:hover,.item:hover,.reward-card:hover,.fb-deal-card:hover,.fb-deal-more:hover,.fb-deal-open:hover{border-color:var(--line-dark)}
+  .btn.dark{background:var(--card-raised);border-color:var(--card-raised)}
+  .btn.dark:hover{background:var(--line-dark);border-color:var(--line-dark)}
+  .special--ice p,.special--ice .pic,.tl-panel--ice p,.tl-panel--ice .pic{color:var(--on-card-soft);border-color:var(--line)}
+  .tl-panel h3,.tl-panel--ice h3,.fb-link{color:var(--on-card)}
+  .fb-link:hover{background:var(--line-dark)}
+  .owner-quote cite{color:var(--gold)}
+  .tab .badge{background:var(--on-dark);color:var(--red)}
+  .heritage::before{background:linear-gradient(90deg,var(--gold) 0 33%,var(--red) 33% 66%,var(--on-dark) 66% 100%)}
+  @media(min-width:760px){body{box-shadow:0 0 60px rgba(255,255,255,.06)}}
+}
+
 </style>
 </head>
 <body>
 
 <!-- SVG icon sprite -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<svg class="sprite" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></g></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5a8 4.2 0 0 1 16 0"/><path d="M3.5 13c1.8 1.7 3.7-1.3 5.5 0s3.7-1.3 5.5 0 3.7-1.3 5.5 0"/><path d="M4.5 15.5h15v1.1a3 2.4 0 0 1-3 2.4h-9a3 2.4 0 0 1-3-2.4Z"/></g><g fill="currentColor" stroke="none"><circle cx="9" cy="8.3" r=".7"/><circle cx="13" cy="7.4" r=".7"/><circle cx="16.5" cy="8.6" r=".7"/></g></symbol>
@@ -754,18 +791,17 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
     <div class="award"><div class="yr">2020</div><div class="nm">PEOPLE'S CHOICE</div></div>
   </div>
 
-  <div class="note-box" style="margin-top:16px">
-    <svg style="width:15px;height:15px;display:inline-block;vertical-align:-2px;fill:currentColor;margin-right:8px;"><use href="#i-park"/></svg> <strong>No indoor seating.</strong> Grab food for the road, take it home for the family, enjoy it in your car, or (as weather permits) use the picnic tables right here on the property.
+  <div class="note-box mt-16">
+    <svg class="park-icon"><use href="#i-park"/></svg> <strong>No indoor seating.</strong> Grab food for the road, take it home for the family, enjoy it in your car, or (as weather permits) use the picnic tables right here on the property.
   </div>
 
   <h2 class="section-title">ALERTS &amp; NOTIFICATIONS</h2>
   <div class="alert-card">
     <p class="alert-info">Big Boy alerts — menu updates, specials, and when the grill is open.</p>
     <button class="alert-toggle" id="notifToggle" aria-label="Toggle alerts"></button>
-    <button class="alert-test" id="notifTest" style="display:none">Test alert</button>
   </div>
 
-  <div style="margin-top:18px">
+  <div class="mt-18">
     <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER ONLINE →</a>
   </div>
 </section>
@@ -935,7 +971,7 @@ nav.tabbar :focus-visible,.hero :focus-visible{outline-color:var(--on-dark)}
     </a>
   </div>
 
-  <div style="margin-top:18px">
+  <div class="mt-18">
     <a class="btn block" href="https://www.bismarckbigboy.com/" data-title="bismarckbigboy.com">VISIT BISMARCKBIGBOY.COM →</a>
   </div>
 </section>

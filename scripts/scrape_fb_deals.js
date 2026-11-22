@@ -158,7 +158,6 @@ function extractText(html) {
     const ctx = await browser.newContext({
       viewport: { width: 420, height: 880 },
       userAgent: 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36',
-      ignoreHTTPSErrors: true,
     });
     const page = await ctx.newPage();
     page.setDefaultTimeout(25000);
