@@ -1,146 +1,138 @@
-# Bismarck Big Boy — Mobile Web App
+# Bismarck Big Boy
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](https://github.com/MidnightRaven9/bismarck-big-boy-app/blob/main/LICENSE)
-[![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
-[![Built with: OpenCode](https://img.shields.io/badge/Built%20with-OpenCode-4da167)](https://opencode.ai)
-[![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
+> A installable mobile web app for Bismarck's original 1954 drive-in. Menu, hours, deals, rewards, and ordering — no accounts, no tracking, no build step.
 
-A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS and JavaScript — no build step, framework, analytics or backend. The installable Progressive Web App opens like a native app on Android and iPhone. The current design uses a modern Americana palette: classic red, heritage navy, and crisp white, with subtle vintage-gold accents and deliberate color blocking inspired by Big Boy's 1954 brand heritage.
+[![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](LICENSE)
+[![Stack: HTML5 PWA](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
+[![Node](https://img.shields.io/badge/Node-%3E%3D20-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Live app](https://img.shields.io/badge/Live-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
+
+[Bismarck Big Boy](https://www.bismarckbigboy.com/) is the oldest continuously operating restaurant in Bismarck, ND — a family-run drive-in at 2511 E Main Ave since 1954. This project is the customer-facing Progressive Web App: plain HTML, CSS, and vanilla JavaScript that installs like a native app on Android and iPhone.
 
 ## Features
 
-- **Home** — open/closed status calculated in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap. Exceptional hours can be supplied through `hours_overrides.json`.
-- **Info** — Facebook page, photos, reviews, and deals/specials. Tap a deal to expand its full text or open the original post.
-- **Menu** — all 56 items with real photos from bismarckbigboy.com, searchable, with category filters and per-size pricing.
-- **Favorites** — save items locally on the device; no account or tracking required.
-- **Rewards** — Toast loyalty sign-up, eGift cards, and the Big Boy shop.
-- **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
-- **External links** — the map and Food Dudes open inside the app; ordering, rewards, gift cards, social pages and other third-party sites hand off safely to the browser or their own app.
-- **Offline** — the service worker caches the app shell, menu and hours for use without a signal. Remote photos, maps, deals and ordering need a connection.
-- **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
+- **Live open/closed status** — Bismarck Central Time (DST-aware), today’s hours, and optional holiday overrides via `hours_overrides.json`.
+- **Full menu** — 56 items with real photos, category filters, search, and per-size pricing.
+- **Favorites** — Saved locally on the device; no account or analytics required.
+- **Facebook deals** — Current specials pulled from the restaurant’s public page, with a link to the original post.
+- **Rewards & gift cards** — Direct links to Toast loyalty, eGift cards, and the Big Boy shop.
+- **Delivery** — One-tap handoff to Uber Eats, DoorDash, and Food Dudes.
+- **Safe external links** — The map and Food Dudes embed in-app; ordering, payments, and social links hand off to the browser or their native app.
+- **Offline-ready** — The service worker caches the app shell, menu, and hours so browsing works without a signal.
 
 ## Screenshots
 
-The app on a phone.
+Drop phone-sized screenshots into `assets/screenshots/` and the table below will pick them up.
 
 | Home | Menu | Favorites |
 | :---: | :---: | :---: |
 | ![Home screen](assets/screenshots/1-home.png) | ![Menu screen](assets/screenshots/2-menu.png) | ![Favorites screen](assets/screenshots/3-favorites.png) |
 
-| Delivery | Rewards | Info |
+| Rewards | Info | Delivery |
 | :---: | :---: | :---: |
-| ![Delivery](assets/screenshots/6-delivery.png) | ![Rewards screen](assets/screenshots/4-rewards.png) | ![Info screen](assets/screenshots/5-info.png) |
+| ![Rewards screen](assets/screenshots/4-rewards.png) | ![Info screen](assets/screenshots/5-info.png) | ![Delivery options](assets/screenshots/6-delivery.png) |
 
-*(To add your own screenshots, run `node scripts/capture_screenshots.js` — see [Developer Setup](#developer-setup).)*
+To regenerate screenshots locally:
+
+```bash
+npm ci
+node scripts/capture_screenshots.js
+```
 
 ## Install
 
-### Android (PWA)
+### Android
 
-Open the live URL in Chrome, tap **⋮** → **Install app**. It will be added to your home screen, opens like a native app, and works offline.
-
-### Android (APK — sideload)
-
-Download **BismarckBigBoy-v1.0.0.apk** from the [latest release](https://github.com/MidnightRaven9/bismarck-big-boy-app/releases/latest). On your phone, open the file → allow “Install unknown apps” when prompted → install. It's a Trusted Web Activity, so it loads the live site.
+1. Open https://midnightraven9.github.io/bismarck-big-boy-app/ in Chrome.
+2. Tap **⋮ → Install app**.
+3. The icon appears on your home screen and works offline.
 
 ### iPhone
 
-iOS does not allow sideloading. Open the live URL in Safari → **Share** → **Add to Home Screen**.
+1. Open the live URL in Safari.
+2. Tap **Share → Add to Home Screen**.
 
-## Requirements
+### Android APK (sideload)
 
-- Nothing to run. The app is static files (`index.html`, `core.js`, `app.js`, `menu.json`, `sw.js` and icons).
+Download `BismarckBigBoy-v1.0.0.apk` from the [latest release](https://github.com/MidnightRaven9/bismarck-big-boy-app/releases/latest). It is a Trusted Web Activity that loads the live site.
 
-## Developer Setup
+## Developer setup
+
+The app has no build step and no runtime dependencies. You only need a static file server and Node 20+ if you want to run tests.
 
 ```bash
-# Clone the repo
 git clone https://github.com/MidnightRaven9/bismarck-big-boy-app.git
 cd bismarck-big-boy-app
 
-# Serve locally for testing (any static server works)
+# Serve locally
 python3 -m http.server 8000
-
-# or use a static web server of your choice
-# npm -g serve
-# python3 -m http.server
 ```
 
 Then open http://localhost:8000/ in Chrome.
 
-### Key files
-
-| File | Purpose |
-|------|---------|
-| `index.html` | Markup, styles and app shell; loads `core.js` and `app.js` |
-| `core.js` | Pure, testable logic: Bismarck time, validation, URL policy |
-| `app.js` | Rendering, navigation, favorites, deals and external-link handling |
-| `menu.json` | Validated menu data (56 items, unique IDs) |
-| `hours_overrides.json` | Optional, validated holiday/exceptional-hours overrides |
-| `manifest.webmanifest` | PWA manifest: name, icons, standalone display |
-| `sw.js` | Service worker — content-addressed, atomic offline app-shell cache |
-| `APP_SHELL_HASH.txt` | SHA-256 manifest for the 12 shell inputs; derives the cache version |
-| `tests/` | Unit and browser integration tests |
-| `icons/` | App icon in 5 sizes (192, 512, maskable, apple-touch, favicon) |
-| `scripts/package-android.py` | Packages the PWA into an Android APK via PWABuilder CloudAPK |
-| `scripts/scrape_fb_deals.js` | Cron scraper for Facebook deals (writes `facebook_deals.json`) |
-| `scripts/capture_screenshots.js` | Headless-Chrome screenshot capture |
-
-## Android Packaging & Releasing
-
-Re-run the packager when the site changes:
+### Running tests
 
 ```bash
-# Enqueue via PWABuilder CloudAPK (versions and secrets come from GH Actions)
-python3 scripts/package-android.py
-```
-
-## Automation
-
-| Trigger | Action |
-|---------|--------|
-| every 6h (`main`) | `auto-package.yml` validates tests and the hash of 12 shell inputs (`index.html`, `core.js`, `app.js`, `menu.json`, `hours_overrides.json`, `manifest.webmanifest`, `sw.js`, 5 icons); repackages the APK/AAB when it changes. Concurrency and `main`/repository guards prevent overlapping writes. |
-| every 6h (`main`) | Scrapes and strictly validates Facebook deals, then commits + pushes only a validated change to `facebook_deals.json` |
-
-## Contributing
-
-We welcome community contributions. To get started:
-
-1. Fork the repo on GitHub.
-2. Create a new branch (e.g., `improve-menu-search`).
-3. Push your changes.
-4. Open a pull request and describe your change.
-
-Follow the existing code style. Before submitting, run the checks below and load the app at `http://localhost:8000/` to confirm the tabs still work.
-
-### Testing
-
-The app has no runtime dependencies or build step. Testing dependencies are pinned in `package.json` and `package-lock.json`.
-
-```bash
-# Reproducible install (Node 20+)
 npm ci
 npx playwright install chromium
 
-# Syntax, JSON and unit tests
-node --check core.js && node --check app.js && node --check sw.js
+# Unit tests
 npm test
 
-# Browser integration tests + everything above
+# Browser integration tests
 npm run test:browser
-# or: npm run test:all
+
+# Everything
+npm run test:all
 ```
 
-`.github/workflows/validate.yml` runs these checks on pull requests with no secrets and no publishing. See `TEST_REPORT.md` for results and `AUDIT_REPORT.md` for the full audit.
+## Project layout
 
-If you're interested in becoming a maintainer of the app, please open a PR and note your interest.
+| File | Purpose |
+|------|---------|
+| `index.html` | App shell, styles, and markup |
+| `core.js` | Pure logic: Bismarck time, validation, URL policy |
+| `app.js` | Rendering, navigation, favorites, deals, external-link overlay |
+| `menu.json` | Validated menu data |
+| `hours_overrides.json` | Optional holiday/exceptional-hours overrides |
+| `facebook_deals.json` | Scraped Facebook specials |
+| `manifest.webmanifest` | PWA manifest |
+| `sw.js` | Content-addressed offline cache |
+| `APP_SHELL_HASH.txt` | SHA-256 manifest for the 12 shell inputs |
+| `tests/` | Unit and browser integration tests |
+| `scripts/` | Android packaging, screenshot capture, Facebook scraper |
 
-## Credits
+## Android packaging
 
-- Restaurant info, prices, and photo art: [bismarckbigboy.com](https://www.bismarckbigboy.com/)
-- App icon: a custom Big Boy mask on a dark background
-- Maintained by [MidnightRaven9](https://github.com/MidnightRaven9) for Bismarck Big Boy
+The packager is designed for GitHub Actions. For local runs, copy `.env.example` to `.env` and fill in the signing values:
+
+```bash
+cp .env.example .env
+# Edit .env with your keystore and token
+python3 scripts/package-android.py
+```
+
+`.env` is gitignored — never commit signing material.
+
+## Automation
+
+| Workflow | Trigger | What it does |
+|----------|---------|--------------|
+| `validate.yml` | Push/PR to `main` | Syntax checks, JSON validation, unit tests |
+| `auto-package.yml` | Every 6 hours on `main` | Validates, repackages APK/AAB if the shell hash changed, and refreshes Facebook deals |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, style guide, and how to open a pull request.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for the security policy, reporting process, and trust-model overview.
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+Restaurant info, photos, and prices courtesy of [bismarckbigboy.com](https://www.bismarckbigboy.com/). Maintained by [MidnightRaven9](https://github.com/MidnightRaven9) for Bismarck Big Boy.

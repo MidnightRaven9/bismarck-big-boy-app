@@ -1,6 +1,4 @@
-/* ============================================================
-   BISMARCK BIG BOY — menu data + photos from bismarckbigboy.com
-   ============================================================ */
+/* BISMARCK BIG BOY — menu data + photos from bismarckbigboy.com */
 /* Pure helpers live in core.js so they can be unit-tested without a DOM. */
 const { RESTAURANT, WEEKDAYS, parseHHMM, formatTime, businessNow, addDaysUTC,
         normalizeOverrides, effectiveHours, nextOpening, validateMenu,
@@ -30,9 +28,7 @@ async function loadMenu(){
   MENU = validateMenu(await res.json());
 }
 
-/* ============================================================
-   State + nonintrusive, throttled status notices
-   ============================================================ */
+/* State + nonintrusive, throttled status notices */
 const FAV_KEY = 'bb_favs_v1';
 const NOTICE_MS = 30000;
 const noticeTimes = new Map();
@@ -93,11 +89,7 @@ function buildMenuIndex(){
   CATS = [{id:'all',name:'ALL'}].concat(MENU.map(g => ({id:g.id, name:g.name})));
 }
 
-/* ============================================================
-   Open / closed status — 10:30 AM to 9:00 PM, 7 days
-   ============================================================ */
-const OPEN_MIN = 10*60 + 30;
-const CLOSE_MIN = 21*60;
+/* Open / closed status — 10:30 AM to 9:00 PM, 7 days */
 function updateStatus(){
   const now = businessNow();
   const h = effectiveHours(now, HOUR_OVERRIDES);
@@ -155,9 +147,7 @@ function renderHours(){
   $$('[data-hours-summary]').forEach(el => { el.textContent = summary; });
 }
 
-/* ============================================================
-   Facebook deals (from the auto-packager cron's scrape)
-   ============================================================ */
+/* Facebook deals (from the auto-packager cron's scrape) */
 async function renderFbDeals(){
   const el = $('#fbDealsList');
   if (!el) return;
@@ -197,9 +187,7 @@ document.addEventListener('click', e => {
   if (more) more.textContent = card.classList.contains('open') ? 'SHOW LESS' : 'READ MORE';
 });
 
-/* ============================================================
-   Notifications — menu updates + open status alerts
-   ============================================================ */
+/* Notifications — menu updates + open status alerts */
 /* Storage can be blocked (private mode, strict settings). Never let an alert
    preference stop the rest of the app from initialising. */
 const store = {
@@ -292,9 +280,7 @@ const NOTIF = {
   }
 };
 
-/* ============================================================
-   Navigation
-   ============================================================ */
+/* Navigation */
 const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
 function go(tab){
   state.tab = tab;
@@ -318,9 +304,7 @@ function go(tab){
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.tab)));
 
-/* ============================================================
-   Menu rendering
-   ============================================================ */
+/* Menu rendering */
 let CATS = [{id:'all',name:'ALL'}];
 
 function renderChips(){
@@ -435,9 +419,7 @@ function updateBadge(){
   b.classList.toggle('show', n>0);
 }
 
-/* ============================================================
-   Favorites screen
-   ============================================================ */
+/* Favorites screen */
 function renderFavs(){
   const ids = [...state.favs];
   const box = $('#favList');
@@ -458,14 +440,12 @@ function renderFavs(){
   });
   box.innerHTML = Object.entries(groups).map(([cat, items]) =>
     `<div class="cat-head">${escapeHtml(cat)}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
-  ).join('') + `<div style="margin-top:18px">
+  ).join('') + `<div class="mt-18">
       <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
     </div>`;
 }
 
-/* ============================================================
-   Search
-   ============================================================ */
+/* Search */
 $('#search').addEventListener('input', e => {
   state.q = e.target.value;
   $('#searchWrap').classList.toggle('has', !!state.q);
@@ -473,13 +453,7 @@ $('#search').addEventListener('input', e => {
 });
 $('#searchClear').addEventListener('click', clearSearch);
 
-/* ============================================================
-   IN-APP BROWSER
-   ------------------------------------------------------------
-   Sites that refuse to be framed (verified via X-Frame-Options /
-   CSP frame-ancestors) get a "handoff" card instead of a blank
-   iframe, so the app always explains what happened.
-   ============================================================ */
+/* IN-APP BROWSER: frame allowlisted origins; hand off everything else. */
 /* Anchor-based open keeps the click user-initiated and strips opener/referrer. */
 function openExternal(url){
   const { protocol } = hostnameOf(url);
@@ -487,7 +461,7 @@ function openExternal(url){
   const a = document.createElement('a');
   a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
   a.setAttribute('data-raw', ''); // do not let the global interceptor re-open this link
-  a.style.display = 'none';
+  a.hidden = true;
   document.body.appendChild(a);
   try { a.click(); } finally { a.remove(); }
 }
@@ -659,9 +633,7 @@ document.addEventListener('error', e => {
   t.src = IMAGE_PLACEHOLDER;
 }, true);
 
-/* ============================================================
-   Init
-   ============================================================ */
+/* Init */
 async function initApp(){
   let menuOk = true;
   try { await loadMenu(); }
@@ -705,9 +677,7 @@ function applyHash(){
   }
 }
 
-/* ============================================================
-   PWA — installable + offline shell
-   ============================================================ */
+/* PWA — installable + offline shell */
 if ('serviceWorker' in navigator) {
   /* A failed install is never activated, so it cannot always message the page.
      The marker in Cache Storage is the reliable cross-reload source of truth. */

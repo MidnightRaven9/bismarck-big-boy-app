@@ -47,7 +47,7 @@ The Android signing key is intentionally **not committed** to the public repo. I
 
 Never check these files in. If you have concerns about key security, rotate them via a fresh key and a new Play Store upload cert — contact us for help.
 
-See `SECURITY_REVIEW.md` for the full control and residual-risk review.
+See the Security section in `README.md` for a high-level overview of the trust model and controls.
 
 ## Policies
 
