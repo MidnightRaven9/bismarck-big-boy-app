@@ -3,23 +3,25 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
-## 2026-11-22 — Modern-retro redesign with black background
+## 2026-11-22 — Modern-retro redesign with dark charcoal + navy blocks
 
 ### Changed
 - Complete visual refresh across Home, Menu, Favorites, Rewards, Delivery, and
   Info with a modern-retro 1950s American drive-in aesthetic.
-- Default palette now uses a black background (`#0A0A0A`) with Big Boy red
-  `#C8102E` as the primary action color, white and light gray text, and vintage
-  gold `#D4A63A` and navy `#193B63` as accent details.
-- Rounded 16 px cards, 8 px spacing rhythm, 44 px touch targets, checkerboard
+- Default palette now uses a dark charcoal background (`#171719`) with navy
+  blue blocks (`#193B63`), Big Boy red `#C8102E` for primary actions, and white
+  text. The look is the same in light mode and dark mode.
+- Rounded cards, consistent spacing rhythm, 44 px touch targets, checkerboard
   strips, and bold Bebas Neue headings paired with Inter body text.
-- Updated `manifest.webmanifest` and `theme-color` to match the black
+- Updated `manifest.webmanifest` and `theme-color` to match the dark charcoal
   background.
 - Refreshed all six README screenshots at 390 × 844.
 
 ### Fixed
-- Ensured the new `styles.css` is included in the service-worker shell and
-  app-shell hash lists so offline caching stays consistent.
+- Ensured `styles.css` is included in the service-worker shell and app-shell
+  hash lists so offline caching stays consistent.
+- Removed inline `style=""` attributes and the hidden `#notifTest` debug button
+  so the strict CSP stays valid.
 
 ## 2026-11-22 — Dark mode + re-applied security fixes
 
