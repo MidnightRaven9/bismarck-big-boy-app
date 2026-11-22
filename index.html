@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F5F7FA" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0A0A0A">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://static.wixstatic.com https://www.google.com/s2/favicons; connect-src 'self'; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org https://fooddudesdelivery.com https://www.fooddudesdelivery.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Big Boy">
 <meta name="description" content="Bismarck Big Boy — A Family Tradition since 1954. Menu, hours, order online, and rewards.">
 <title>Bismarck Big Boy</title>
@@ -72,6 +71,9 @@
     <img class="hero-bg" alt="" src="https://static.wixstatic.com/media/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg/v1/fill/w_1100,h_700,al_c,q_80,enc_auto/063b6c_1e46c589f8154a85b6023bcb748e41fd~mv2.jpg">
     <div class="hero-tint"></div>
     <div class="hero-check"></div>
+    <div class="hero-mascot">
+      <span class="ph"><span class="fb"></span><img alt="Big Boy mascot" loading="lazy" src="https://static.wixstatic.com/media/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg/v1/fill/w_240,h_240,al_c,q_85,enc_auto/063b6c_983ad671ed6d4b5a822a469856aeaa47~mv2.jpg"></span>
+    </div>
     <p class="eyebrow">A FAMILY TRADITION</p>
     <span class="hero-since">★ EST. 1954</span>
     <h1>Stop By and<br>See Us Today</h1>
@@ -86,11 +88,11 @@
   <div class="qa">
     <a class="retro-icon-button primary" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">
       <span class="icon"><svg aria-hidden="true"><use href="#i-bag"/></svg></span>
-      <span class="label">Order<br>Online</span>
+      <span class="label">Order<br>Delivery</span>
     </a>
-    <a class="retro-icon-button" href="tel:7012234125">
-      <span class="icon"><svg aria-hidden="true"><use href="#i-call"/></svg></span>
-      <span class="label">Call</span>
+    <a class="retro-icon-button" href="#menu" data-goto="menu">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-menu"/></svg></span>
+      <span class="label">View<br>Menu</span>
     </a>
     <a class="retro-icon-button" href="https://www.google.com/maps/search/?api=1&query=2511+E+Main+Ave+Bismarck+ND+58501"
        data-iab="https://www.openstreetmap.org/export/embed.html?bbox=-100.7575,46.8028,-100.7495,46.8068&layer=mapnik&marker=46.8047555,-100.7534822"
@@ -98,9 +100,24 @@
       <span class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></span>
       <span class="label">Directions</span>
     </a>
-    <a class="retro-icon-button" href="#rewards" data-goto="rewards">
+    <a class="retro-icon-button" href="#favs" data-goto="favs">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-heart"/></svg></span>
+      <span class="label">Favorites</span>
+    </a>
+  </div>
+
+  <div class="shortcuts">
+    <a class="shortcut-tile" href="#rewards" data-goto="rewards">
       <span class="icon"><svg aria-hidden="true"><use href="#i-gift"/></svg></span>
-      <span class="label">Gift Cards</span>
+      <span class="label">Rewards</span>
+    </a>
+    <a class="shortcut-tile" href="#info" data-goto="info">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-info"/></svg></span>
+      <span class="label">Info</span>
+    </a>
+    <a class="shortcut-tile" href="tel:7012234125">
+      <span class="icon"><svg aria-hidden="true"><use href="#i-call"/></svg></span>
+      <span class="label">Call</span>
     </a>
   </div>
 
@@ -136,7 +153,7 @@
     </div>
   </div>
 
-<h2 class="section-title" id="delivery">GET IT DELIVERED</h2>
+  <h2 class="section-title" id="delivery">GET IT DELIVERED</h2>
   <div class="delivery">
     <a class="del" href="https://www.ubereats.com/store/big-boy-restaurant/Yaiq62AyUguFfz1C5_BRlQ" data-title="Uber Eats">
       <span class="txt"><span class="n">Uber <em>Eats</em></span><span class="s">Delivery</span></span>
@@ -181,7 +198,7 @@
 <!-- ============ MENU ============ -->
 <section class="screen" id="s-menu">
   <h1 class="screen-title">MENU</h1>
-  <p class="screen-sub">Tap Favorite to save.</p>
+  <p class="screen-sub">Tap a heart to save your go-to orders.</p>
 
   <div class="search" id="searchWrap">
     <svg class="search-ico"><use href="#i-search"/></svg>

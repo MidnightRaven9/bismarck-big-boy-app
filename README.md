@@ -1,28 +1,29 @@
-# Bismarck Big Boy — Mobile Web App
+# Bismarck Big Boy
+
+> A modern-retro mobile app for Bismarck's original 1954 drive-in.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-4c71af.svg)](https://github.com/MidnightRaven9/bismarck-big-boy-app/blob/main/LICENSE)
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
-[![Built with: OpenCode](https://img.shields.io/badge/Built%20with-OpenCode-4da167)](https://opencode.ai)
+[![Tests](https://img.shields.io/badge/Tests-17%2F17%20pass-4da167)](TEST_REPORT.md)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
-A customer-facing mobile web app for [Bismarck Big Boy](https://www.bismarckbigboy.com/), the original 1954 drive-in at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS and JavaScript — no build step, framework, analytics or backend. The installable Progressive Web App opens like a native app on Android and iPhone. The current design uses a modern Americana palette: classic red, heritage navy, and crisp white, with subtle vintage-gold accents and deliberate color blocking inspired by Big Boy's 1954 brand heritage.
+Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and keeps the original Big Boy logo, mascot, and signature red on a clean black background with 1950s drive-in diner details.
 
 ## Features
 
-- **Home** — open/closed status calculated in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap. Exceptional hours can be supplied through `hours_overrides.json`.
-- **Info** — Facebook page, photos, reviews, and deals/specials. Tap a deal to expand its full text or open the original post.
-- **Menu** — all 56 items with real photos from bismarckbigboy.com, searchable, with category filters and per-size pricing.
-- **Favorites** — save items locally on the device; no account or tracking required.
-- **Rewards** — Toast loyalty sign-up, eGift cards, and the Big Boy shop.
-- **Delivery** — one-tap links to Uber Eats, DoorDash, and Food Dudes.
-- **External links** — the map and Food Dudes open inside the app; ordering, rewards, gift cards, social pages and other third-party sites hand off safely to the browser or their own app.
-- **Offline** — the service worker caches the app shell, menu and hours for use without a signal. Remote photos, maps, deals and ordering need a connection.
-- **Dark mode** — respects your system dark mode preference for a black background and adjusted contrast.
-- **Phone, address, and directions** — a single trusted source for the restaurant's contact info and location.
+- **Home** — live open/closed status in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap.
+- **Menu** — full menu with photos from bismarckbigboy.com, search, category filters, per-size pricing, and one-tap favorites.
+- **Favorites** — saved locally on the device; no account or tracking required.
+- **Rewards** — links to Toast loyalty sign-up, eGift cards, and the Big Boy shop.
+- **Delivery** — one-tap ordering through Uber Eats, DoorDash, and Food Dudes.
+- **Info** — Facebook page, verified history timeline, contact details, phone, address, and current deals.
+- **External links** — map and Food Dudes open in-app; ordering, rewards, gift cards, and social pages hand off safely to the browser.
+- **Offline** — service worker caches the app shell, menu, and hours. Photos, maps, deals, and ordering require a connection.
+- **Accessibility** — 44 px touch targets, high-contrast text, focus outlines, and reduced-motion support.
 
 ## Screenshots
 
-The app on a phone.
+Screenshots are captured at 390 × 844 from the live app. Drop replacement images in `assets/screenshots/` with the same filenames, then run `node scripts/capture_screenshots.js` to regenerate them.
 
 | Home | Menu | Favorites |
 | :---: | :---: | :---: |
@@ -31,8 +32,6 @@ The app on a phone.
 | Delivery | Rewards | Info |
 | :---: | :---: | :---: |
 | ![Delivery](assets/screenshots/6-delivery.png) | ![Rewards screen](assets/screenshots/4-rewards.png) | ![Info screen](assets/screenshots/5-info.png) |
-
-*(To add your own screenshots, run `node scripts/capture_screenshots.js` — see [Developer Setup](#developer-setup).)*
 
 ## Install
 
@@ -73,10 +72,11 @@ Then open http://localhost:8000/ in Chrome.
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Markup, styles and app shell; loads `core.js` and `app.js` |
+| `index.html` | App shell and markup; loads `styles.css`, `core.js`, and `app.js` |
+| `styles.css` | Modern-retro styling: black background, red accents, rounded cards, responsive layout |
 | `core.js` | Pure, testable logic: Bismarck time, validation, URL policy |
-| `app.js` | Rendering, navigation, favorites, deals and external-link handling |
-| `menu.json` | Validated menu data (56 items, unique IDs) |
+| `app.js` | Rendering, navigation, favorites, deals, and external-link handling |
+| `menu.json` | Validated menu data with photos and prices |
 | `hours_overrides.json` | Optional, validated holiday/exceptional-hours overrides |
 | `manifest.webmanifest` | PWA manifest: name, icons, standalone display |
 | `sw.js` | Service worker — content-addressed, atomic offline app-shell cache |
@@ -100,7 +100,7 @@ python3 scripts/package-android.py
 
 | Trigger | Action |
 |---------|--------|
-| every 6h (`main`) | `auto-package.yml` validates tests and the hash of 12 shell inputs (`index.html`, `core.js`, `app.js`, `menu.json`, `hours_overrides.json`, `manifest.webmanifest`, `sw.js`, 5 icons); repackages the APK/AAB when it changes. Concurrency and `main`/repository guards prevent overlapping writes. |
+| every 6h (`main`) | `auto-package.yml` validates tests and the hash of 13 shell inputs (`index.html`, `styles.css`, `core.js`, `app.js`, `menu.json`, `hours_overrides.json`, `manifest.webmanifest`, `sw.js`, 5 icons); repackages the APK/AAB when it changes. Concurrency and `main`/repository guards prevent overlapping writes. |
 | every 6h (`main`) | Scrapes and strictly validates Facebook deals, then commits + pushes only a validated change to `facebook_deals.json` |
 
 ## Contributing
@@ -138,8 +138,8 @@ If you're interested in becoming a maintainer of the app, please open a PR and n
 
 ## Credits
 
-- Restaurant info, prices, and photo art: [bismarckbigboy.com](https://www.bismarckbigboy.com/)
-- App icon: a custom Big Boy mask on a dark background
+- Restaurant info, prices, and photos: [bismarckbigboy.com](https://www.bismarckbigboy.com/)
+- Design: modern-retro 1950s American drive-in, built around the original Big Boy identity
 - Maintained by [MidnightRaven9](https://github.com/MidnightRaven9) for Bismarck Big Boy
 
 ## License
