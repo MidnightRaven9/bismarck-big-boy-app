@@ -72,16 +72,13 @@ function loadFavs(){
 function saveFavs(){
   try {
     localStorage.setItem(FAV_KEY, JSON.stringify([...state.favs]));
-    return true;
   } catch (e){
     notifyOnce('favorites-write', 'Saved for this visit only — your browser blocked favorite storage.');
-    return false;
   }
 }
 
-let BY_ID = {};
+const BY_ID = Object.create(null);
 function buildMenuIndex(){
-  BY_ID = {};
   MENU.forEach(g => g.items.forEach(it => { it._cat = g.name; BY_ID[it.id] = it; }));
   // A menu update can remove an item saved earlier — drop those stale ids.
   const stale = [...state.favs].filter(id => !BY_ID[id]);
@@ -193,10 +190,9 @@ document.addEventListener('click', e => {
 const store = {
   get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
   set(k,v){
-    try { localStorage.setItem(k,v); return true; }
+    try { localStorage.setItem(k,v); }
     catch(e){
       notifyOnce('prefs-write', 'Preferences are available for this visit only — your browser blocked storage.');
-      return false;
     }
   }
 };
@@ -283,6 +279,7 @@ const NOTIF = {
 /* Navigation */
 const SCREENS = { home:'#s-home', menu:'#s-menu', favs:'#s-favs', rewards:'#s-rewards', info:'#s-info' };
 function go(tab){
+  if (!Object.hasOwn(SCREENS, tab)) return;
   state.tab = tab;
   Object.entries(SCREENS).forEach(([k,sel]) => $(sel).classList.toggle('active', k===tab));
   $$('.tab').forEach(t => {
@@ -309,7 +306,7 @@ let CATS = [{id:'all',name:'ALL'}];
 
 function renderChips(){
   // Build image map: category id -> first item image
-  const imgMap = {};
+  const imgMap = Object.create(null);
   MENU.forEach(g => {
     if (g.items && g.items.length) {
       imgMap[g.id] = g.items[0].img;
@@ -333,32 +330,69 @@ function renderChips(){
   }));
 }
 
-function picHTML(it, cls){
-  const src = wix(it.img, 300, 300);
+// Edited thumbnails keyed by their exact original media ID, including sources
+// already shared by multiple menu items. Unlisted sources keep their Wix URL.
+const MENU_PHOTO_EDITS = {
+  '063b6c_aecb05600db84f9183a638aed1785c79~mv2.jpg': 'big-boy-original-warm-studio.webp',
+  '063b6c_b5d3ae991ff048fa82f72a223eb45bce~mv2.jpg': 'jr-big-boy-original-cool-studio.webp',
+  '063b6c_a91baf12ad30489d9feeb1cd3ea44b43~mv2.jpg': 'hamburger-original-warm-studio.webp',
+  '063b6c_329cdc6d6cb84fc7ba8dd21b6556241b~mv2.jpg': 'cheeseburger-original-warm-studio.webp',
+  '063b6c_c609940490a44ab3b857a752eb0b07f9~mv2.jpg': 'alpine-burger-original-cool-studio.webp',
+  '063b6c_724df592c7b34899bdc6fe94152f2e40~mv2.jpg': 'big-chicken-original-warm-studio.webp',
+  '063b6c_13cfa18e944d48f8879049bbec783023~mv2.jpg': 'big-boy-fish-original-cool-studio.webp',
+  '063b6c_a273ac51740b4045ab24f873a4bb544e~mv2.jpg': 'ham-cheese-original-warm-studio.webp',
+  '063b6c_c7fd0a3f44c643f59a2b375188707dd6~mv2.jpg': 'bbq-beef-original-cool-studio.webp',
+  '063b6c_2a3c6722badb40eaa6b5d41802de046f~mv2.jpg': 'hot-dog-6-original-warm-studio.webp',
+  '063b6c_9e7fb4ef685046da98bdfad0db331acf~mv2.jpg': 'coney-6-original-warm-studio.webp',
+  '063b6c_1e0367619e0141c4ac785f1740449126~mv2.jpg': 'chicken-1-breast-original-cool-studio.webp',
+  '063b6c_ee203b2eef6844d199588095521955f7~mv2.jpg': 'strips-3-original-warm-studio.webp',
+  '063b6c_3553570521ab43128da2cb05a425de8f~mv2.jpg': 'kids-nugget-original-cool-studio.webp',
+  '063b6c_9ef2785b1857457e9a1c97e0e72bd0dc~mv2.jpg': 'onion-rings-original-warm-studio.webp',
+  '063b6c_1628e15369d9490486927b9e715cf616~mv2.jpg': 'cheese-stix-original-cool-studio.webp',
+  '063b6c_f7e53295af2247d582c54b8a44c1c996~mv2.jpg': 'poppers-original-warm-studio.webp',
+  '063b6c_8f19006d857a4e9991d70ac70dd64c32~mv2.jpg': 'coleslaw-original-cool-studio.webp',
+  '063b6c_713795ad8a4e4ca38e410a91370330a9~mv2.jpg': 'mac-salad-original-warm-studio.webp',
+  '063b6c_b2b5d9bf38d5493aaf55391eac0553f9~mv2.jpg': 'potato-salad-original-warm-studio.webp',
+  '063b6c_bd3567683a66429799a82c3780ed8851~mv2.jpg': 'gravy-original-cool-studio.webp',
+  '063b6c_0ee0e0c4e19e4d2e86ba36be7b5d75a4~mv2.jpg': 'baked-beans-original-warm-studio.webp',
+  '063b6c_daa1906f875d432e923207f603970489~mv2.jpg': 'pizza-burger-flying-style-white-studio.webp',
+};
+
+function picHTML(it, photoOverride){
+  const original = wix(it.img, 300, 300);
+  const edited = original && Object.hasOwn(MENU_PHOTO_EDITS, it.img) ? MENU_PHOTO_EDITS[it.img] : '';
+  const filename = photoOverride || edited;
+  const src = filename ? 'assets/menu/' + filename : original;
+  const fallback = filename ? ` data-original-src="${escapeHtml(original)}"` : '';
   const img = src
-    ? `<img alt="${escapeHtml(it.n)}" loading="lazy" decoding="async" src="${escapeHtml(src)}">`
+    ? `<img alt="${escapeHtml(it.n)}" loading="lazy" decoding="async" src="${escapeHtml(src)}"${fallback}>`
     : '';
-  return `<div class="pic ph ${escapeHtml(cls||'')}"><span class="fb" aria-hidden="true"></span>${img}</div>`;
+  return `<div class="pic ph"><span class="fb" aria-hidden="true"></span>${img}</div>`;
 }
 
-function itemHTML(it){
+function itemHTML(it, photoOverride){
   const id = escapeHtml(it.id);
   const name = escapeHtml(it.n);
   const sizes = it.s.map((s,i) =>
-    `<button class="size ${i===0?'on':''}" data-price="${s[1]}">${escapeHtml(s[0])} ${money(s[1])}</button>`
+    `<button class="size ${i===0?'on':''}" data-price="${s[1]}" aria-pressed="${i===0}">${escapeHtml(s[0])} ${money(s[1])}</button>`
   ).join('');
   const fav = state.favs.has(it.id);
   return `
   <div class="item" data-id="${id}">
-    ${picHTML(it)}
-    <div class="body">
-      <div class="top">
+    <div class="top">
+      ${picHTML(it, photoOverride)}
+      <div class="body">
         <h4>${name}</h4>
-        <button class="fav ${fav?'on':''}" data-fav="${id}" aria-label="Save ${name}"><svg><use href="#i-heart"/></svg></button>
+        ${it.d ? `<p class="desc">${escapeHtml(it.d)}</p>` : ''}
       </div>
-      ${it.d ? `<p class="desc">${escapeHtml(it.d)}</p>` : ''}
+      <button class="fav ${fav?'on':''}" data-fav="${id}" aria-label="Save ${name}" aria-pressed="${fav}"><svg aria-hidden="true"><use href="#i-heart"/></svg></button>
+    </div>
+    <div class="item-options">
       <div class="sizes">${sizes}</div>
-      <div class="price-row"><span class="price">${money(it.s[0][1])}</span></div>
+      <div class="price-row" ${it.s.length===1?'hidden':''}>
+        <span class="price-label">Selected</span>
+        <span class="price" aria-live="polite">${money(it.s[0][1])}</span>
+      </div>
     </div>
   </div>`;
 }
@@ -376,7 +410,7 @@ function renderMenu(){
     if (!items.length) return;
     shown += items.length;
     html += `<div class="cat-head">${escapeHtml(g.name)}<span>${items.length} ITEM${items.length>1?'S':''}</span></div>`;
-    html += items.map(itemHTML).join('');
+    html += items.map(it => itemHTML(it, it.id === 'pizza-burger' ? 'pizza-burger-2056.jpg' : '')).join('');
   });
   if (!shown){
     html = `<div class="empty">
@@ -399,8 +433,11 @@ document.addEventListener('click', e => {
   const sizeBtn = e.target.closest('.size');
   if (sizeBtn){
     const wrap = sizeBtn.closest('.item');
-    wrap.querySelectorAll('.size').forEach(s => s.classList.remove('on'));
-    sizeBtn.classList.add('on');
+    wrap.querySelectorAll('.size').forEach(button => {
+      const selected = button === sizeBtn;
+      button.classList.toggle('on', selected);
+      button.setAttribute('aria-pressed', selected);
+    });
     wrap.querySelector('.price').textContent = money(parseFloat(sizeBtn.dataset.price));
     return;
   }
@@ -412,7 +449,9 @@ document.addEventListener('click', e => {
     // Compare dataset values instead of interpolating an id into a CSS selector.
     $$('[data-fav]').forEach(b => {
       if (b.dataset.fav !== id) return;
-      b.classList.toggle('on', state.favs.has(id));
+      const saved = state.favs.has(id);
+      b.classList.toggle('on', saved);
+      b.setAttribute('aria-pressed', saved);
     });
     if (state.tab==='favs') renderFavs();
   }
@@ -430,22 +469,22 @@ function renderFavs(){
   const ids = [...state.favs];
   const box = $('#favList');
   if (!ids.length){
-    box.innerHTML = `<div class="empty">
-      <div class="big">Empty</div>
-      <h3>No favorites yet</h3>
-      <p>Tap the heart on any menu item and it'll show up here for quick reordering.</p>
-      <button class="btn" data-goto="menu">BROWSE THE MENU</button>
+    box.innerHTML = `<div class="favorites-empty">
+      <span class="favorites-mark" aria-hidden="true"><svg><use href="#i-heart"/></svg></span>
+      <h2>No favorites yet</h2>
+      <p>Tap the heart on a menu item to save it here.</p>
+      <button class="btn" data-goto="menu">Browse Menu</button>
     </div>`;
     return;
   }
-  const groups = {};
+  const groups = Object.create(null);
   ids.forEach(id => {
     const it = BY_ID[id];
     if (!it) return;
     (groups[it._cat] = groups[it._cat] || []).push(it);
   });
   box.innerHTML = Object.entries(groups).map(([cat, items]) =>
-    `<div class="cat-head">${escapeHtml(cat)}<span>${items.length} SAVED</span></div>` + items.map(itemHTML).join('')
+    `<div class="cat-head">${escapeHtml(cat)}<span>${items.length} SAVED</span></div>` + items.map(it => itemHTML(it)).join('')
   ).join('') + `<div class="mt-18">
       <a class="btn block" href="https://order.toasttab.com/online/big-boy-2511-east-main-avenue" data-title="Order Online">ORDER THESE ONLINE →</a>
     </div>`;
@@ -477,16 +516,6 @@ function openExternal(url){
 const iab = $('#iab'), iabBody = $('#iabBody'), iabFrame = $('#iabFrame');
 let iabUrl = '', iabIsOpen = false, iabReturnFocus = null;
 
-const NOTES = {
-  'order.toasttab.com': "Big Boy's own ordering runs on Toast, which blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
-  'www.toasttab.com':   "Toast's gift card checkout blocks being shown inside other apps. Continue to open it — your spot in the app is saved.",
-  'www.instagram.com':  "Instagram blocks being shown inside other apps. Continue to open it in Instagram or your browser.",
-  'www.facebook.com':   "Facebook blocks being shown inside other apps. Continue to open it in Facebook or your browser.",
-  'www.google.com':     "Google Maps blocks being shown inside other apps. Continue to open it for turn-by-turn directions.",
-  'www.ubereats.com':   "Uber Eats blocks being shown inside other apps. Continue to open it and place your delivery order.",
-  'www.doordash.com':   "DoorDash blocks being shown inside other apps. Continue to open it and place your delivery order."
-};
-
 function openIAB({src, url, title}){
   iabUrl = url;
   let host = '', hostRaw = '';
@@ -516,14 +545,12 @@ function openIAB({src, url, title}){
   } else {
     iabFrame.src = 'about:blank';
     iabBody.className = 'iab-body handoff';
-    const isOrdering = host === 'order.toasttab.com';
     $('#hoInner').innerHTML = `
       <img class="site-img" alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostRaw)}&sz=128">
       <h3>${escTitle || escHost}</h3>
       <div class="host">${escHost}</div>
-      <p>${NOTES[hostRaw] || NOTES[host] || "This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved."}</p>
+      <p>This site blocks being displayed inside other apps. Continue to open it — your spot in the app is saved.</p>
       <a class="btn block" id="hoGo" data-raw target="_blank" rel="noopener noreferrer" href="${escapeHtml(url)}">CONTINUE TO ${escapeHtml(host.toUpperCase())} →</a>
-      ${isOrdering ? `<button class="btn ghost block" id="hoDelivery">Delivery INSTEAD</button>` : ''}
       <button class="btn dark block" id="hoCancel">GO BACK TO THE APP</button>
       <div class="why">Your place in the app is kept — just tap Back to return.</div>`;
     $('#hoGo').addEventListener('click', ev => {
@@ -532,16 +559,6 @@ function openIAB({src, url, title}){
       openExternal(url);
       closeIAB();
     });
-    if (isOrdering){
-      $('#hoDelivery').addEventListener('click', () => {
-        closeIAB();
-        go('home');
-        setTimeout(() => {
-          const el = document.getElementById('delivery');
-          if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-        }, 180);
-      });
-    }
     $('#hoCancel').addEventListener('click', closeIAB);
   }
 
@@ -636,6 +653,12 @@ const IMAGE_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
 document.addEventListener('error', e => {
   const t = e.target;
   if (!(t instanceof HTMLImageElement) || t.id === 'iabFav' || t.dataset.bbFallback) return;
+  if (t.dataset.originalSrc){
+    const original = t.dataset.originalSrc;
+    delete t.dataset.originalSrc;
+    t.src = original;
+    return;
+  }
   t.dataset.bbFallback = '1';
   t.removeAttribute('loading');
   t.src = IMAGE_PLACEHOLDER;
@@ -676,7 +699,7 @@ initApp();
 /* PWA shortcuts deep-link into a screen or action. */
 function applyHash(){
   const h = location.hash.slice(1);
-  if (SCREENS[h]){ go(h); return; }
+  if (Object.hasOwn(SCREENS, h)){ go(h); return; }
   if (h === 'order' || h === 'directions'){
     go('home');
     const sel = h === 'order' ? '.qa a.primary' : '.qa a[data-title="Directions"]';

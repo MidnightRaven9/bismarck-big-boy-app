@@ -14,11 +14,24 @@ Designed for the auto-updater cron workflow. Reads everything from env vars:
 Produces: release/BismarckBigBoy-<VERSION>.apk and .aab, then uploads to the
 GitHub Release, clobbering existing assets.
 """
-import hashlib, json, os, shutil, sys, time, urllib.request, urllib.parse, uuid, subprocess, zipfile, pathlib
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+import time
+import urllib.parse
+import urllib.request
+import uuid
+import zipfile
 
 def load_env(path=".env"):
     """Load .env file into env — values already set by the environment (like GH Actions secrets) win."""
-    p = pathlib.Path(path)
+    p = Path(path)
     if not p.exists(): return
     for line in p.read_text().splitlines():
         line = line.strip()
@@ -30,6 +43,9 @@ def load_env(path=".env"):
 load_env()
 
 SERVICE = "https://pwabuilder-cloudapk.azurewebsites.net"
+MAX_DOWNLOAD = 200 * 1024 * 1024
+MAX_EXPANDED = 500 * 1024 * 1024
+MAX_JSON = 2 * 1024 * 1024
 
 APP_URL      = os.environ["APP_URL"]
 PACKAGE_ID   = os.environ["PACKAGE_ID"]
@@ -67,7 +83,11 @@ def call(path, method="GET", body=None, token=None, raw=False, attempts=3):
         try:
             req = urllib.request.Request(SERVICE + path, data=data, headers=h, method=method)
             with urllib.request.urlopen(req, timeout=90) as r:
-                return r.read() if raw else json.loads(r.read())
+                limit = MAX_DOWNLOAD if raw else MAX_JSON
+                payload = r.read(limit + 1)
+                if len(payload) > limit:
+                    raise ValueError("CloudAPK response exceeds its size limit")
+                return payload if raw else json.loads(payload)
         except Exception as exc:
             last = exc
             if attempt < attempts - 1:
@@ -124,7 +144,7 @@ def options():
         "minSdkVersion": 24,
     }
 
-def package():
+def package(work_dir):
     print(f"Enqueueing CloudAPK job for {APP_URL} ...", flush=True)
     receipt = call("/enqueuePackageJob", "POST", options())
     job_id, token = receipt["id"], receipt["accessToken"]
@@ -146,45 +166,49 @@ def package():
         print("TIMED OUT")
         sys.exit(1)
 
-    zip_path = "/tmp/bigboy-android.zip"
+    zip_path = work_dir / "package.zip"
     data = call(f"/downloadPackageZip?id={urllib.parse.quote(job_id)}", token=token, raw=True)
-    if len(data) > 200 * 1024 * 1024:
-        print("Downloaded package exceeds 200 MB — refusing to extract", flush=True)
-        sys.exit(1)
-    with open(zip_path, "wb") as f:
-        f.write(data)
-    print(f"  downloaded {len(data)} bytes -> {zip_path}", flush=True)
+    zip_path.write_bytes(data)
+    print(f"  downloaded {len(data)} bytes", flush=True)
     print(f"  sha256: {hashlib.sha256(data).hexdigest()}", flush=True)
     return zip_path
 
-def extract(zip_path):
-    """Extract only safe, regular files inside a dedicated directory."""
-    out = "/tmp/bbpkg-auto"
-    if os.path.isdir(out):
-        shutil.rmtree(out)
-    os.makedirs(out, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as z:
-        bad = z.testzip()
-        if bad:
-            print(f"Corrupt archive member: {bad}", flush=True)
-            sys.exit(1)
+
+def extract(zip_path, work_dir):
+    """Validate the complete archive before opening either release artifact."""
+    artifacts = {}
+    with zipfile.ZipFile(zip_path) as archive:
         total = 0
-        for info in z.infolist():
-            name = info.filename.replace("\\", "/")
+        for member in archive.infolist():
+            name = member.filename.replace("\\", "/")
             if name.startswith("/") or ".." in name.split("/") or ":" in name:
-                print(f"Unsafe archive path rejected: {name}", flush=True)
-                sys.exit(1)
-            if info.is_dir():
+                raise ValueError("CloudAPK returned an unsafe archive path")
+            if member.is_dir():
                 continue
-            total += info.file_size
-            if total > 500 * 1024 * 1024:
-                print("Archive expands beyond 500 MB — refusing to extract", flush=True)
-                sys.exit(1)
-            with z.open(info) as src, open(os.path.join(out, os.path.basename(name)), "wb") as dst:
-                shutil.copyfileobj(src, dst)
-    apk = [n for n in os.listdir(out) if n.endswith(".apk")]
-    aab = [n for n in os.listdir(out) if n.endswith(".aab")]
-    return apk, aab
+
+            total += member.file_size
+            if total > MAX_EXPANDED:
+                raise ValueError("CloudAPK archive exceeds its expanded size limit")
+
+            suffix = Path(name).suffix.lower()
+            if suffix not in {".apk", ".aab"}:
+                continue
+            mode = stat.S_IFMT(member.external_attr >> 16)
+            if mode not in {0, stat.S_IFREG} or suffix in artifacts:
+                raise ValueError(f"CloudAPK returned an invalid or duplicate {suffix} artifact")
+            artifacts[suffix] = member
+
+        if artifacts.keys() != {".apk", ".aab"}:
+            raise ValueError("CloudAPK must return one APK and one AAB")
+
+        paths = []
+        for suffix in (".apk", ".aab"):
+            destination = work_dir / f"package{suffix}"
+            with archive.open(artifacts[suffix]) as source, destination.open("xb") as target:
+                shutil.copyfileobj(source, target)
+            paths.append(destination)
+    return paths
+
 
 def upload(apk_src, aab_src):
     out_dir = os.path.join(os.environ.get("PWD", "."), "release")
@@ -193,13 +217,13 @@ def upload(apk_src, aab_src):
     if apk_src:
         name = f"BismarckBigBoy-{ASSET_SUFFIX}.apk"
         dst = os.path.join(out_dir, name)
-        open(dst, "wb").write(open(apk_src, "rb").read())
+        shutil.copyfile(apk_src, dst)
         print(f"  saved {dst} ({os.path.getsize(dst)} bytes)")
         files.append((dst, name))
     if aab_src:
         name = f"BismarckBigBoy-{ASSET_SUFFIX}.aab"
         dst = os.path.join(out_dir, name)
-        open(dst, "wb").write(open(aab_src, "rb").read())
+        shutil.copyfile(aab_src, dst)
         print(f"  saved {dst} ({os.path.getsize(dst)} bytes)")
         files.append((dst, name))
 
@@ -215,15 +239,16 @@ def upload(apk_src, aab_src):
     print(f"  uploaded {len(files)} assets to {RELEASE_TAG}")
 
 def main():
-    zip_path = package()
-    apk, aab = extract(zip_path)
-    if not apk or not aab:
-        print(f"Package incomplete — apk={apk}, aab={aab}", flush=True)
+    try:
+        with TemporaryDirectory(prefix="bigboy-android-") as temporary:
+            work_dir = Path(temporary)
+            apk_path, aab_path = extract(package(work_dir), work_dir)
+            upload(apk_path, aab_path)
+    except (RuntimeError, ValueError, OSError, zipfile.BadZipFile) as error:
+        print(redact(error), file=sys.stderr, flush=True)
         sys.exit(1)
-    apk_path = "/tmp/bbpkg-auto/" + apk[0]
-    aab_path = "/tmp/bbpkg-auto/" + aab[0]
-    upload(apk_path, aab_path)
-    print("DONE")
+    print("DONE", flush=True)
+
 
 if __name__ == "__main__":
     main()

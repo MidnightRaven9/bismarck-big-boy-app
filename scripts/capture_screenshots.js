@@ -1,85 +1,73 @@
 #!/usr/bin/env node
-/**
- * Capture headless-Chrome screenshots of the live app for the README.
- * Usage: node scripts/capture_screenshots.js
- * Writes to assets/screenshots/: 1-home, 2-menu, 3-favorites, 4-rewards, 5-info, 6-delivery
- */
 const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-const BASE = process.env.APP_URL || 'https://midnightraven9.github.io/bismarck-big-boy-app/';
-const OUT = path.join(__dirname, '..', 'assets', 'screenshots');
+const base = process.env.APP_URL || 'https://midnightraven9.github.io/bismarck-big-boy-app/';
+const output = path.join(__dirname, '..', 'assets', 'screenshots');
 
-async function shot(page, name, actions) {
-  await page.goto(BASE, { waitUntil: 'networkidle', timeout: 60000 });
-  await page.locator('#statusMain').filter({hasNotText:'Checking…'}).waitFor();
-  if (actions) await actions(page);
-  await page.screenshot({ path: path.join(OUT, name), fullPage: false });
-  console.log('  ✓', name);
+async function capture(context, screen, filename, prepare) {
+  const page = await context.newPage();
+  try {
+    await page.goto(new URL('#' + screen, base).href, { waitUntil: 'domcontentloaded' });
+    await page.locator('#statusMain').filter({ hasNotText: 'Checking…' }).waitFor();
+    await page.locator('#s-' + screen + '.active').waitFor();
+    const target = prepare ? await prepare(page) : null;
+    await page.evaluate(() => document.fonts.ready);
+    if (target) await target.screenshot({ path: path.join(output, filename) });
+    else await page.screenshot({ path: path.join(output, filename) });
+    console.log('Saved', filename);
+  } finally {
+    await page.close();
+  }
 }
 
 (async () => {
-  fs.mkdirSync(OUT, { recursive: true });
+  await fs.mkdir(output, { recursive: true });
   const browser = await chromium.launch();
   try {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-
-    // 1 — Home
-    const p1 = await ctx.newPage();
-    await shot(p1, '1-home.png');
-    await p1.close();
-
-    // 2 — Menu (scrolled down to show items)
-    const p2 = await ctx.newPage();
-    await shot(p2, '2-menu.png', async p => {
-      await p.click('.tab[data-tab="menu"]');
-      await p.waitForTimeout(900);
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      reducedMotion: 'reduce',
+      serviceWorkers: 'block'
     });
-    await p2.close();
-
-    // 3 — Favorites
-    const p3 = await ctx.newPage();
-    await shot(p3, '3-favorites.png', async p => {
-      await p.click('.tab[data-tab="menu"]');
-      await p.waitForTimeout(700);
-      const favBtn = p.locator('#menuList [data-fav]').first();
-      if (await favBtn.count()) await favBtn.click();  // add a favorite
-      await p.click('.tab[data-tab="favs"]');
-      await p.waitForTimeout(700);
+    await capture(context, 'home', '1-home.png', async page => {
+      await page.locator('.hero-bg').evaluate(img => img.decode());
     });
-    await p3.close();
-
-    // 4 — Rewards
-    const p4 = await ctx.newPage();
-    await shot(p4, '4-rewards.png', async p => {
-      await p.click('.tab[data-tab="rewards"]');
-      await p.waitForTimeout(800);
+    await capture(context, 'menu', '2-menu.png', async page => {
+      await page.locator('#menuList .item img').first().evaluate(img => img.decode());
     });
-    await p4.close();
-
-    // 5 — Info (should show Facebook deals)
-    const p5 = await ctx.newPage();
-    await shot(p5, '5-info.png', async p => {
-      await p.click('.tab[data-tab="info"]');
-      await p.waitForTimeout(1000);
+    await capture(context, 'menu', '3-favorites.png', async page => {
+      await page.locator('#menuList [data-fav]').first().click();
+      await page.locator('.tab[data-tab="favs"]').click();
+      await page.locator('#favList .item img').first().evaluate(img => img.decode());
     });
-    await p5.close();
-
-    // 6 — Delivery (from Home scroll)
-    const p6 = await ctx.newPage();
-    await shot(p6, '6-delivery.png', async p => {
-      await p.waitForTimeout(800);
-      await p.evaluate(() => document.getElementById('delivery') &&
-        document.getElementById('delivery').scrollIntoView({ behavior: 'instant', block: 'center' }));
+    await capture(context, 'rewards', '4-rewards.png', async page => {
+      await page.locator('.reward-photo img').evaluate(img => img.decode());
     });
-    await p6.close();
-
-    console.log('✓ All screenshots saved to', OUT);
-  } catch (e) {
-    console.error('Error:', e.message);
-    process.exit(1);
+    await capture(context, 'info', '5-info.png', async page => {
+      await page.locator('.story-photo').evaluate(async img => {
+        img.loading = 'eager';
+        await img.decode();
+      });
+    });
+    await capture(context, 'home', '6-delivery.png', async page => {
+      await page.locator('#delivery').evaluate(el => el.scrollIntoView({ block: 'center' }));
+    });
+    await capture(context, 'info', '7-history.png', async page => {
+      await page.locator('.story-photo').evaluate(async img => {
+        img.loading = 'eager';
+        await img.decode();
+      });
+      await page.locator('header, .tabbar').evaluateAll(els => {
+        els.forEach(el => { el.style.visibility = 'hidden'; });
+      });
+      return page.locator('.heritage');
+    });
   } finally {
     await browser.close();
   }
-})();
+})().catch(error => {
+  console.error('Screenshot capture failed:', error.message);
+  process.exitCode = 1;
+});

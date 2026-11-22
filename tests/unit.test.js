@@ -121,6 +121,8 @@ test('URL policy allowlists framing and hands off sensitive flows', () => {
   assert.equal(C.canEmbed('https://www.openstreetmap.org/export/embed.html'), true);
   assert.equal(C.canEmbed('https://fooddudesdelivery.com/bismarck/big-boy'), true);
   assert.equal(C.canEmbed('https://www.toasttab.com/loyalty/welcome/X'), false);
+  assert.equal(C.canEmbed('http://www.openstreetmap.org/export/embed.html'), false);
+  assert.equal(C.canEmbed('https://www.openstreetmap.org:8443/export/embed.html'), false);
   assert.equal(C.canEmbed('javascript:alert(1)'), false);
   assert.equal(C.shouldHandoff('https://order.toasttab.com/online/x'), true);
   assert.equal(C.shouldHandoff('https://www.facebook.com/bismarckbigboy/'), true);

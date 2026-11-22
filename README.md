@@ -6,12 +6,14 @@
 [![Stack: HTML5](https://img.shields.io/badge/Stack-HTML5%20%26%20PWA-000000?logo=html5&logoColor=white)](https://html.spec.org/)
 [![Live app](https://img.shields.io/badge/Live%20app-GitHub%20Pages-00aaff)](https://midnightraven9.github.io/bismarck-big-boy-app/)
 
-Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Built with plain HTML, CSS, and JavaScript — no framework, no build step, no backend. The app installs to the home screen, works offline, and pairs the original Big Boy identity with the Premium Dark Americana design. The charcoal canvas, navy panels, red ordering button, and checkerboard accents frame the original food photography. The Info screen tells the restaurant’s story through an illustrated timeline, including the 1954 newspaper clipping and the owner’s message.
+An installable menu and restaurant guide for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2511 E Main Ave, Bismarck, ND. Browse the menu, check live hours, save favorites, or open pickup and delivery. The app uses plain HTML, CSS, and JavaScript and can be served as static files.
+
+The **Big Boy After Dark** design uses the drive-in’s red, white, and blue against a near-black canvas. The Info screen includes the original 1954 newspaper clipping and the owner’s message.
 
 ## Features
 
 - **Home** — live open/closed status in Bismarck time (America/Chicago, DST-aware), today's hours, specials, awards, and directions with an embedded OpenStreetMap.
-- **Menu** — full menu with photos from bismarckbigboy.com, search, category filters, per-size pricing, and one-tap favorites.
+- **Menu** — searchable menu with photo category filters, variant prices, and one-tap favorites.
 - **Favorites** — saved locally on the device; no account or tracking required.
 - **Rewards** — links to Toast loyalty sign-up, eGift cards, and the Big Boy shop.
 - **Delivery** — one-tap ordering through Uber Eats, DoorDash, and Food Dudes.
@@ -22,7 +24,7 @@ Customer-facing PWA for [Bismarck Big Boy](https://www.bismarckbigboy.com/) at 2
 
 ## Screenshots
 
-Screen previews were captured in Chromium at 390 × 844. To refresh the six viewport screenshots from a local server, run `APP_URL=http://127.0.0.1:8000/ node scripts/capture_screenshots.js`.
+Screen previews were captured in Chromium at 390 × 844. To refresh the six viewport previews and the history detail from a local server, run `APP_URL=http://127.0.0.1:8000/ node scripts/capture_screenshots.js`.
 
 | Home | Menu | Favorites |
 | :---: | :---: | :---: |
@@ -59,25 +61,22 @@ iOS does not allow sideloading. Open the live URL in Safari → **Share** → **
 git clone https://github.com/MidnightRaven9/bismarck-big-boy-app.git
 cd bismarck-big-boy-app
 
-# Serve locally for testing (any static server works)
-python3 -m http.server 8000
-
-# or use a static web server of your choice
-# npm -g serve
-# python3 -m http.server
+# Serve locally for testing
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Then open http://localhost:8000/ in Chrome.
+Open http://localhost:8000/. Keep local signing files and environment secrets outside any publicly served directory.
 
 ### Key files
 
 | File | Purpose |
 |------|---------|
 | `index.html` | App shell and markup; loads `styles.css`, `core.js`, and `app.js` |
-| `styles.css` | Premium Dark Americana palette, responsive layout, and screen styles |
+| `styles.css` | Big Boy After Dark palette, responsive layout, and screen styles |
 | `core.js` | Pure, testable logic: Bismarck time, validation, URL policy |
 | `app.js` | Rendering, navigation, favorites, deals, and external-link handling |
-| `menu.json` | Validated menu data with photos and prices |
+| `menu.json` | Menu data, original photo references, and prices |
+| `assets/menu/` | Local menu photos with original Wix fallbacks |
 | `hours_overrides.json` | Optional, validated holiday/exceptional-hours overrides |
 | `manifest.webmanifest` | PWA manifest: name, icons, standalone display |
 | `sw.js` | Service worker — content-addressed, atomic offline app-shell cache |
@@ -90,7 +89,7 @@ Then open http://localhost:8000/ in Chrome.
 
 ## Android Packaging & Releasing
 
-Re-run the packager when the site changes:
+The Android wrapper loads the hosted web app. Run packaging only when you intend to replace the Android release artifacts:
 
 ```bash
 # Enqueue via PWABuilder CloudAPK (versions and secrets come from GH Actions)
@@ -101,8 +100,12 @@ python3 scripts/package-android.py
 
 | Trigger | Action |
 |---------|--------|
-| every 6h (`main`) | `auto-package.yml` validates tests and the hash of 13 shell inputs (`index.html`, `styles.css`, `core.js`, `app.js`, `menu.json`, `hours_overrides.json`, `manifest.webmanifest`, `sw.js`, 5 icons); repackages the APK/AAB when it changes. Concurrency and `main`/repository guards prevent overlapping writes. |
+| every 6h (`main`) | `auto-package.yml` validates tests and the hash of 13 shell inputs (`index.html`, `styles.css`, `core.js`, `app.js`, `menu.json`, `hours_overrides.json`, `manifest.webmanifest`, `sw.js`, 5 icons); repackages the APK/AAB when the computed hash differs from the committed marker. Concurrency and `main`/repository guards prevent overlapping writes. |
 | every 6h (`main`) | Scrapes and strictly validates Facebook deals, then commits + pushes only a validated change to `facebook_deals.json` |
+
+## Security
+
+For the trust model, audit findings, and remaining limits, see [Security Review](SECURITY_REVIEW.md). Report vulnerabilities using the private channel in [Security Policy](SECURITY.md).
 
 ## Contributing
 

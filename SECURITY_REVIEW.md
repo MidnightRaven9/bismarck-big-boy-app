@@ -1,36 +1,27 @@
-# Security Review
+# Security review
 
-## Trust model
+Reviewed on 2026-11-22. Scope included the PWA, data validation, navigation and external links, local storage, service worker, development dependencies, Facebook refresh script, and GitHub Actions and Android packaging source.
 
-The app is a static PWA. It receives two kinds of untrusted input:
+## Changes
 
-1. `menu.json` and `facebook_deals.json`, written by repository/content automation.
-2. Search text typed by the customer and data already in `localStorage`.
+| Area | Finding and correction |
+| --- | --- |
+| Menu and navigation | Menu indexes and category groups accepted inherited object keys. Data lookups now use dictionaries without prototypes, and only known screen identifiers can change the active view. |
+| Embedded pages | The frame policy now requires HTTPS, a default port, and no URL credentials in addition to the approved map and delivery hosts. The HTML policy and iframe sandbox continue to apply. |
+| Offline shell | Offline navigation now serves the hash-verified `index.html`. The root response had been cached separately and could take priority without its bytes being covered by the shell hash. Same-origin paths outside the application scope are left to the network. |
+| Android packaging | Cloud response reads have size limits. Archive paths, declared expansion size, and artifact types are checked before extraction. Exactly one regular APK and one regular AAB are extracted into a private temporary directory. Reading the selected entries verifies their ZIP integrity. |
 
-There are no accounts, no backend, no analytics and no personal data leaving the device. Favorites and alert preferences are stored in `localStorage` only.
+## Controls reviewed
 
-## Controls verified in this review
+- Dynamic menu and Facebook text is escaped at HTML insertion. Data validation constrains identifiers and image URLs, and the deals refresh validates the payload before updating the repository.
+- The app has a restrictive HTML Content Security Policy and uses sandboxed frames for supported map and delivery views. External ordering, loyalty, and social links open in a separate tab with opener and referrer isolation.
+- Offline code and data use a versioned cache. Failed installs leave the previous shell in place. Malformed network data can fall back to a validated cached copy.
+- Favorites and alert preferences stay in local browser storage. The app has no account system or first-party analytics. Photos, fonts, maps, and other external services can still receive ordinary network request metadata.
+- Workflow actions and development dependencies are pinned. The validation workflow uses read-only repository permissions. Release and deal-writing jobs are restricted to the canonical repository’s default branch.
 
-- **XSS** — every dynamic menu/deal string goes through `escapeHtml()` before `innerHTML`; IDs and Wix media IDs are allowlisted in `core.js` before they reach URLs or selectors. Deals pass through `normalizeDeals()` for rendering and `assertDealsPayload()` before being written or cached. Text lengths are bounded (title 120, text 700).
-- **CSP** — `script-src 'self'` only (inline JS removed); `img-src` limited to self, `data:`, Wix media and Google favicons; `frame-src` limited to the two origins the app actually embeds; `object-src 'none'`; `base-uri 'self'`; `form-action 'self'`. The offline fallback is served with `default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'` and uses a plain retry link instead of inline JS. Browser tests assert no CSP violations.
-- **URL handling** — `hostnameOf()` rejects unparseable URLs and non-http(s) schemes. `canEmbed()` is an allowlist, not a blocklist. Sensitive hosts hand off directly. `openExternal()` uses a generated anchor with `target="_blank" rel="noopener noreferrer"` and `data-raw` so the global interceptor cannot recurse (a recursion bug found and fixed during browser testing).
-- **Iframe** — `sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"` and `allow="fullscreen"`. Geolocation and clipboard permissions were removed.
-- **Referrer** — `strict-origin-when-cross-origin`.
-- **Service worker** — installs are atomic and hash-verified against all 12 shell inputs; the cache name is derived from a digest of the full shell hash; navigation responses never mutate the cache; JSON is syntax- and schema-validated before use, with last-known-good fallback and a `CONTENT_FALLBACK` notice; stale release caches are removed with a `bb-app-` prefix filter; failed installs are rejected before activation and reported through a persisted marker plus a retry that forces a fresh registration URL.
-- **Scraper** — writes to `DEALS_OUTPUT` only after a non-empty candidate check and schema/URL validation; `process.exitCode = 1` on failure; the workflow validates the temp JSON and only then replaces `facebook_deals.json`. A failed scrape never overwrites good data.
-- **Packaging** — safe archive extraction with path traversal and size checks, `testzip()` integrity verification, retried API calls, SHA-256 logged, signing material and tokens redacted from all error output, explicit failure on incomplete packages or failed uploads.
-- **CI** — both workflows use least-privilege permissions and concurrency groups. `auto-package.yml` guards writes to `main` in the canonical repository, checks out `main` explicitly, disables persisted credentials, and uses token-only `git` extraheaders. Actions are pinned to full commit SHAs, Playwright is pinned to `1.65.1`, installs use `npm ci`, and all multi-line shell steps use `set -euo pipefail`. No `continue-on-error`, `| tail`, `|| true`, force push or `git add -A` remains. Validation runs before packaging; the signing and data-refresh jobs are separated and cannot push concurrently.
-- **Images and local storage** — failed external images swap to a local CSP-allowed SVG placeholder instead of a broken icon; favorites/storage failures produce one throttled live-region notice per 30s key while in-memory behavior continues.
+## Remaining boundaries
 
-## Residual risks
-
-- `ANDROID_KEYSTORE_B64` and `ANDROID_KEYSTORE_PASSWORD` live in GitHub Actions secrets; local keystores are gitignored. A targeted scan of the current tree and full git history found no GitHub token or private-key pattern and no live secret; the only history hit was a commented placeholder in `.env.example`. Rotation is not needed unless a real credential was exposed outside the repository. No credentials were rotated during this pass.
-- Facebook's anonymous DOM is unreliable; deal text may remain truncated. The UI tells customers to confirm details on the original post.
-- Third-party pages can still change framing behaviour; verify embedded map and delivery pages periodically.
-- The legacy "Shake Flavors" menu entry is not on the current official menu page. The owner confirmed it should be kept, so it remains unchanged in `menu.json`.
-- All current code and workflow changes are local and uncommitted: no commit, push, workflow run, release publication or deployment has been performed.
-- Manual device verification is still required for TWA fullscreen/return-to-app, digital asset links, popup behavior, iOS Safari offline behavior, real screen readers and OS-level large text.
-
-## Not claimed
-
-No penetration test, Android reverse-engineering or server-side assessment was performed. `npm audit` was run and reported 0 vulnerabilities. No secret value was printed, stored or transmitted during this review.
+- GitHub Pages enforces HTTPS, and the deployed response returned HSTS when checked. The HTML policy cannot provide HTTP-only protections such as `frame-ancestors`. Those controls require a hosting or proxy configuration that sets response headers.
+- Android packaging sends the signing material to the configured CloudAPK provider and uploads release artifacts through GitHub Actions. This review exercised local ZIP fixtures and did not submit a signing job, inspect private secret values, or publish an APK.
+- The scheduled release workflow uses the committed shell hash as its packaging marker. A matching shell hash committed with a web-only update can skip Android repackaging. This is existing release behavior.
+- Third-party pages and a signed native wrapper are outside the source audit. The review did not include a penetration test, physical-device validation, or live checkout.

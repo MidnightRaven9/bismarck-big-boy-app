@@ -200,9 +200,13 @@ function hostnameOf(url){
   catch(e){ return { host:'', protocol:'' }; }
 }
 function canEmbed(url){
-  const { host, protocol } = hostnameOf(url);
-  if (protocol !== 'http:' && protocol !== 'https:') return false;
-  return EMBED_HOSTS.has(host);
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && !parsed.port && !parsed.username && !parsed.password
+      && EMBED_HOSTS.has(parsed.hostname);
+  } catch (e) {
+    return false;
+  }
 }
 function shouldHandoff(url){
   const { host, protocol } = hostnameOf(url);

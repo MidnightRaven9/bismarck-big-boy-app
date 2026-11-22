@@ -3,6 +3,13 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`. The web app shell cache version is derived from `APP_SHELL_HASH.txt`.
 
+## 2026-11-22 — Big Boy After Dark and maintenance
+
+- Updated the Home and Info layouts, near-black palette, compact Menu cards, Favorites empty state, and Rewards banner.
+- Refined menu photography and added the supplied Flying Style Pizza Burger photo to the Menu tab.
+- Hardened menu lookups, external frame checks, offline shell verification, and Android archive handling.
+- Refreshed the README previews and documented the security review.
+
 ## 2026-11-22 — Premium Dark Americana
 
 - Reworked Home around the original food photography, a prominent red ordering

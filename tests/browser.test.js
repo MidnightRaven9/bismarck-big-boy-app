@@ -250,6 +250,16 @@ const server = http.createServer((req, res) => {
     await page.waitForFunction(() => document.querySelectorAll('#menuList .item').length === 4);
   });
 
+  check('unrecognized deep links preserve the active screen', async () => {
+    await page.goto(base + '#home');
+    await page.waitForSelector('#menuList .item', { state:'attached' });
+    await page.evaluate(() => new Promise(resolve => {
+      window.addEventListener('hashchange', resolve, { once:true });
+      location.hash = 'constructor';
+    }));
+    ok(await page.locator('#s-home.active').isVisible(), 'unknown route hid the active screen');
+  });
+
   check('narrow layouts do not overflow horizontally', async () => {
     await page.setViewportSize({ width:320, height:640 });
     await page.goto(base + '#menu', { waitUntil:'networkidle' });
@@ -510,9 +520,17 @@ const server = http.createServer((req, res) => {
     }
   });
 
-  check('broken external images use a local placeholder without layout shift', async () => {
+  check('item photo tries the original before using a local placeholder without layout shift', async () => {
     const ctx = await browser.newContext({ serviceWorkers:'block' });
-    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => r.abort());
+    let originalRequested = false;
+    await ctx.route('**/assets/menu/big-boy-original-warm-studio.webp', r => r.abort());
+    await ctx.route(/^https:\/\/(?!127\.0\.0\.1)/, r => {
+      const url = r.request().url();
+      if (url.includes('063b6c_aecb05600db84f9183a638aed1785c79') && url.includes('w_300,h_300')){
+        originalRequested = true;
+      }
+      return r.abort();
+    });
     const p = await ctx.newPage();
     await p.goto(base + '#menu', { waitUntil:'networkidle' });
     const img = p.locator('#menuList .item img').first();
@@ -523,6 +541,7 @@ const server = http.createServer((req, res) => {
     const tile = p.locator('#menuList .item .pic').first();
     const box = await tile.boundingBox();
     ok(box && box.width > 0 && box.height > 0, 'image tile collapsed');
+    ok(originalRequested, 'the original photo was not requested');
     const src = await img.getAttribute('src');
     ok(src && src.startsWith('data:image/svg+xml'), 'local placeholder was not applied');
     ok((await img.getAttribute('alt') || '').length > 0, 'placeholder removed alt text');

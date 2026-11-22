@@ -13,7 +13,6 @@ const FAILURE_KEY = './__shell_install_failed';
    but is deliberately excluded from the release hash because the scraper
    refreshes it independently. */
 const SHELL = [
-  './',
   './index.html',
   './styles.css',
   './app.js',
@@ -29,7 +28,7 @@ const SHELL = [
   './icons/apple-touch-icon-180.png',
   './icons/favicon-48.png'
 ];
-/* Exact 12-file list produced by .github/workflows/auto-package.yml. */
+/* Exact 13-file list produced by .github/workflows/auto-package.yml. */
 const HASH_SOURCES = [
   './index.html',
   './styles.css',
@@ -57,8 +56,7 @@ const fallbackNotified = new Set();
 
 function relativeKey(url){
   const scopePath = new URL(self.registration.scope).pathname;
-  let rel = url.pathname.startsWith(scopePath) ? url.pathname.slice(scopePath.length) : '';
-  return './' + rel;
+  return url.pathname.startsWith(scopePath) ? './' + url.pathname.slice(scopePath.length) : null;
 }
 function toHex(buf){
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -66,7 +64,7 @@ function toHex(buf){
 function validHash(h){
   return typeof h === 'string' && /^[a-f0-9]{832}$/.test(h);
 }
-/* The committed hash is a concatenation of 12 per-file digests. Hashing that
+/* The committed hash is a concatenation of 13 per-file digests. Hashing that
    entire string (not a prefix) means every shell input affects the version. */
 async function releaseVersion(hashText){
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(hashText));
@@ -233,7 +231,9 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   let url;
   try { url = new URL(req.url); } catch (err) { return; }
-  if (url.origin !== self.location.origin) return;   // Wix photos / favicons: network only
+  if (url.origin !== self.location.origin) return;
+  const key = relativeKey(url);
+  if (!key) return;
 
   /* Navigation: network first. The cached shell is only ever written by a
      successful, hash-verified install, so serving a live HTML response into a
@@ -245,7 +245,7 @@ self.addEventListener('fetch', e => {
       } catch (err) {
         const name = await currentCacheName();
         const cache = name ? await caches.open(name) : null;
-        const cached = cache && (await cache.match('./') || await cache.match('./index.html'));
+        const cached = cache && await cache.match('./index.html');
         return cached || new Response(OFFLINE_HTML, {
           status: 503,
           headers: {
@@ -258,7 +258,6 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  const key = relativeKey(url);
   if (!SHELL.includes(key)) return;
 
   e.respondWith((async () => {

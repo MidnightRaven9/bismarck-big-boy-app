@@ -15,7 +15,7 @@ If you believe you have found a security vulnerability, **please do not open a p
 - How to reproduce it
 - Your recommended fix (optional, but appreciated)
 
-We will respond within **48 hours**.
+Include enough context for a maintainer to triage the report.
 
 ## Reporting a bug (non-security)
 
@@ -29,12 +29,12 @@ Please open an issue on GitHub with:
 
 Briefly:
 
-- **The app is static**: no server logic, no personal data collection beyond local favorites.
+- **The app is static**: no first-party server, accounts, or analytics.
 - **XSS hardening**: dynamic strings are HTML-escaped; Facebook deals are additionally schema-validated, length-capped and restricted to official Facebook URLs.
 - **CSP**: `script-src 'self'` (no inline JS); images, frames, fonts and connections are restricted to the specific origins the app needs. A `strict-origin-when-cross-origin` referrer policy is set.
 - **External links**: only the map and Food Dudes may be framed. Payments, ordering, accounts and social links hand off with `noopener noreferrer`; unsafe protocols are rejected.
 - **Service worker**: only successful same-origin responses are cached; errors and malformed JSON never replace good cached data.
-- **Secrets**: Android signing key is stored only in GitHub Actions secrets and in gitignored local `release/`. Packaging logs redact signing values.
+- **Secrets**: Android signing material is supplied through GitHub Actions secrets or a local ignored environment. Packaging sends it to the configured CloudAPK provider, and error logs redact signing values.
 - **Local data**: favorites and alert preferences stay in the device's `localStorage`; there is no account, analytics or server-side collection.
 - **Menu data**: `menu.json` is local and validated; it mirrors bismarckbigboy.com and is updated manually by maintainers.
 
