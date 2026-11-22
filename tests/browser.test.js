@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
 
 const ROOT = path.join(__dirname, '..');
 const MIME = { '.html':'text/html', '.js':'text/javascript', '.json':'application/json',
-  '.webmanifest':'application/manifest+json', '.png':'image/png', '.css':'text/css' };
+  '.webmanifest':'application/manifest+json', '.png':'image/png', '.webp':'image/webp', '.css':'text/css' };
 const results = [];
 const check = (name, fn) => results.push({ name, fn });
 
@@ -16,7 +16,7 @@ const check = (name, fn) => results.push({ name, fn });
 // so server-side flags drive the failure/fallback scenarios.
 let failMenu = false, badMenuSchema = false;
 const SHELL_HASH_FILES = [
-  'index.html', 'styles.css', 'core.js', 'app.js', 'menu.json', 'hours_overrides.json',
+  'index.html', 'styles.css', 'core.js', 'app.js', 'startup.js', 'assets/startup/big-boy-bismarck.webp', 'menu.json', 'hours_overrides.json',
   'manifest.webmanifest', 'sw.js', 'icons/apple-touch-icon-180.png',
   'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png',
   'icons/icon-maskable-512.png'
@@ -91,6 +91,46 @@ const server = http.createServer((req, res) => {
     const status = await page.locator('#statusMain').textContent();
     ok(status !== 'Checking…', 'status never resolved');
     ok(/^(Open now|Closed|Closed today)$/.test(status.trim()), 'unexpected status: ' + status);
+  });
+
+  check('startup logo yields to readiness and respects reduced motion', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block', reducedMotion:'reduce' });
+    let serveMenu;
+    const held = new Promise(resolve => { serveMenu = resolve; });
+    try {
+      await ctx.route(/^https:\/\//, r => r.abort());
+      await ctx.route('**/menu.json', async r => { await held; await r.continue(); });
+      await ctx.addInitScript(() => {
+        document.addEventListener('DOMContentLoaded', () => {
+          const overlay = document.getElementById('startup');
+          const logo = overlay?.querySelector('img');
+          const caption = overlay?.querySelector('.startup-est');
+          window.startupState = {
+            background: overlay && getComputedStyle(overlay).backgroundColor,
+            stripe: overlay && getComputedStyle(overlay, '::after').backgroundColor,
+            animation: logo && getComputedStyle(logo).animationName,
+            caption: caption?.textContent,
+            captionAnimation: caption && getComputedStyle(caption).animationName
+          };
+        }, { once:true });
+      });
+      const p = await ctx.newPage();
+      await p.goto(base, { waitUntil:'domcontentloaded' });
+      const overlay = p.locator('#startup');
+      const appearance = await p.evaluate(() => window.startupState);
+      ok(appearance?.background === 'rgb(16, 17, 20)', 'the startup background did not render');
+      ok(appearance?.stripe === 'rgb(200, 16, 46)', 'the startup accent did not render');
+      ok(appearance?.caption === 'Est. 1954', 'the startup caption was missing');
+      ok(appearance?.animation === 'none' && appearance?.captionAnimation === 'none', 'reduced-motion branding animated');
+      serveMenu();
+      await overlay.waitFor({ state:'detached' });
+      ok(await p.locator('#s-home.active').isVisible(), 'Home did not appear after startup');
+      await p.locator('.tab[data-tab="menu"]').click();
+      ok(await overlay.count() === 0, 'tab navigation recreated the startup overlay');
+    } finally {
+      serveMenu();
+      await ctx.close();
+    }
   });
 
   check('malicious menu content is displayed as text, never executed', async () => {
@@ -201,15 +241,18 @@ const server = http.createServer((req, res) => {
     const p = await ctx.newPage();
     await p.goto(base, { waitUntil:'networkidle' });
     await p.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout:10000 });
-    // The first activation reloads once; let it finish before changing state.
-    await p.waitForTimeout(1000);
+    // Exercise the fallback while the controlled document is stable. The
+    // worker reports the first fallback once, so capture it before reloading.
+    await p.waitForLoadState('networkidle');
+    await p.locator('#startup').waitFor({ state:'detached' });
     badMenuSchema = true;
     try {
-      await p.reload({ waitUntil:'networkidle' });
-      await p.waitForFunction(() => document.querySelectorAll('#menuList .item').length === 56, null, { timeout:10000 });
-      ok(await p.locator('#menuList .item').count() === 56, 'schema-invalid menu replaced the cached copy');
-      await p.waitForSelector('#appToast', { timeout:5000 });
+      const servedMenu = await stableEval(p, async () => (await fetch('menu.json')).json());
+      ok(Array.isArray(servedMenu), 'schema-invalid menu replaced the cached copy');
+      await p.waitForSelector('#appToast', { timeout:6000 });
       ok(/Showing saved menu/.test(await p.locator('#appToast').textContent()), 'cached fallback was not reported');
+      await p.reload({ waitUntil:'domcontentloaded' });
+      await p.waitForFunction(() => document.querySelectorAll('#menuList .item').length === 56, null, { timeout:10000 });
       const cachedIsArray = await stableEval(p, async () => {
         const state = await caches.open('bb-shell-state');
         const v = await (await state.match('./version')).text();

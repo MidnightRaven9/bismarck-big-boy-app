@@ -11,9 +11,10 @@ Designed for the auto-updater cron workflow. Reads everything from env vars:
   ANDROID_KEYSTORE_PASSWORD  Keystore + key alias password
   GITHUB_TOKEN             Auto-provided by GitHub Actions
 
-Produces: release/BismarckBigBoy-<VERSION>.apk and .aab, then uploads to the
-GitHub Release, clobbering existing assets.
+With no arguments, saves and uploads the artifacts to the configured GitHub
+release. Use --output-dir for a local-only build with no release upload.
 """
+import argparse
 import hashlib
 import json
 import os
@@ -47,15 +48,16 @@ MAX_DOWNLOAD = 200 * 1024 * 1024
 MAX_EXPANDED = 500 * 1024 * 1024
 MAX_JSON = 2 * 1024 * 1024
 
-APP_URL      = os.environ["APP_URL"]
-PACKAGE_ID   = os.environ["PACKAGE_ID"]
+APP_URL      = os.environ.get("APP_URL", "")
+PACKAGE_ID   = os.environ.get("PACKAGE_ID", "")
 APP_VERSION  = os.environ.get("APP_VERSION", "1.0.0.0")
 RELEASE_TAG  = os.environ.get("RELEASE_TAG", "v1.0.0")
-KEYSTORE_B64 = os.environ["ANDROID_KEYSTORE_B64"]
-KEYSTORE_PW  = os.environ["ANDROID_KEYSTORE_PASSWORD"]
-GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+KEYSTORE_B64 = os.environ.get("ANDROID_KEYSTORE_B64", "")
+KEYSTORE_PW  = os.environ.get("ANDROID_KEYSTORE_PASSWORD", "")
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 ASSET_SUFFIX = os.environ.get("APK_SUFFIX", APP_VERSION)
+SPLASH_COLOR = "#101114"
 
 HEADERS = {
     "content-type": "application/json",
@@ -98,7 +100,7 @@ def options():
     return {
         "appVersion": APP_VERSION,
         "appVersionCode": 1,  # kept constant so the signature is stable
-        "backgroundColor": "#050114",
+        "backgroundColor": SPLASH_COLOR,
         "display": "standalone",
         "enableNotifications": True,
         "enableSiteSettingsShortcut": True,
@@ -134,10 +136,10 @@ def options():
             "storePassword": KEYSTORE_PW,
         },
         "signingMode": "mine",
-        "splashScreenFadeOutDuration": 300,
+        "splashScreenFadeOutDuration": 150,
         "startUrl": "/bismarck-big-boy-app/",
-        "themeColor": "#F8F5F2",
-        "themeColorDark": "#F8F5F2",
+        "themeColor": SPLASH_COLOR,
+        "themeColorDark": SPLASH_COLOR,
         "webManifestUrl": f"{APP_URL}manifest.webmanifest",
         "pwaUrl": APP_URL,
         "fullScopeUrl": APP_URL,
@@ -238,12 +240,39 @@ def upload(apk_src, aab_src):
         sys.exit(1)
     print(f"  uploaded {len(files)} assets to {RELEASE_TAG}")
 
+def save_local(paths, output_dir):
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for source in paths:
+        destination = output_dir / f"BismarckBigBoy-{ASSET_SUFFIX}{source.suffix}"
+        with source.open("rb") as incoming, destination.open("xb") as output:
+            shutil.copyfileobj(incoming, output)
+        print(f"  saved {destination}", flush=True)
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Build the signed Bismarck Big Boy TWA.")
+    parser.add_argument("--output-dir", type=Path, help="Save new artifacts locally without uploading or overwriting.")
+    args = parser.parse_args()
+    required = {
+        "APP_URL": APP_URL,
+        "PACKAGE_ID": PACKAGE_ID,
+        "ANDROID_KEYSTORE_B64": KEYSTORE_B64,
+        "ANDROID_KEYSTORE_PASSWORD": KEYSTORE_PW,
+    }
+    if args.output_dir is None:
+        required["GITHUB_TOKEN"] = GITHUB_TOKEN
+    missing = [key for key, value in required.items() if not value]
+    if missing:
+        parser.error("missing build configuration: " + ", ".join(missing))
+
     try:
         with TemporaryDirectory(prefix="bigboy-android-") as temporary:
             work_dir = Path(temporary)
             apk_path, aab_path = extract(package(work_dir), work_dir)
-            upload(apk_path, aab_path)
+            if args.output_dir is None:
+                upload(apk_path, aab_path)
+            else:
+                save_local((apk_path, aab_path), args.output_dir)
     except (RuntimeError, ValueError, OSError, zipfile.BadZipFile) as error:
         print(redact(error), file=sys.stderr, flush=True)
         sys.exit(1)

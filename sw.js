@@ -16,6 +16,8 @@ const SHELL = [
   './index.html',
   './styles.css',
   './app.js',
+  './startup.js',
+  './assets/startup/big-boy-bismarck.webp',
   './core.js',
   './menu.json',
   './hours_overrides.json',
@@ -28,12 +30,14 @@ const SHELL = [
   './icons/apple-touch-icon-180.png',
   './icons/favicon-48.png'
 ];
-/* Exact 13-file list produced by .github/workflows/auto-package.yml. */
+/* Exact 15-file list produced by .github/workflows/auto-package.yml. */
 const HASH_SOURCES = [
   './index.html',
   './styles.css',
   './core.js',
   './app.js',
+  './startup.js',
+  './assets/startup/big-boy-bismarck.webp',
   './menu.json',
   './hours_overrides.json',
   './manifest.webmanifest',
@@ -62,9 +66,9 @@ function toHex(buf){
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function validHash(h){
-  return typeof h === 'string' && /^[a-f0-9]{832}$/.test(h);
+  return typeof h === 'string' && /^[a-f0-9]{960}$/.test(h);
 }
-/* The committed hash is a concatenation of 13 per-file digests. Hashing that
+/* The committed hash is a concatenation of 15 per-file digests. Hashing that
    entire string (not a prefix) means every shell input affects the version. */
 async function releaseVersion(hashText){
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(hashText));

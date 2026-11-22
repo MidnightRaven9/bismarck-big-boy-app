@@ -95,6 +95,40 @@ img{max-width:100%;display:block}
 }
 .checker{height:3px;background:var(--red)}
 
+/* Shared by browsers and the Android Trusted Web Activity. */
+.startup{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;
+  padding:max(12px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right))
+          max(36px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));
+  background:#101114 radial-gradient(ellipse at 50% 43%,rgba(24,49,79,.34) 0%,transparent 51%);
+  pointer-events:none;
+  animation:startup-timeout 1ms step-end 2.2s forwards;
+}
+.startup::after{
+  content:"";position:absolute;inset-inline:0;margin-inline:auto;
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  width:clamp(44px,15vw,68px);height:2px;background:var(--red);
+}
+.startup-brand{
+  display:grid;justify-items:center;gap:clamp(8px,2vh,16px);width:100%;
+}
+.startup img{
+  width:min(100%,520px,96vh);height:auto;object-fit:contain;
+  animation:startup-logo 850ms cubic-bezier(.16,1,.3,1) both;
+}
+.startup-est{
+  color:#C6A04A;font:700 11px/1.2 var(--font-body);
+  letter-spacing:.22em;text-transform:uppercase;
+  animation:startup-caption 420ms ease-out 160ms both;
+}
+.skip-startup .startup{display:none}
+.startup.startup-leaving{animation:startup-exit 150ms ease-out forwards}
+@keyframes startup-logo{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes startup-caption{from{opacity:0}to{opacity:1}}
+@keyframes startup-exit{to{opacity:0;visibility:hidden}}
+@keyframes startup-timeout{to{visibility:hidden}}
+@media(prefers-reduced-motion:reduce){.startup img,.startup-est{animation:none}}
+
 /* ---------- header ---------- */
 header{
   position:sticky;top:0;z-index:40;

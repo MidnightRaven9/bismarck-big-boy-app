@@ -38,6 +38,7 @@ jobs:
         run: |
           node --check core.js
           node --check app.js
+          node --check startup.js
           node --check sw.js
           node --check scripts/scrape_fb_deals.js
           node --check scripts/capture_screenshots.js

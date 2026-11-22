@@ -44,6 +44,7 @@ jobs:
           set -euo pipefail
           node --check core.js
           node --check app.js
+          node --check startup.js
           node --check sw.js
           node --check scripts/scrape_fb_deals.js
           node --check scripts/capture_screenshots.js
@@ -79,9 +80,9 @@ jobs:
           git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)" pull --rebase origin main --autostash
           # Every input shipped inside the TWA shell. facebook_deals.json is
           # refreshed independently by the scraper and does not change code.
-          LC_ALL=C sha256sum index.html styles.css core.js app.js menu.json hours_overrides.json manifest.webmanifest sw.js icons/*.png | awk '{printf "%s", $1}' > /tmp/shell-hash.txt
+          LC_ALL=C sha256sum index.html styles.css core.js app.js startup.js assets/startup/big-boy-bismarck.webp menu.json hours_overrides.json manifest.webmanifest sw.js icons/*.png | awk '{printf "%s", $1}' > /tmp/shell-hash.txt
           HASH=$(cat /tmp/shell-hash.txt)
-          [[ "$HASH" =~ ^[a-f0-9]{832}$ ]]
+          [[ "$HASH" =~ ^[a-f0-9]{960}$ ]]
           echo "hash=$HASH" >> "$GITHUB_OUTPUT"
 
       - name: Get last packaged hash

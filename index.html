@@ -11,6 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Big Boy">
 <meta name="description" content="Bismarck Big Boy — A Family Tradition since 1954. Menu, hours, order online, and rewards.">
 <title>Bismarck Big Boy</title>
+<link rel="preload" as="image" href="assets/startup/big-boy-bismarck.webp">
+<script src="startup.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/favicon-48.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
@@ -21,6 +23,12 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="startup" id="startup" hidden aria-hidden="true">
+  <div class="startup-brand">
+    <img src="assets/startup/big-boy-bismarck.webp" width="768" height="606" alt="">
+    <span class="startup-est">Est. 1954</span>
+  </div>
+</div>
 
 <!-- SVG icon sprite -->
 <svg class="sprite" aria-hidden="true" focusable="false">
