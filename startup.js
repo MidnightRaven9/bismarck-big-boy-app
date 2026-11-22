@@ -2,46 +2,53 @@
 window.BigBoyStartup = (() => {
   const key = 'bb_skip_startup_once';
   let timeout;
+  let failed = false;
+
   try {
     if (sessionStorage.getItem(key) === '1') {
       sessionStorage.removeItem(key);
-      document.documentElement.classList.add('skip-startup');
+      document.documentElement.classList.add('startup-reload');
     }
   } catch (error) {
-    // The splash still times out if storage is blocked.
+    // Startup also works when session storage is unavailable.
+  }
+
+  function fail() {
+    const overlay = document.getElementById('startup');
+    if (!overlay || failed) return;
+    failed = true;
+    clearTimeout(timeout);
+    overlay.classList.add('startup-failed');
   }
 
   function finish() {
     const overlay = document.getElementById('startup');
-    if (!overlay || overlay.classList.contains('startup-leaving')) return;
+    if (!overlay || failed) return;
     clearTimeout(timeout);
-    if (!overlay.querySelector('img').naturalWidth || matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      overlay.remove();
-      return;
-    }
-    overlay.classList.add('startup-leaving');
-    setTimeout(() => overlay.remove(), 160);
+    // Let the initialized screen paint under the splash before revealing it.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
+          document.documentElement.classList.contains('startup-reload')) {
+        overlay.remove();
+        return;
+      }
+      overlay.classList.add('startup-leaving');
+      overlay.addEventListener('animationend', event => {
+        if (event.target === overlay) overlay.remove();
+      });
+    }));
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('startup');
-    if (document.documentElement.classList.contains('skip-startup')) {
-      overlay?.remove();
-      return;
-    }
-    const logo = overlay?.querySelector('img');
-    if (!logo || overlay.classList.contains('startup-leaving')) return;
-    if (logo.complete && !logo.naturalWidth) {
-      finish();
-      return;
-    }
-    logo.addEventListener('error', finish, { once:true });
-    timeout = setTimeout(finish, 1800);
-    document.addEventListener('pointerdown', finish, { once:true });
-    document.addEventListener('keydown', finish, { once:true });
+    const logo = overlay.querySelector('img');
+    logo.decode().then(() => overlay.classList.add('startup-logo-ready'), () => {});
+    overlay.classList.add('startup-running');
+    timeout = setTimeout(fail, 10000);
   }, { once:true });
 
   return {
+    fail,
     finish,
     skipNextReload() {
       try { sessionStorage.setItem(key, '1'); } catch (error) {}

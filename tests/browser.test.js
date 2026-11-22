@@ -122,6 +122,9 @@ const server = http.createServer((req, res) => {
       ok(appearance?.stripe === 'rgb(200, 16, 46)', 'the startup accent did not render');
       ok(appearance?.caption === 'Est. 1954', 'the startup caption was missing');
       ok(appearance?.animation === 'none' && appearance?.captionAnimation === 'none', 'reduced-motion branding animated');
+      const decodedLogo = p.locator('.startup-logo-ready img');
+      await decodedLogo.waitFor({ state:'visible' });
+      ok(await decodedLogo.evaluate(img => getComputedStyle(img).animationName === 'none'), 'decoded logo animated with reduced motion');
       serveMenu();
       await overlay.waitFor({ state:'detached' });
       ok(await p.locator('#s-home.active').isVisible(), 'Home did not appear after startup');
@@ -129,6 +132,77 @@ const server = http.createServer((req, res) => {
       ok(await overlay.count() === 0, 'tab navigation recreated the startup overlay');
     } finally {
       serveMenu();
+      await ctx.close();
+    }
+  });
+
+  check('delayed logo and menu keep the branded splash on repeat visits', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block', viewport:{ width:390, height:844 } });
+    let releaseLogo, releaseMenu;
+    const logo = new Promise(resolve => { releaseLogo = resolve; });
+    const menu = new Promise(resolve => { releaseMenu = resolve; });
+    try {
+      await ctx.route(/^https:\/\//, r => r.abort());
+      await ctx.route('**/assets/startup/big-boy-bismarck.webp', async r => { await logo; await r.continue(); });
+      await ctx.route('**/menu.json', async r => { await menu; await r.continue(); });
+      const p = await ctx.newPage();
+      await p.clock.install();
+      await p.goto(base, { waitUntil:'domcontentloaded' });
+      await p.locator('.startup-wordmark').waitFor({ state:'visible' });
+      ok(!await p.locator('.startup img').isVisible(), 'undecoded logo was revealed');
+      await p.clock.runFor(2500);
+      await p.keyboard.press('Escape');
+      ok(await p.locator('#startup').isVisible(), 'startup dismissed before initialization');
+      releaseLogo();
+      await p.locator('.startup-logo-ready img').waitFor({ state:'visible' });
+      ok(!await p.locator('.startup-wordmark').isVisible(), 'fallback overlapped the decoded logo');
+      releaseMenu();
+      await p.locator('#startup').waitFor({ state:'detached' });
+      await p.reload({ waitUntil:'domcontentloaded' });
+      await p.locator('#startup').waitFor({ state:'detached' });
+      ok(await p.locator('#s-home.active').isVisible(), 'repeat visit never reached Home');
+    } finally {
+      releaseLogo();
+      releaseMenu();
+      await ctx.close();
+    }
+  });
+
+  check('fatal initialization and timeout expose a keyboard-accessible retry link', async () => {
+    const ctx = await browser.newContext({ serviceWorkers:'block', reducedMotion:'reduce' });
+    try {
+      await ctx.route(/^https:\/\//, r => r.abort());
+      const p = await ctx.newPage();
+      await p.route('**/app.js', async route => {
+        const code = fs.readFileSync(path.join(ROOT, 'app.js'), 'utf8');
+        await route.fulfill({ contentType:'text/javascript',
+          body:code.replace('  renderHours();', '  throw new Error("Test startup failure");') });
+      });
+      await p.goto(base, { waitUntil:'domcontentloaded' });
+      const retry = p.getByRole('link', { name:'Retry', exact:true });
+      await p.locator('.startup-failed').waitFor({ state:'visible', timeout:5000 });
+      await retry.waitFor({ state:'visible' });
+      await p.keyboard.press('Tab');
+      ok(await retry.evaluate(link => document.activeElement === link), 'retry did not receive keyboard focus');
+      await p.unroute('**/app.js');
+
+      await p.clock.install();
+      let releaseMenu;
+      const menu = new Promise(resolve => { releaseMenu = resolve; });
+      await p.route('**/menu.json', async r => { await menu; await r.continue().catch(() => {}); });
+      try {
+        await Promise.all([p.waitForEvent('domcontentloaded'), retry.click({ noWaitAfter:true })]);
+        await p.clock.runFor(10100);
+        await retry.waitFor({ state:'visible' });
+        ok(await p.locator('.startup-failed').isVisible(), 'timeout did not enter recovery');
+      } finally {
+        releaseMenu();
+      }
+      await p.unroute('**/menu.json');
+      await Promise.all([p.waitForEvent('domcontentloaded'), retry.click({ noWaitAfter:true })]);
+      await p.locator('#startup').waitFor({ state:'detached' });
+      ok(await p.locator('#s-home.active').isVisible(), 'retry did not restore Home');
+    } finally {
       await ctx.close();
     }
   });

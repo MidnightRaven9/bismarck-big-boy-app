@@ -43,6 +43,7 @@ jobs:
           node --check scripts/scrape_fb_deals.js
           node --check scripts/capture_screenshots.js
           python3 -m py_compile scripts/package-android.py
+          python3 tests/android_splash_test.py
 
       - name: Data integrity
         run: |

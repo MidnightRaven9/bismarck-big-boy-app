@@ -662,7 +662,7 @@ const IMAGE_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
 );
 document.addEventListener('error', e => {
   const t = e.target;
-  if (!(t instanceof HTMLImageElement) || t.id === 'iabFav' || t.dataset.bbFallback) return;
+  if (!(t instanceof HTMLImageElement) || t.id === 'iabFav' || t.closest('#startup') || t.dataset.bbFallback) return;
   if (t.dataset.originalSrc){
     const original = t.dataset.originalSrc;
     delete t.dataset.originalSrc;
@@ -705,11 +705,11 @@ async function initApp(){
   applyHash();
 }
 initApp()
+  .then(() => window.BigBoyStartup?.finish())
   .catch(error => {
     console.error('App startup did not finish:', error.message);
-    notifyOnce('startup', 'Some parts of the app could not load. Reload to try again.');
-  })
-  .finally(() => window.BigBoyStartup?.finish());
+    window.BigBoyStartup?.fail();
+  });
 
 /* PWA shortcuts deep-link into a screen or action. */
 function applyHash(){

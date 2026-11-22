@@ -15,10 +15,12 @@ With no arguments, saves and uploads the artifacts to the configured GitHub
 release. Use --output-dir for a local-only build with no release upload.
 """
 import argparse
+import base64
 import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import subprocess
@@ -56,6 +58,7 @@ KEYSTORE_B64 = os.environ.get("ANDROID_KEYSTORE_B64", "")
 KEYSTORE_PW  = os.environ.get("ANDROID_KEYSTORE_PASSWORD", "")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
+KEY_ALIAS = "my-key-alias"
 ASSET_SUFFIX = os.environ.get("APK_SUFFIX", APP_VERSION)
 SPLASH_COLOR = "#101114"
 
@@ -127,7 +130,7 @@ def options():
         "shortcuts": [],
         "signing": {
             "file": f"data:application/octet-stream;base64,{KEYSTORE_B64}",
-            "alias": "my-key-alias",
+            "alias": KEY_ALIAS,
             "fullName": "Bismarck Big Boy Admin",
             "organization": "Bismarck Big Boy",
             "organizationalUnit": "Restaurant",
@@ -212,6 +215,87 @@ def extract(zip_path, work_dir):
     return paths
 
 
+SPLASH_ASSETS = Path(__file__).resolve().parents[1] / "assets/startup/android"
+SPLASH_DENSITIES = ("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi")
+
+
+def android_tool(name):
+    sdk = os.environ.get("ANDROID_SDK_ROOT") or os.environ.get("ANDROID_HOME")
+    if sdk:
+        builds = Path(sdk, "build-tools").glob("[0-9]*")
+        stable = [path for path in builds if re.fullmatch(r"\d+\.\d+\.\d+", path.name)]
+        for build in sorted(stable, key=lambda path: tuple(map(int, path.name.split("."))), reverse=True):
+            if (build / name).is_file():
+                return str(build / name)
+    tool = shutil.which(name)
+    if not tool:
+        raise RuntimeError(f"Android packaging requires {name} from the Android SDK build tools or JDK")
+    return tool
+
+
+def run_tool(args):
+    result = subprocess.run(args, capture_output=True, text=True)
+    if result.returncode:
+        raise RuntimeError(redact(f"{Path(args[0]).name} failed: {result.stderr or result.stdout}"))
+    return result.stdout
+
+
+def apk_splash_paths(resource_dump):
+    section = re.search(r"^    resource \S+ drawable/splash\s*\n((?:      .*\n)+)",
+                        resource_dump, re.MULTILINE)
+    paths = dict(re.findall(r"^      \((\w+)\) \(file\) (res/\S+\.png) type=PNG$",
+                            section[1] if section else "", re.MULTILINE))
+    if set(paths) != set(SPLASH_DENSITIES) or len(set(paths.values())) != len(SPLASH_DENSITIES):
+        raise ValueError("Generated APK has unexpected drawable/splash configurations")
+    return paths
+
+
+def replace_splash_archive(source, target, paths):
+    replacements = {member: (SPLASH_ASSETS / f"splash-{density}.png").read_bytes()
+                    for density, member in paths.items()}
+    with zipfile.ZipFile(source) as incoming:
+        members = incoming.namelist()
+        if len(set(members)) != len(members) or not replacements.keys() <= set(members):
+            raise ValueError(f"Missing splash resources or duplicate members in {source.name}")
+        if sum(item.file_size for item in incoming.infolist()) > MAX_EXPANDED:
+            raise ValueError(f"{source.name} exceeds its expanded size limit")
+        with zipfile.ZipFile(target, "x") as outgoing:
+            for item in incoming.infolist():
+                name = item.filename
+                if re.fullmatch(r"META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC))", name, re.I):
+                    continue
+                data = replacements[name] if name in replacements else incoming.read(item)
+                outgoing.writestr(item, data)
+
+
+def brand_android_packages(apk, aab, work_dir):
+    """Replace the TWA drawable independently of its launcher icon, then re-sign."""
+    aapt2, zipalign, apksigner, jarsigner = map(android_tool, ("aapt2", "zipalign", "apksigner", "jarsigner"))
+    apk_paths = apk_splash_paths(run_tool([aapt2, "dump", "resources", apk]))
+    aab_paths = {density: f"base/res/drawable-{density}-v4/splash.png" for density in SPLASH_DENSITIES}
+    unsigned_apk, aligned_apk = work_dir / "unsigned.apk", work_dir / "aligned.apk"
+    unsigned_aab = work_dir / "unsigned.aab"
+    branded_apk, branded_aab = work_dir / "branded.apk", work_dir / "branded.aab"
+    replace_splash_archive(apk, unsigned_apk, apk_paths)
+    replace_splash_archive(aab, unsigned_aab, aab_paths)
+    keystore = work_dir / "signing.keystore"
+    keystore.write_bytes(base64.b64decode(KEYSTORE_B64, validate=True))
+    password = "ANDROID_KEYSTORE_PASSWORD"
+    run_tool([zipalign, "-f", "4", unsigned_apk, aligned_apk])
+    run_tool([apksigner, "sign", "--ks", keystore, "--ks-key-alias", KEY_ALIAS,
+              "--ks-pass", f"env:{password}", "--key-pass", f"env:{password}",
+              "--out", branded_apk, aligned_apk])
+    run_tool([jarsigner, "-keystore", keystore, "-storepass:env", password, "-keypass:env", password,
+              "-signedjar", branded_aab, unsigned_aab, KEY_ALIAS])
+    fingerprint = r"certificate SHA-256 digest: ([0-9a-f]+)"
+    original_signer = re.findall(fingerprint, run_tool([apksigner, "verify", "--print-certs", apk]))
+    branded_signer = re.findall(fingerprint, run_tool([apksigner, "verify", "--print-certs", branded_apk]))
+    if not original_signer or original_signer != branded_signer:
+        raise ValueError("Branded APK signing certificate does not match the generated package")
+    run_tool([jarsigner, "-verify", branded_aab])
+    return branded_apk, branded_aab
+
+
 def upload(apk_src, aab_src):
     out_dir = os.path.join(os.environ.get("PWD", "."), "release")
     os.makedirs(out_dir, exist_ok=True)
@@ -268,7 +352,7 @@ def main():
     try:
         with TemporaryDirectory(prefix="bigboy-android-") as temporary:
             work_dir = Path(temporary)
-            apk_path, aab_path = extract(package(work_dir), work_dir)
+            apk_path, aab_path = brand_android_packages(*extract(package(work_dir), work_dir), work_dir)
             if args.output_dir is None:
                 upload(apk_path, aab_path)
             else:
