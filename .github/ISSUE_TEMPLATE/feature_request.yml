@@ -1,0 +1,44 @@
+name: Feature request
+description: Have an idea to make the app better? We'd love to hear it.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got an idea for the app? Share it here. We can't promise everything will get built, but we read every suggestion.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation where the app falls short.
+      placeholder: I order the same sandwich every week and wish I could get to it faster.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to see?
+      description: Explain your idea in plain language.
+      placeholder: Add a "recent orders" section to the home screen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Any alternatives you've thought of?
+      description: Other ways to solve the same problem.
+      placeholder: Or maybe a favorites sort option.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked existing issues to make sure this hasn't already been suggested.
+          required: true

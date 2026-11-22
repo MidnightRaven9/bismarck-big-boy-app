@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Restaurant question or order issue
+    url: https://www.bismarckbigboy.com/
+    about: For questions about the menu, hours, or an order, please contact the restaurant directly.
+  - name: Security concern
+    url: https://github.com/MidnightRaven9/bismarck-big-boy-app/security/advisories/new
+    about: Please report security vulnerabilities privately here.

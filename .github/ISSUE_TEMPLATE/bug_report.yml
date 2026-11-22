@@ -1,0 +1,58 @@
+name: Bug report
+description: Something isn't working right? Let us know.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem. The more detail you give, the faster we can track it down.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you expected and what actually happened.
+      placeholder: I tapped the Menu tab and the screen stayed blank.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the taps, swipes, or clicks that trigger the issue.
+      placeholder: |
+        1. Open the app
+        2. Tap Menu
+        3. Search for "burger"
+        4. Screen goes blank
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      description: Phone model, OS version, and browser help a lot.
+      placeholder: iPhone 13, iOS 18, Safari
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or screen recording
+      description: If you can share one, drop it here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked the live site and the issue is still there.
+          required: true
+        - label: I cleared the browser cache / refreshed the page.
+          required: false
