@@ -376,7 +376,7 @@ header{
 .search .clear:hover{background:var(--line-dark)}
 .search.has .clear{display:grid}
 
-.chips{display:flex;flex-wrap:wrap;gap:10px;padding:14px 0 6px;scrollbar-width:none}
+.chips{display:flex;flex-wrap:nowrap;gap:10px;padding:14px 0 6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
 
 .chip{
@@ -792,8 +792,6 @@ nav.tabbar{
 }
 
 @media (max-width:380px){
-  .chip{flex-direction:column;white-space:normal;text-align:center;padding:10px 8px;min-height:auto;line-height:1.25}
-  .chip .chip-thumb{width:32px;height:32px;margin:0 0 6px}
   .cat-head{font-size:20px;flex-wrap:wrap;gap:4px}
   .cat-head span{white-space:normal}
   .size{white-space:normal;text-align:center;padding:6px 10px}
