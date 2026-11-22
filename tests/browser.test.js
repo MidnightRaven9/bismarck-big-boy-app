@@ -400,13 +400,15 @@ const server = http.createServer((req, res) => {
       await p.goto(base, { waitUntil:'domcontentloaded' });
 
       const expectStatus = async (text, color, glowing) => {
-        await p.waitForFunction(expected => document.querySelector('#statusMain')?.textContent === expected, text);
+        await p.waitForFunction(({ text, color, glowing }) => {
+          const dot = getComputedStyle(document.querySelector('#status .dot'));
+          return document.querySelector('#statusMain')?.textContent === text &&
+            dot.backgroundColor === color && (dot.boxShadow !== 'none') === glowing;
+        }, { text, color, glowing });
         const dot = await p.locator('#status .dot').evaluate(el => {
           const css = getComputedStyle(el);
-          return { color:css.backgroundColor, glow:css.boxShadow, width:css.width, height:css.height };
+          return { width:css.width, height:css.height };
         });
-        ok(dot.color === color, 'incorrect indicator color for ' + text);
-        ok((dot.glow !== 'none') === glowing, 'incorrect glow for ' + text);
         ok(dot.width === '7px' && dot.height === '7px', 'indicator size changed');
       };
 
