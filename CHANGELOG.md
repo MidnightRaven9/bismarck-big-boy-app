@@ -3,6 +3,24 @@
 Notable changes to the Bismarck Big Boy mobile web app. The installable Android
 build uses release tag `v1.0.0`; the web app shell cache version is in `sw.js`.
 
+## 2026-11-22 — Modern-retro redesign with black background
+
+### Changed
+- Complete visual refresh across Home, Menu, Favorites, Rewards, Delivery, and
+  Info with a modern-retro 1950s American drive-in aesthetic.
+- Default palette now uses a black background (`#0A0A0A`) with Big Boy red
+  `#C8102E` as the primary action color, white and light gray text, and vintage
+  gold `#D4A63A` and navy `#193B63` as accent details.
+- Rounded 16 px cards, 8 px spacing rhythm, 44 px touch targets, checkerboard
+  strips, and bold Bebas Neue headings paired with Inter body text.
+- Updated `manifest.webmanifest` and `theme-color` to match the black
+  background.
+- Refreshed all six README screenshots at 390 × 844.
+
+### Fixed
+- Ensured the new `styles.css` is included in the service-worker shell and
+  app-shell hash lists so offline caching stays consistent.
+
 ## 2026-11-22 — Dark mode + re-applied security fixes
 
 ### Added
